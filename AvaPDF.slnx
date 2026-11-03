@@ -6,6 +6,7 @@
     <Project Path="src/AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/AvaPDF.AotSmoke/AvaPDF.AotSmoke.csproj" />
     <Project Path="tests/AvaPDF.Tests/AvaPDF.Tests.csproj" />
   </Folder>
 </Solution>

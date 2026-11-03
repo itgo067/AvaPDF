@@ -27,12 +27,13 @@ dotnet run --project src/AvaPDF.Desktop/AvaPDF.Desktop.csproj
 dotnet test AvaPDF.slnx
 ```
 
-发布 Windows x64 版本：
+发布 Windows x64 版本（**Native AOT 优先，自包含 CoreCLR 兜底**）：
 
-```bash
-dotnet publish src/AvaPDF.Desktop/AvaPDF.Desktop.csproj \
-  -c Release -r win-x64 --self-contained true
+```powershell
+powershell -File eng/publish-desktop.ps1
 ```
+
+脚本会检测 MSVC 工具链，先运行全部 PDF 功能的 AOT 冒烟测试，再发布桌面程序；条件不足或验证失败时明确提示并回退到 CoreCLR。强制要求 AOT 时使用 `-RequireAot`。详见 [docs/PUBLISHING.md](docs/PUBLISHING.md)。
 
 ## 项目结构
 
@@ -44,6 +45,7 @@ src/
   AvaPDF.Desktop/         Avalonia 12、MVVM、文件对话框、桌面组合根
 tests/
   AvaPDF.Tests/           页码解析测试与真实 PDF 操作测试
+  AvaPDF.AotSmoke/        覆盖全部 PDF 功能的 Native AOT 冒烟测试
 ```
 
 依赖方向：
