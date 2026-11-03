@@ -64,6 +64,33 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ToolWorkspaceViewModel Workspace { get; }
 
+    public void ApplyStartupOptions(StartupOptions options)
+    {
+        if (options.Tool.HasValue)
+        {
+            SelectedTool = PdfToolCatalog.Get(options.Tool.Value);
+        }
+
+        var accepted = options.Files
+            .Where(File.Exists)
+            .Where(path => FileDialogService.IsSupportedFile(path, SelectedTool.InputKind))
+            .ToArray();
+        Workspace.AddFiles(accepted);
+        var rejected = options.Files.Count - accepted.Length;
+        if (!string.IsNullOrWhiteSpace(options.Error))
+        {
+            Workspace.StatusMessage = options.Error;
+        }
+        else if (rejected > 0)
+        {
+            Workspace.StatusMessage = $"已忽略 {rejected} 个不存在或格式不匹配的启动文件。";
+        }
+        else if (accepted.Length > 0)
+        {
+            Workspace.StatusMessage = $"已从外部调用载入 {accepted.Length} 个文件，请确认后开始处理。";
+        }
+    }
+
     [RelayCommand]
     private void SelectTool(PdfToolDescriptor tool) => SelectedTool = tool;
 

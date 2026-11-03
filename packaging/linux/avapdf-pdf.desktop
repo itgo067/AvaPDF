@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=application/pdf;
+Actions=AvaPDFOptimize
+X-KDE-Priority=TopLevel
+
+[Desktop Action AvaPDFOptimize]
+Name=Optimize with AvaPDF
+Name[zh_CN]=使用 AvaPDF 优化 PDF
+Icon=avapdf
+Exec=avapdf --tool optimize --file %F

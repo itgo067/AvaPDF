@@ -1,0 +1,74 @@
+name: Windows release installer
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-installer:
+    name: Build and verify Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Run unit tests
+        shell: powershell
+        run: dotnet test AvaPDF.slnx -c Release --nologo --verbosity minimal
+
+      - name: Publish Native AOT
+        shell: powershell
+        run: powershell -File eng/publish-desktop.ps1 -RequireAot
+
+      - name: Install Inno Setup
+        shell: powershell
+        run: winget install --id JRSoftware.InnoSetup --exact --silent --accept-package-agreements --accept-source-agreements
+
+      - name: Build installer
+        shell: powershell
+        run: powershell -File eng/build-installer.ps1
+
+      - name: Verify install, context menu and uninstall
+        shell: powershell
+        run: powershell -File eng/test-installer.ps1 -SetupPath (Get-ChildItem artifacts/publish/*-win-x64-setup.exe).FullName
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AvaPDF-windows-release
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/publish/AvaPDF-*-win-x64-setup.exe
+            artifacts/publish/AvaPDF-*-win-x64-aot.zip
+            artifacts/metrics/win-x64-aot.json
+            artifacts/metrics/win-x64-aot.md
+
+      - name: Attach assets to GitHub Release
+        if: github.event_name == 'release'
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          $assets = Get-ChildItem artifacts/publish -File |
+            Where-Object { $_.Name -like 'AvaPDF-*-win-x64-setup.exe' -or $_.Name -like 'AvaPDF-*-win-x64-aot.zip' } |
+            ForEach-Object { $_.FullName }
+          gh release upload $env:RELEASE_TAG $assets --clobber
+          if ($LASTEXITCODE -ne 0) { throw "gh release upload failed: $LASTEXITCODE" }

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=AvaPDF
+Comment=Local PDF workspace
+Comment[zh_CN]=本地 PDF 工作台
+Exec=avapdf --file %F
+Icon=avapdf
+Terminal=false
+Categories=Office;Utility;
+MimeType=application/pdf;
+Keywords=PDF;Office;Document;
+Keywords[zh_CN]=PDF;文档;办公;

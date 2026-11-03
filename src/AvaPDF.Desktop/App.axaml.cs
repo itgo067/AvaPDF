@@ -28,10 +28,12 @@ public sealed class App : Avalonia.Application
 
             var provider = services.BuildServiceProvider();
             provider.GetRequiredService<IThemeService>().ApplySavedTheme();
+            var viewModel = provider.GetRequiredService<MainWindowViewModel>();
             var mainWindow = new MainWindow
             {
-                DataContext = provider.GetRequiredService<MainWindowViewModel>()
+                DataContext = viewModel
             };
+            viewModel.ApplyStartupOptions(StartupOptions.Parse(desktop.Args));
             desktop.MainWindow = mainWindow;
 
             if (provider.GetRequiredService<IFileDialogService>() is FileDialogService dialogs)

@@ -10,7 +10,7 @@
 | 优化与转换 | 无损优化、图片转 PDF、原生文本提取为 UTF-8 TXT |
 | 文档转换 | DOC/DOCX、XLS/XLSX、PPT/PPTX、Markdown、HTML、RTF、TXT 转 PDF，支持转换警告展示 |
 | 安全与信息 | 文字/图片水印、AES-256 加密、所有者密码解密、标题/作者/主题/关键词编辑 |
-| 桌面体验 | Ursa NavMenu 分组导航、Semi 亮色/暗色/跟随系统主题及配色、掩码密码框、文件拖入与排序、MinVer 版本化发布、后台执行、取消、进度反馈、结果文件打开 |
+| 桌面体验 | Ursa NavMenu 分组导航、Semi 亮色/暗色/跟随系统主题及配色、掩码密码框、文件拖入与排序、启动参数与右键菜单、MinVer 版本化发布、后台执行、取消、进度反馈、结果文件打开 |
 
 所有文件均在本机处理。输出文件遇到同名时自动添加序号，不覆盖已有文件。
 
@@ -36,6 +36,8 @@ powershell -File eng/publish-desktop.ps1
 ```
 
 脚本会检测 MSVC 工具链，先运行全部 PDF 功能的 AOT 冒烟测试，再发布桌面程序，并记录体积和三次窗口启动耗时、生成 ZIP；条件不足或验证失败时明确提示并回退到 CoreCLR。强制要求 AOT 时使用 `-RequireAot`。详见 [docs/PUBLISHING.md](docs/PUBLISHING.md) 和 [docs/BENCHMARKS.md](docs/BENCHMARKS.md)。
+
+Windows 安装包与 PDF 右键菜单见 [docs/WINDOWS_INSTALLER.md](docs/WINDOWS_INSTALLER.md)；Ubuntu/Kubuntu 的 DEB、AppImage 与 Flatpak 取舍见 [docs/LINUX_PACKAGING.md](docs/LINUX_PACKAGING.md)。
 
 ## 项目结构
 
