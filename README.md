@@ -1,4 +1,4 @@
-# AvaTools
+# AvaPDF
 
 基于 **.NET 10、Avalonia 12.1.5、OfficeIMO.Pdf 3.5.3** 的本地 PDF 工具台。项目采用分层架构与按功能拆分的处理器，桌面界面不承载 PDF 业务逻辑，为后续 ASP.NET Core / Web 版本复用核心能力。
 
@@ -17,20 +17,20 @@
 要求安装 .NET SDK 10.0.403 或兼容的 .NET 10 SDK。
 
 ```bash
-dotnet restore AvaTools.slnx
-dotnet run --project src/AvaTools.Desktop/AvaTools.Desktop.csproj
+dotnet restore AvaPDF.slnx
+dotnet run --project src/AvaPDF.Desktop/AvaPDF.Desktop.csproj
 ```
 
 测试：
 
 ```bash
-dotnet test AvaTools.slnx
+dotnet test AvaPDF.slnx
 ```
 
 发布 Windows x64 版本：
 
 ```bash
-dotnet publish src/AvaTools.Desktop/AvaTools.Desktop.csproj \
+dotnet publish src/AvaPDF.Desktop/AvaPDF.Desktop.csproj \
   -c Release -r win-x64 --self-contained true
 ```
 
@@ -38,20 +38,20 @@ dotnet publish src/AvaTools.Desktop/AvaTools.Desktop.csproj \
 
 ```text
 src/
-  AvaTools.Domain/          工具目录、操作标识、结果与进度模型
-  AvaTools.Application/     流抽象、操作请求、参数解析、统一任务入口
-  AvaTools.Pdf.OfficeIMO/   OfficeIMO 适配器；每项功能一个独立处理器
-  AvaTools.Desktop/         Avalonia 12、MVVM、文件对话框、桌面组合根
+  AvaPDF.Domain/          工具目录、操作标识、结果与进度模型
+  AvaPDF.Application/     流抽象、操作请求、参数解析、统一任务入口
+  AvaPDF.Pdf.OfficeIMO/   OfficeIMO 适配器；每项功能一个独立处理器
+  AvaPDF.Desktop/         Avalonia 12、MVVM、文件对话框、桌面组合根
 tests/
-  AvaTools.Tests/           页码解析测试与真实 PDF 操作测试
+  AvaPDF.Tests/           页码解析测试与真实 PDF 操作测试
 ```
 
 依赖方向：
 
 ```text
-AvaTools.Desktop ───────> AvaTools.Application ───────> AvaTools.Domain
+AvaPDF.Desktop ───────> AvaPDF.Application ───────> AvaPDF.Domain
        │                          ▲
-       └── 仅组合根注册 ─> AvaTools.Pdf.OfficeIMO ─────┘
+       └── 仅组合根注册 ─> AvaPDF.Pdf.OfficeIMO ─────┘
 ```
 
 更详细的边界和 Web 复用方式见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，分支与提交规范见 [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md)。
@@ -60,13 +60,13 @@ AvaTools.Desktop ───────> AvaTools.Application ──────�
 
 1. 在 `PdfOperationKind` 中增加稳定标识，并在 `PdfToolCatalog` 添加描述。
 2. 在 Application 层定义请求模型。
-3. 在 `AvaTools.Pdf.OfficeIMO/Features` 新增 `PdfOperationHandler<TRequest>`。
+3. 在 `AvaPDF.Pdf.OfficeIMO/Features` 新增 `PdfOperationHandler<TRequest>`。
 4. 在 `AddOfficeImoPdf` 中注册处理器。
 5. 添加真实 PDF 测试；桌面端按参数需求增加对应设置面板。
 
 ## 品牌资源
 
-Logo 位于 `src/AvaTools.Desktop/Assets/`：`Logo.svg` 为完整应用图标，`LogoMark.svg` 为透明图形标，同时提供 PNG 和多尺寸 ICO。修改 SVG 或生成脚本后，可运行 `eng/generate-logo.ps1` 重新生成桌面资源。
+Logo 位于 `src/AvaPDF.Desktop/Assets/`：`Logo.svg` 为完整应用图标，`LogoMark.svg` 为透明图形标，同时提供 PNG 和多尺寸 ICO。修改 SVG 或生成脚本后，可运行 `eng/generate-logo.ps1` 重新生成桌面资源。
 
 ## 当前边界
 

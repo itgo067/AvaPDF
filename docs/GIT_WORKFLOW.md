@@ -28,8 +28,8 @@ chore: update Avalonia packages
 ## 提交前检查
 
 ```bash
-dotnet test AvaTools.slnx
-dotnet build AvaTools.slnx -c Release --nologo
+dotnet test AvaPDF.slnx
+dotnet build AvaPDF.slnx -c Release --nologo
 git diff --check
 ```
 

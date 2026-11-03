@@ -42,7 +42,7 @@ PDF 工作通过 `Task.Run` 移出 UI 线程，并传递取消令牌与进度。
 
 ## 后续 Web 宿主
 
-建议新增 `AvaTools.Web`，只引用 Application 与 OfficeIMO 适配项目：
+建议新增 `AvaPDF.Web`，只引用 Application 与 OfficeIMO 适配项目：
 
 1. 将 `IFormFile.OpenReadStream()` 包装为 `IPdfSource`，并在 Web 边界设置上传大小和请求超时限制。
 2. 单文件下载可用临时文件实现 `IPdfOutputTarget`，完成后以 `FileStreamResult` 返回；多文件结果可写入 ZIP。

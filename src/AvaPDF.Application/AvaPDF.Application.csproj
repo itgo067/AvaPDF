@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>AvaPDF.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AvaPDF.Domain/AvaPDF.Domain.csproj" />
+  </ItemGroup>
+</Project>

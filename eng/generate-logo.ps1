@@ -1,5 +1,5 @@
 param(
-    [string]$AssetsPath = (Join-Path $PSScriptRoot '../src/AvaTools.Desktop/Assets')
+    [string]$AssetsPath = (Join-Path $PSScriptRoot '../src/AvaPDF.Desktop/Assets')
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -164,4 +164,4 @@ $writer.Flush()
 $writer.Dispose()
 $file.Dispose()
 
-Write-Output "Generated AvaTools logo assets in $resolvedAssets"
+Write-Output "Generated AvaPDF logo assets in $resolvedAssets"

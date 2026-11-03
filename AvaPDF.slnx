@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AvaPDF.Application/AvaPDF.Application.csproj" />
+    <Project Path="src/AvaPDF.Desktop/AvaPDF.Desktop.csproj" />
+    <Project Path="src/AvaPDF.Domain/AvaPDF.Domain.csproj" />
+    <Project Path="src/AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AvaPDF.Tests/AvaPDF.Tests.csproj" />
+  </Folder>
+</Solution>
