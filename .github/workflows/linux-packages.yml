@@ -1,0 +1,97 @@
+name: Linux packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/linux-packages.yml'
+      - 'AvaPDF.slnx'
+      - 'Directory.*'
+      - 'global.json'
+      - 'eng/**'
+      - 'packaging/linux/**'
+      - 'src/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - '.github/workflows/linux-packages.yml'
+      - 'AvaPDF.slnx'
+      - 'Directory.*'
+      - 'global.json'
+      - 'eng/**'
+      - 'packaging/linux/**'
+      - 'src/**'
+      - 'tests/**'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-verify:
+    name: Build and verify linux-x64 DEB and AppImage
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - name: Checkout source or release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Install build and desktop test tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang zlib1g-dev dpkg-dev desktop-file-utils xvfb x11-utils libfuse2 fonts-noto-cjk
+
+      - name: Install verified AppImageTool 1.9.1
+        shell: bash
+        run: |
+          curl -fL --retry 5 --retry-all-errors https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage -o /tmp/appimagetool-x86_64.AppImage
+          echo 'ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0  /tmp/appimagetool-x86_64.AppImage' | sha256sum -c -
+          sudo install -m 755 /tmp/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+
+      - name: Run unit tests
+        shell: bash
+        run: dotnet test AvaPDF.slnx -c Release --nologo --verbosity minimal
+
+      - name: Build Native AOT, DEB and AppImage
+        shell: bash
+        run: bash eng/build-linux-packages.sh
+
+      - name: Verify DEB install, GUI startup, uninstall and AppImage startup
+        shell: bash
+        run: |
+          DEB=$(find artifacts/publish -maxdepth 1 -name 'AvaPDF-*-linux-x64.deb' -print -quit)
+          APPIMAGE=$(find artifacts/publish -maxdepth 1 -name 'AvaPDF-*-linux-x64.AppImage' -print -quit)
+          bash eng/test-linux-packages.sh "$DEB" "$APPIMAGE"
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: AvaPDF-linux-x64-packages
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/publish/AvaPDF-*-linux-x64.deb
+            artifacts/publish/AvaPDF-*-linux-x64.AppImage
+
+      - name: Attach packages to GitHub Release
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$RELEASE_TAG" artifacts/publish/AvaPDF-*-linux-x64.deb artifacts/publish/AvaPDF-*-linux-x64.AppImage --clobber

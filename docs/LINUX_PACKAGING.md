@@ -16,7 +16,10 @@
 - CI 构建：`ubuntu-latest`。
 - 用户桌面验证：Kubuntu 26.04。
 - 发布仍采用 Native AOT，不要求用户安装 .NET Runtime。
-- CI 先运行普通测试、OfficeIMO AOT 冒烟测试和无桌面环境的启动/打包检查；KDE 菜单与实际 GUI 操作需要在 Kubuntu 桌面验证。
+- `.github/workflows/linux-packages.yml` 构建 linux-x64 Native AOT、DEB 和 AppImage，并在 Xvfb 中检查真实 AvaPDF 窗口。
+- CI 实际执行 DEB 安装、程序入口与 KDE 文件检查、GUI 启动、卸载清理，以及 AppImage 的 extract-and-run 启动。
+- AppImageTool 固定为 1.9.1，并在 CI 中校验官方 SHA-256。
+- KDE 菜单与真实桌面交互仍建议在 Kubuntu 26.04 做最终人工验证。
 
 ## DEB 结构
 
