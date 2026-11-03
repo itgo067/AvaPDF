@@ -13,6 +13,8 @@
     <ProjectReference Include="../AvaPDF.Converters.OfficeIMO/AvaPDF.Converters.OfficeIMO.csproj" />
     <ProjectReference Include="../AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
     <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Irihi.Ursa" />
+    <PackageReference Include="Irihi.Ursa.Themes.Semi" />
     <PackageReference Include="Semi.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />

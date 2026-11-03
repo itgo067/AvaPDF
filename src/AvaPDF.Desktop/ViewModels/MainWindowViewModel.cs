@@ -17,6 +17,12 @@ public sealed partial class PdfToolNavigationItem : ObservableObject
 
     public PdfToolDescriptor Descriptor { get; }
 
+    public string Name => Descriptor.Name;
+
+    public string Glyph => Descriptor.Glyph;
+
+    public IReadOnlyList<PdfToolNavigationItem>? Tools => null;
+
     public bool IsExpanded => false;
 }
 
@@ -33,6 +39,8 @@ public sealed partial class PdfToolCategoryViewModel : ObservableObject
     }
 
     public string Name { get; }
+
+    public string Glyph => string.Empty;
 
     public IReadOnlyList<PdfToolNavigationItem> Tools { get; }
 }
