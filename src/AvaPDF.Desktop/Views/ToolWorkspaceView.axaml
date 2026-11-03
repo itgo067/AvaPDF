@@ -1,55 +1,54 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
-             xmlns:controls="clr-namespace:AvaPDF.Desktop.Views.Controls"
              x:Class="AvaPDF.Desktop.Views.ToolWorkspaceView"
              x:DataType="vm:ToolWorkspaceViewModel">
   <UserControl.Styles>
     <Style Selector="Border.card">
-      <Setter Property="Background" Value="{DynamicResource CardBackground}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource CardBorder}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorBackground0}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="CornerRadius" Value="16" />
     </Style>
     <Style Selector="TextBlock.section">
       <Setter Property="FontSize" Value="13" />
       <Setter Property="FontWeight" Value="SemiBold" />
-      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
     </Style>
     <Style Selector="TextBlock.caption">
       <Setter Property="FontSize" Value="11" />
-      <Setter Property="Foreground" Value="{DynamicResource SecondaryText}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText2}" />
     </Style>
     <Style Selector="Button.secondary">
-      <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackground}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource SecondaryButtonBorder}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="Padding" Value="13,8" />
     </Style>
     <Style Selector="Button.accent">
-      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorPrimary}" />
       <Setter Property="Foreground" Value="White" />
       <Setter Property="BorderThickness" Value="0" />
     </Style>
     <Style Selector="Button.accent:disabled">
-      <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackground}" />
-      <Setter Property="Foreground" Value="{DynamicResource SecondaryText}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource SecondaryButtonBorder}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText2}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
       <Setter Property="BorderThickness" Value="1" />
     </Style>
     <Style Selector="TextBox">
-      <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
-      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorBackground0}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="MinHeight" Value="38" />
     </Style>
     <Style Selector="ComboBox">
-      <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
-      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorBackground0}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="MinHeight" Value="38" />
     </Style>
@@ -59,11 +58,11 @@
     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="2,0,0,22">
       <StackPanel Spacing="7">
         <TextBlock Text="PDF 工具工作台" Classes="caption" LetterSpacing="1.1" />
-        <TextBlock Text="{Binding CurrentTool.Name}" FontSize="29" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryText}" />
-        <TextBlock Text="{Binding CurrentTool.Description}" FontSize="13" Foreground="{DynamicResource SecondaryText}" />
+        <TextBlock Text="{Binding CurrentTool.Name}" FontSize="29" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
+        <TextBlock Text="{Binding CurrentTool.Description}" FontSize="13" Foreground="{DynamicResource SemiColorText2}" />
       </StackPanel>
-      <Border Grid.Column="1" VerticalAlignment="Center" Padding="12,8" CornerRadius="20" Background="{DynamicResource AccentSoft}">
-        <TextBlock Text="OfficeIMO 引擎" FontSize="11" Foreground="{DynamicResource AccentText}" />
+      <Border Grid.Column="1" VerticalAlignment="Center" Padding="12,8" CornerRadius="20" Background="{DynamicResource SemiColorPrimaryLight}">
+        <TextBlock Text="OfficeIMO 引擎" FontSize="11" Foreground="{DynamicResource SemiColorPrimary}" />
       </Border>
     </Grid>
 
@@ -82,23 +81,23 @@
               </StackPanel>
             </Grid>
 
-            <Border Background="{DynamicResource ControlBackground}" CornerRadius="11" Padding="8" MinHeight="92">
+            <Border Background="{DynamicResource SemiColorBackground0}" CornerRadius="11" Padding="8" MinHeight="92">
               <Grid>
                 <StackPanel IsVisible="{Binding ShowEmptyFiles}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="12">
-                  <TextBlock Text="＋" FontSize="22" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" />
-                  <TextBlock Text="尚未选择文件" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center" />
+                  <TextBlock Text="＋" FontSize="22" Foreground="{DynamicResource SemiColorPrimary}" HorizontalAlignment="Center" />
+                  <TextBlock Text="尚未选择文件" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Center" />
                   <TextBlock Text="点击“添加文件”开始，处理顺序以列表为准。" Classes="caption" HorizontalAlignment="Center" />
                 </StackPanel>
                 <ItemsControl ItemsSource="{Binding Files}" IsVisible="{Binding HasFiles}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:LocalFileItem">
-                    <Border BorderBrush="{DynamicResource FileRowBorder}" BorderThickness="0,0,0,1" Padding="8,7">
+                    <Border BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1" Padding="8,7">
                       <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto" VerticalAlignment="Center">
-                        <Border Width="34" Height="38" CornerRadius="7" Background="{DynamicResource GlyphBackground}" Margin="0,0,12,0">
-                          <TextBlock Text="{Binding Extension}" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="34" Height="38" CornerRadius="7" Background="{DynamicResource SemiColorFill0}" Margin="0,0,12,0">
+                          <TextBlock Text="{Binding Extension}" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource SemiColorPrimary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
-                          <TextBlock Text="{Binding Name}" FontSize="12.5" Foreground="{DynamicResource PrimaryText}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Text="{Binding Name}" FontSize="12.5" Foreground="{DynamicResource SemiColorText0}" TextTrimming="CharacterEllipsis" />
                           <TextBlock Text="{Binding Details}" Classes="caption" />
                         </StackPanel>
                         <Button Grid.Column="2" Content="↑" Classes="secondary" Margin="5,0,0,0" Padding="9,5" Command="{Binding $parent[ItemsControl].DataContext.MoveUpCommand}" CommandParameter="{Binding}" />
@@ -126,7 +125,7 @@
             </ComboBox>
             <StackPanel IsVisible="{Binding ShowSplitPageCount}" Spacing="6">
               <TextBlock Text="每份包含的页数" Classes="caption" />
-              <controls:NumberStepper Minimum="1" Maximum="10000" Increment="1" DecimalPlaces="0" Value="{Binding PagesPerPart}" />
+              <NumericUpDown Minimum="1" Maximum="10000" Increment="1" Value="{Binding PagesPerPart}" />
             </StackPanel>
             <StackPanel IsVisible="{Binding ShowSplitRanges}" Spacing="6">
               <TextBlock Text="拆分范围（每组生成一个文件）" Classes="caption" />
@@ -191,16 +190,16 @@
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding ShowWatermarkText}">
               <StackPanel Spacing="5">
                 <TextBlock Text="文字大小（点）" Classes="caption" />
-                <controls:NumberStepper Minimum="6" Maximum="256" Increment="1" DecimalPlaces="0" Value="{Binding WatermarkFontSize}" />
+                <NumericUpDown Minimum="6" Maximum="256" Increment="1" Value="{Binding WatermarkFontSize}" />
               </StackPanel>
               <StackPanel Grid.Column="1" Spacing="5">
                 <TextBlock Text="旋转角度" Classes="caption" />
-                <controls:NumberStepper Minimum="-180" Maximum="180" Increment="5" DecimalPlaces="0" Value="{Binding WatermarkRotation}" />
+                <NumericUpDown Minimum="-180" Maximum="180" Increment="5" Value="{Binding WatermarkRotation}" />
               </StackPanel>
             </Grid>
             <StackPanel Spacing="5">
               <TextBlock Text="透明度（0.05–1.00）" Classes="caption" />
-              <controls:NumberStepper Minimum="0.05" Maximum="1" Increment="0.05" DecimalPlaces="2" Value="{Binding WatermarkOpacity}" />
+              <NumericUpDown Minimum="0.05" Maximum="1" Increment="0.05" Value="{Binding WatermarkOpacity}" />
             </StackPanel>
           </StackPanel>
         </Border>
@@ -257,21 +256,21 @@
               <Button Grid.Column="2" Content="开始处理  →" Classes="accent" Padding="20,11" CornerRadius="10" VerticalAlignment="Center" Command="{Binding RunCommand}" />
             </Grid>
             <ProgressBar Minimum="0" Maximum="100" Value="{Binding ProgressValue}" Height="5" CornerRadius="3" />
-            <Border Background="{DynamicResource ErrorBackground}" CornerRadius="9" Padding="12" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-              <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" FontSize="12" />
+            <Border Background="{DynamicResource SemiColorDangerLight}" CornerRadius="9" Padding="12" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+              <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource SemiColorDanger}" TextWrapping="Wrap" FontSize="12" />
             </Border>
           </StackPanel>
         </Border>
 
         <Border Classes="card" Padding="20" IsVisible="{Binding HasWarnings}">
           <StackPanel Spacing="10">
-            <TextBlock Text="转换警告" Classes="section" Foreground="{DynamicResource WarningBrush}" />
+            <TextBlock Text="转换警告" Classes="section" Foreground="{DynamicResource SemiColorWarning}" />
             <TextBlock Text="PDF 已生成，但部分字体、资源或版式可能发生变化，请检查输出。" Classes="caption" TextWrapping="Wrap" />
-            <Border Background="{DynamicResource WarningBackground}" CornerRadius="9" Padding="12">
+            <Border Background="{DynamicResource SemiColorWarningLight}" CornerRadius="9" Padding="12">
               <ItemsControl ItemsSource="{Binding ConversionWarnings}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="x:String">
-                    <TextBlock Text="{Binding}" Foreground="{DynamicResource WarningBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,7" />
+                    <TextBlock Text="{Binding}" Foreground="{DynamicResource SemiColorWarning}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,7" />
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>

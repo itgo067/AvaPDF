@@ -7,23 +7,23 @@
         Width="1280" Height="800"
         MinWidth="1040" MinHeight="680"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource WindowBackground}"
+        Background="{DynamicResource SemiColorBackground0}"
         Icon="/Assets/AppIcon.ico"
         Title="AvaPDF · 本地 PDF 工作台">
   <Grid ColumnDefinitions="278,*">
-    <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}" BorderBrush="{DynamicResource CardBorder}" BorderThickness="0,0,1,0">
+    <Border Grid.Column="0" Background="{DynamicResource SemiColorBackground1}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,1,0">
       <Grid RowDefinitions="Auto,*,Auto" Margin="20">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Margin="4,4,0,26">
           <Image Source="/Assets/AppIcon.png" Width="42" Height="42" />
           <StackPanel VerticalAlignment="Center" Spacing="1">
-            <TextBlock Text="AVAPDF" FontSize="17" FontWeight="SemiBold" LetterSpacing="1.8" Foreground="{DynamicResource PrimaryText}" />
-            <TextBlock Text="PDF WORKSPACE" FontSize="10" LetterSpacing="1.5" Foreground="{DynamicResource SecondaryText}" />
+            <TextBlock Text="AVAPDF" FontSize="17" FontWeight="SemiBold" LetterSpacing="1.8" Foreground="{DynamicResource SemiColorText0}" />
+            <TextBlock Text="PDF WORKSPACE" FontSize="10" LetterSpacing="1.5" Foreground="{DynamicResource SemiColorText2}" />
           </StackPanel>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
           <StackPanel Spacing="10">
-            <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SecondaryText}" Margin="6,0,0,2" />
+            <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SemiColorText2}" Margin="6,0,0,2" />
             <TreeView ItemsSource="{Binding ToolCategories}" SelectedItem="{Binding SelectedNavigationNode}"
                       Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch">
               <TreeView.Styles>
@@ -32,31 +32,31 @@
                   <Setter Property="Margin" Value="0,0,0,3" />
                   <Setter Property="Background" Value="Transparent" />
                   <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+                  <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
                 </Style>
                 <Style Selector="TreeViewItem:pointerover">
-                  <Setter Property="Background" Value="{DynamicResource NavHoverBackground}" />
+                  <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
                 </Style>
                 <Style Selector="TreeViewItem:selected">
-                  <Setter Property="Background" Value="{DynamicResource NavSelectedBackground}" />
+                  <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLight}" />
                 </Style>
                 <Style Selector="TreeViewItem:selected /template/ ContentPresenter">
-                  <Setter Property="Background" Value="{DynamicResource NavSelectedBackground}" />
+                  <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLight}" />
                 </Style>
               </TreeView.Styles>
               <TreeView.DataTemplates>
                 <TreeDataTemplate DataType="vm:PdfToolCategoryViewModel" ItemsSource="{Binding Tools}">
                   <StackPanel Orientation="Horizontal" Spacing="8" Margin="4,8" ToolTip.Tip="点击箭头展开或折叠分组">
                     <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" />
-                    <Border Background="{DynamicResource GlyphBackground}" CornerRadius="7" Padding="6,1">
-                      <TextBlock Text="{Binding Tools.Count}" FontSize="10" Foreground="{DynamicResource SecondaryText}" />
+                    <Border Background="{DynamicResource SemiColorFill0}" CornerRadius="7" Padding="6,1">
+                      <TextBlock Text="{Binding Tools.Count}" FontSize="10" Foreground="{DynamicResource SemiColorText2}" />
                     </Border>
                   </StackPanel>
                 </TreeDataTemplate>
                 <TreeDataTemplate DataType="vm:PdfToolNavigationItem">
                   <Grid ColumnDefinitions="34,*" MinHeight="38" Margin="4,3" VerticalAlignment="Center">
-                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource GlyphBackground}" VerticalAlignment="Center">
-                      <TextBlock Text="{Binding Descriptor.Glyph}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource SemiColorFill0}" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Descriptor.Glyph}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorPrimary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Grid.Column="1" Text="{Binding Descriptor.Name}" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                   </Grid>
@@ -68,24 +68,24 @@
 
         <StackPanel Grid.Row="2" Margin="0,18,0,0" Spacing="12">
           <StackPanel Spacing="6">
-            <TextBlock Text="外观主题" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SecondaryText}" Margin="4,0,0,0" />
+            <TextBlock Text="外观主题" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText2}" Margin="4,0,0,0" />
             <ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}"
                       HorizontalAlignment="Stretch" MinHeight="38" CornerRadius="9"
-                      Background="{DynamicResource ControlBackground}" BorderBrush="{DynamicResource ControlBorder}">
+                      Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}">
               <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:ThemeOption">
                   <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="{Binding Glyph}" FontSize="15" Foreground="{DynamicResource AccentText}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Glyph}" FontSize="15" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
                   </StackPanel>
                 </DataTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>
           </StackPanel>
-          <Border Padding="13" CornerRadius="12" Background="{DynamicResource LocalBadgeBackground}" BorderBrush="{DynamicResource LocalBadgeBorder}" BorderThickness="1">
+          <Border Padding="13" CornerRadius="12" Background="{DynamicResource SemiColorSuccessLight}" BorderBrush="{DynamicResource SemiColorSuccess}" BorderThickness="1">
             <StackPanel Spacing="5">
-              <TextBlock Text="●  本地运行" Foreground="{DynamicResource SuccessBrush}" FontSize="12" FontWeight="SemiBold" />
-              <TextBlock Text="文件仅在此设备处理，不会上传。" Foreground="{DynamicResource SecondaryText}" FontSize="11" TextWrapping="Wrap" />
+              <TextBlock Text="●  本地运行" Foreground="{DynamicResource SemiColorSuccess}" FontSize="12" FontWeight="SemiBold" />
+              <TextBlock Text="文件仅在此设备处理，不会上传。" Foreground="{DynamicResource SemiColorText2}" FontSize="11" TextWrapping="Wrap" />
             </StackPanel>
           </Border>
         </StackPanel>

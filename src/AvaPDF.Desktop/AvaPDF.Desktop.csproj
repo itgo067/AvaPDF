@@ -13,7 +13,7 @@
     <ProjectReference Include="../AvaPDF.Converters.OfficeIMO/AvaPDF.Converters.OfficeIMO.csproj" />
     <ProjectReference Include="../AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
     <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Semi.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
