@@ -69,10 +69,10 @@ public partial class MainWindowViewModel : ObservableObject
         var navigationItems = Tools.Select(tool => new PdfToolNavigationItem(tool)).ToArray();
         ToolCategories = Tools
             .GroupBy(tool => tool.Category)
-            .Select((group, index) => new PdfToolCategoryViewModel(
+            .Select(group => new PdfToolCategoryViewModel(
                 group.Key,
                 navigationItems.Where(item => item.Descriptor.Category == group.Key).ToArray(),
-                index == 0))
+                false))
             .ToArray();
         ThemeOptions =
         [
