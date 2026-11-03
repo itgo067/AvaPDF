@@ -22,14 +22,14 @@
           </StackPanel>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-          <StackPanel Spacing="10">
-            <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SemiColorText2}" Margin="6,0,0,2" />
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+          <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SemiColorText2}" Margin="6,0,0,12" />
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <u:NavMenu x:Name="ToolNavMenu" ItemsSource="{Binding ToolCategories}" SelectedItem="{Binding SelectedNavigationNode}"
                        ContainerPrepared="OnToolNavMenuContainerPrepared" Loaded="OnToolNavMenuLoaded"
                        Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" />
-          </StackPanel>
-        </ScrollViewer>
+          </ScrollViewer>
+        </Grid>
 
         <StackPanel Grid.Row="2" Margin="0,18,0,0" Spacing="12">
           <StackPanel Spacing="6">
