@@ -2,6 +2,7 @@ using AvaPDF.Application.Operations;
 using AvaPDF.Desktop.Services;
 using AvaPDF.Desktop.ViewModels;
 using AvaPDF.Domain;
+using Ursa.Controls;
 using Xunit;
 
 namespace AvaPDF.Tests;
@@ -9,7 +10,7 @@ namespace AvaPDF.Tests;
 public sealed class NavigationViewModelTests
 {
     [Fact]
-    public void Selecting_tools_across_categories_keeps_one_selection_and_workspace()
+    public void NavMenu_uses_real_items_and_keeps_selection_across_categories()
     {
         var viewModel = CreateViewModel();
         var optimize = PdfToolCatalog.Get(PdfOperationKind.Optimize);
@@ -18,20 +19,16 @@ public sealed class NavigationViewModelTests
         viewModel.SelectToolCommand.Execute(optimize);
         Assert.Same(optimize, viewModel.SelectedTool);
         Assert.Same(optimize, viewModel.Workspace.CurrentTool);
-        Assert.Single(viewModel.ToolCategories.SelectMany(category => category.Tools), item => item.IsSelected);
 
-        viewModel.SelectedNavigationNode = viewModel.ToolCategories
-            .SelectMany(category => category.Tools)
-            .Single(item => item.Descriptor.Kind == PdfOperationKind.Watermark);
+        var securityCategory = viewModel.ToolCategories.Single(item => Equals(item.Header, "安全与信息"));
+        var watermarkItem = securityCategory.ItemsSource!.Cast<NavMenuItem>()
+            .Single(item => Equals(item.Header, "添加水印"));
+        Assert.Same(watermark, watermarkItem.CommandParameter);
+        Assert.Equal("印", watermarkItem.Icon);
+
+        viewModel.SelectedNavigationNode = watermarkItem;
         Assert.Same(watermark, viewModel.SelectedTool);
         Assert.Same(watermark, viewModel.Workspace.CurrentTool);
-        Assert.Single(viewModel.ToolCategories.SelectMany(category => category.Tools), item => item.IsSelected);
-
-        var category = viewModel.ToolCategories.Single(category => category.Name == "安全与信息");
-        viewModel.ToggleCategoryCommand.Execute(category);
-        Assert.True(category.IsExpanded);
-        Assert.Same(watermark, viewModel.SelectedTool);
-        Assert.Single(viewModel.ToolCategories.SelectMany(category => category.Tools), item => item.IsSelected);
     }
 
     private static MainWindowViewModel CreateViewModel() => new(
