@@ -25,7 +25,8 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
           <StackPanel Spacing="10">
             <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SemiColorText2}" Margin="6,0,0,2" />
-            <u:NavMenu ItemsSource="{Binding ToolCategories}" SelectedItem="{Binding SelectedNavigationNode}"
+            <u:NavMenu x:Name="ToolNavMenu" ItemsSource="{Binding ToolCategories}" SelectedItem="{Binding SelectedNavigationNode}"
+                       SelectionChanging="OnToolSelectionChanging" Loaded="OnToolNavMenuLoaded"
                        Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" />
           </StackPanel>
         </ScrollViewer>

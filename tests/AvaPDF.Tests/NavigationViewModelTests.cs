@@ -24,7 +24,7 @@ public sealed class NavigationViewModelTests
         var watermarkItem = securityCategory.ItemsSource!.Cast<NavMenuItem>()
             .Single(item => Equals(item.Header, "添加水印"));
         Assert.Same(watermark, watermarkItem.CommandParameter);
-        Assert.Equal("印", watermarkItem.Icon);
+        Assert.Null(watermarkItem.Icon);
 
         viewModel.SelectedNavigationNode = watermarkItem;
         Assert.Same(watermark, viewModel.SelectedTool);

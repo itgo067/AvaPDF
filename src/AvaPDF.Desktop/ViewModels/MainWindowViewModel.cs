@@ -48,7 +48,6 @@ public partial class MainWindowViewModel : ObservableObject
                 ItemsSource = group.Select(tool => new NavMenuItem
                 {
                     Header = tool.Name,
-                    Icon = tool.Glyph,
                     Command = SelectToolCommand,
                     CommandParameter = tool
                 }).ToArray()
