@@ -56,6 +56,8 @@ powershell -File eng/publish-desktop.ps1 -RequireAot
 
 脚本通过 `vcvars64.bat` 建立原生链接环境，并设置 `IlcUseEnvironmentalTools=true`，避免依赖终端预先配置 MSVC PATH。
 
+Ursa 2.3.0 的主题反射绑定和 `EnumSelector` 会产生已知的 `IL2026`、`IL3050`、`IL2075` 警告。AOT 发布仅将这三类警告设为不作为错误，并通过 `TrimmerSingleWarn=false` 保留完整警告明细；其他裁剪或 AOT 警告仍会阻断发布。
+
 ## 当前边界
 
 Native AOT 不等于单一 EXE。Avalonia 的 Skia、HarfBuzz 和 OpenGL ES 原生库仍需随程序发布。AOT 冒烟测试通过 23 个场景覆盖当前 20 个工具，但新加入 OCR、更多 Office 格式、PDF/A、签名或第三方 Provider 时，必须扩展验证。普通 CoreCLR 单元测试仍是功能正确性的主要测试入口。

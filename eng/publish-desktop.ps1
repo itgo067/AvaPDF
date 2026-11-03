@@ -93,6 +93,8 @@ function Invoke-AotPublish([string]$project, [string]$output, [string]$vcVars) {
         '-r', $Runtime,
         '-p:PublishAot=true',
         '-p:IlcUseEnvironmentalTools=true',
+        '-p:TrimmerSingleWarn=false',
+        '-p:WarningsNotAsErrors=IL2026%3BIL3050%3BIL2075',
         '-p:StripSymbols=true',
         '-o', ('"{0}"' -f $output)) -join ' '
     $command = 'set "PATH={0};%PATH%" && call "{1}" >nul && dotnet {2}' -f $vsInstaller, $vcVars, $arguments
