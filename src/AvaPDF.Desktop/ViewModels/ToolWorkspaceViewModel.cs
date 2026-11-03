@@ -258,6 +258,16 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         }
 
         var paths = await _dialogs.PickFilesAsync(CurrentTool.InputKind);
+        AddFiles(paths);
+    }
+
+    public void AddFiles(IEnumerable<string> paths)
+    {
+        if (IsRunning)
+        {
+            return;
+        }
+
         var maximum = CurrentTool.MaximumInputs;
         foreach (var path in paths)
         {

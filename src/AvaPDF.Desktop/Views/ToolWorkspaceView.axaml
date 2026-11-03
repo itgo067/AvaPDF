@@ -1,9 +1,18 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
+             xmlns:input="clr-namespace:Avalonia.Input;assembly=Avalonia.Base"
              x:Class="AvaPDF.Desktop.Views.ToolWorkspaceView"
              x:DataType="vm:ToolWorkspaceViewModel">
   <UserControl.Styles>
+    <Style Selector="Border.drop-zone">
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+    <Style Selector="Border.drop-zone.drag-over">
+      <Setter Property="BorderBrush" Value="{DynamicResource SemiColorPrimary}" />
+      <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLight}" />
+    </Style>
     <Style Selector="Border.card">
       <Setter Property="Background" Value="{DynamicResource SemiColorBackground0}" />
       <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
@@ -81,12 +90,13 @@
               </StackPanel>
             </Grid>
 
-            <Border Background="{DynamicResource SemiColorBackground0}" CornerRadius="11" Padding="8" MinHeight="92">
+            <Border x:Name="InputDropZone" Classes="drop-zone" Background="{DynamicResource SemiColorBackground0}" CornerRadius="11" Padding="8" MinHeight="92"
+                    input:DragDrop.AllowDrop="True" input:DragDrop.DragEnter="OnInputDragEnter" input:DragDrop.DragOver="OnInputDragOver" input:DragDrop.DragLeave="OnInputDragLeave" input:DragDrop.Drop="OnInputDrop">
               <Grid>
                 <StackPanel IsVisible="{Binding ShowEmptyFiles}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="12">
                   <TextBlock Text="＋" FontSize="22" Foreground="{DynamicResource SemiColorPrimary}" HorizontalAlignment="Center" />
                   <TextBlock Text="尚未选择文件" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Center" />
-                  <TextBlock Text="点击“添加文件”开始，处理顺序以列表为准。" Classes="caption" HorizontalAlignment="Center" />
+                  <TextBlock Text="点击“添加文件”或直接拖动文件到此处，顺序以列表为准。" Classes="caption" HorizontalAlignment="Center" />
                 </StackPanel>
                 <ItemsControl ItemsSource="{Binding Files}" IsVisible="{Binding HasFiles}">
                 <ItemsControl.ItemTemplate>

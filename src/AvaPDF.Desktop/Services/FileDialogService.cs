@@ -56,6 +56,13 @@ public sealed class FileDialogService : IFileDialogService
         return folders.Count > 0 ? folders[0].TryGetLocalPath() : null;
     }
 
+    public static bool IsSupportedFile(string path, PdfInputKind inputKind)
+    {
+        var extension = Path.GetExtension(path);
+        return !string.IsNullOrEmpty(extension)
+            && GetFilter(inputKind).Patterns.Contains($"*{extension}", StringComparer.OrdinalIgnoreCase);
+    }
+
     private static (string Title, string FilterName, string[] Patterns) GetFilter(PdfInputKind inputKind) =>
         inputKind switch
         {
