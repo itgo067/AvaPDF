@@ -65,6 +65,60 @@ public partial class ToolWorkspaceViewModel : ObservableObject
     private bool _showOptimization;
 
     [ObservableProperty]
+    private bool _showWatermarkOptions;
+
+    [ObservableProperty]
+    private bool _showWatermarkText;
+
+    [ObservableProperty]
+    private bool _showWatermarkImage;
+
+    [ObservableProperty]
+    private bool _showEncryptionOptions;
+
+    [ObservableProperty]
+    private bool _showDecryptionOptions;
+
+    [ObservableProperty]
+    private bool _showMetadataOptions;
+
+    [ObservableProperty]
+    private WatermarkModeOption _selectedWatermarkMode = new(PdfWatermarkKind.Text, "文字水印");
+
+    [ObservableProperty]
+    private string _watermarkText = "内部资料";
+
+    [ObservableProperty]
+    private string _watermarkImagePath = string.Empty;
+
+    [ObservableProperty]
+    private double _watermarkOpacity = 0.25;
+
+    [ObservableProperty]
+    private double _watermarkRotation = -30;
+
+    [ObservableProperty]
+    private double _watermarkFontSize = 54;
+
+    [ObservableProperty]
+    private string _userPassword = string.Empty;
+
+    [ObservableProperty]
+    private string _ownerPassword = string.Empty;
+
+    [ObservableProperty]
+    private string _metadataTitle = string.Empty;
+
+    [ObservableProperty]
+    private string _metadataAuthor = string.Empty;
+
+    [ObservableProperty]
+    private string _metadataSubject = string.Empty;
+
+    [ObservableProperty]
+    private string _metadataKeywords = string.Empty;
+
+    [ObservableProperty]
     private bool _isRunning;
 
     [ObservableProperty]
@@ -78,6 +132,12 @@ public partial class ToolWorkspaceViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _hasOutputs;
+
+    [ObservableProperty]
+    private bool _hasFiles;
+
+    [ObservableProperty]
+    private bool _showEmptyFiles = true;
 
     [ObservableProperty]
     private bool _hasWarnings;
@@ -121,6 +181,12 @@ public partial class ToolWorkspaceViewModel : ObservableObject
 
     public IReadOnlyList<int> RotationAngles { get; } = [90, 180, 270];
 
+    public IReadOnlyList<WatermarkModeOption> WatermarkModes { get; } =
+    [
+        new(PdfWatermarkKind.Text, "文字水印"),
+        new(PdfWatermarkKind.Image, "图片水印")
+    ];
+
     public void Configure(PdfToolDescriptor tool)
     {
         if (IsRunning)
@@ -140,9 +206,13 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         ShowSplitOptions = tool.Kind == PdfOperationKind.Split;
         ShowRotation = tool.Kind == PdfOperationKind.Rotate;
         ShowOptimization = tool.Kind == PdfOperationKind.Optimize;
+        ShowWatermarkOptions = tool.Kind == PdfOperationKind.Watermark;
+        ShowEncryptionOptions = tool.Kind == PdfOperationKind.Encrypt;
+        ShowDecryptionOptions = tool.Kind == PdfOperationKind.Decrypt;
+        ShowMetadataOptions = tool.Kind == PdfOperationKind.UpdateMetadata;
         ShowPageOrder = tool.Kind == PdfOperationKind.Reorder;
         ShowPageRanges = tool.Kind is PdfOperationKind.Extract or PdfOperationKind.Delete
-            or PdfOperationKind.Rotate or PdfOperationKind.ExtractText;
+            or PdfOperationKind.Rotate or PdfOperationKind.ExtractText or PdfOperationKind.Watermark;
         PageRanges = tool.Kind switch
         {
             PdfOperationKind.Extract => "1-3",
@@ -150,15 +220,15 @@ public partial class ToolWorkspaceViewModel : ObservableObject
             PdfOperationKind.Reorder => "3,1-2",
             _ => string.Empty
         };
-        PageRangeWatermark = tool.Kind is PdfOperationKind.Rotate or PdfOperationKind.ExtractText
+        PageRangeWatermark = tool.Kind is PdfOperationKind.Rotate or PdfOperationKind.ExtractText or PdfOperationKind.Watermark
             ? "留空处理全部页面，或输入 1-3,5"
             : "例如 1-3,5";
         InputHint = tool.InputKind switch
         {
             PdfInputKind.Images => "支持 JPG、PNG、BMP、WEBP、SVG 等，按列表顺序生成页面",
-            PdfInputKind.Word => "支持 DOCX、DOCM、DOTX、DOTM 文档",
-            PdfInputKind.Excel => "支持 XLSX、XLSM、XLTX、XLTM 工作簿",
-            PdfInputKind.PowerPoint => "支持 PPTX、PPTM 演示文稿",
+            PdfInputKind.Word => "支持 DOC、DOCX、DOCM、DOTX、DOTM 文档",
+            PdfInputKind.Excel => "支持 XLS、XLSX、XLSM、XLTX、XLTM 工作簿",
+            PdfInputKind.PowerPoint => "支持 PPT、PPTX、PPTM 演示文稿",
             PdfInputKind.Markdown => "支持 MD、MARKDOWN，可读取同目录下的相对图片",
             PdfInputKind.Html => "支持静态 HTML、HTM，可读取同目录下的相对资源",
             PdfInputKind.Rtf => "支持 RTF 富文本文档",
@@ -166,6 +236,16 @@ public partial class ToolWorkspaceViewModel : ObservableObject
             _ => tool.Kind == PdfOperationKind.Merge ? "至少选择两个 PDF，按列表顺序合并" : "选择一个 PDF 文件"
         };
         SelectedSplitMode = SplitModes[0];
+        SelectedWatermarkMode = WatermarkModes[0];
+        WatermarkText = "内部资料";
+        WatermarkImagePath = string.Empty;
+        UserPassword = string.Empty;
+        OwnerPassword = string.Empty;
+        MetadataTitle = string.Empty;
+        MetadataAuthor = string.Empty;
+        MetadataSubject = string.Empty;
+        MetadataKeywords = string.Empty;
+        UpdateWatermarkVisibility();
         UpdateSplitVisibility();
     }
 
@@ -213,6 +293,16 @@ public partial class ToolWorkspaceViewModel : ObservableObject
 
     [RelayCommand]
     private void MoveDown(LocalFileItem? file) => Move(file, 1);
+
+    [RelayCommand]
+    private async Task BrowseWatermarkImageAsync()
+    {
+        var paths = await _dialogs.PickFilesAsync(PdfInputKind.Images);
+        if (paths.Count > 0)
+        {
+            WatermarkImagePath = paths[0];
+        }
+    }
 
     [RelayCommand]
     private async Task BrowseOutputFolderAsync()
@@ -355,6 +445,27 @@ public partial class ToolWorkspaceViewModel : ObservableObject
                     sources[0],
                     Path.GetDirectoryName(Files[0].Path),
                     target),
+            PdfOperationKind.Watermark => new WatermarkPdfRequest(
+                sources[0],
+                SelectedWatermarkMode.Value,
+                WatermarkText,
+                string.IsNullOrWhiteSpace(WatermarkImagePath) ? null : new LocalPdfSource(WatermarkImagePath),
+                PageRanges,
+                WatermarkOpacity,
+                WatermarkRotation,
+                WatermarkFontSize,
+                SelectedWatermarkMode.Value == PdfWatermarkKind.Text ? 360 : 180,
+                SelectedWatermarkMode.Value == PdfWatermarkKind.Text ? 120 : 80,
+                target),
+            PdfOperationKind.Encrypt => new EncryptPdfRequest(sources[0], UserPassword, OwnerPassword, target),
+            PdfOperationKind.Decrypt => new DecryptPdfRequest(sources[0], OwnerPassword, target),
+            PdfOperationKind.UpdateMetadata => new UpdateMetadataPdfRequest(
+                sources[0],
+                NullIfWhiteSpace(MetadataTitle),
+                NullIfWhiteSpace(MetadataAuthor),
+                NullIfWhiteSpace(MetadataSubject),
+                NullIfWhiteSpace(MetadataKeywords),
+                target),
             _ => throw new NotSupportedException($"不支持的工具：{CurrentTool.Kind}")
         };
     }
@@ -362,7 +473,21 @@ public partial class ToolWorkspaceViewModel : ObservableObject
     private bool CanRun() => !IsRunning
         && !string.IsNullOrWhiteSpace(OutputDirectory)
         && Files.Count >= CurrentTool.MinimumInputs
-        && (!CurrentTool.MaximumInputs.HasValue || Files.Count <= CurrentTool.MaximumInputs.Value);
+        && (!CurrentTool.MaximumInputs.HasValue || Files.Count <= CurrentTool.MaximumInputs.Value)
+        && HasValidToolOptions();
+
+    private bool HasValidToolOptions() => CurrentTool.Kind switch
+    {
+        PdfOperationKind.Watermark => SelectedWatermarkMode.Value == PdfWatermarkKind.Text
+            ? !string.IsNullOrWhiteSpace(WatermarkText)
+            : !string.IsNullOrWhiteSpace(WatermarkImagePath),
+        PdfOperationKind.Encrypt => !string.IsNullOrWhiteSpace(UserPassword),
+        PdfOperationKind.Decrypt => !string.IsNullOrWhiteSpace(OwnerPassword),
+        _ => true
+    };
+
+    private static string? NullIfWhiteSpace(string value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private void Move(LocalFileItem? file, int offset)
     {
@@ -379,14 +504,38 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         }
     }
 
-    private void OnFilesChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+    private void OnFilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        HasFiles = Files.Count > 0;
+        ShowEmptyFiles = Files.Count == 0;
         RunCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnIsRunningChanged(bool value) => RunCommand.NotifyCanExecuteChanged();
 
     partial void OnOutputDirectoryChanged(string value) => RunCommand.NotifyCanExecuteChanged();
 
     partial void OnSelectedSplitModeChanged(SplitModeOption value) => UpdateSplitVisibility();
+
+    partial void OnSelectedWatermarkModeChanged(WatermarkModeOption value)
+    {
+        UpdateWatermarkVisibility();
+        RunCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnWatermarkTextChanged(string value) => RunCommand.NotifyCanExecuteChanged();
+
+    partial void OnWatermarkImagePathChanged(string value) => RunCommand.NotifyCanExecuteChanged();
+
+    partial void OnUserPasswordChanged(string value) => RunCommand.NotifyCanExecuteChanged();
+
+    partial void OnOwnerPasswordChanged(string value) => RunCommand.NotifyCanExecuteChanged();
+
+    private void UpdateWatermarkVisibility()
+    {
+        ShowWatermarkText = ShowWatermarkOptions && SelectedWatermarkMode.Value == PdfWatermarkKind.Text;
+        ShowWatermarkImage = ShowWatermarkOptions && SelectedWatermarkMode.Value == PdfWatermarkKind.Image;
+    }
 
     private void UpdateSplitVisibility()
     {

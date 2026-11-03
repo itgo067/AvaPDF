@@ -61,9 +61,9 @@ public sealed class FileDialogService : IFileDialogService
         {
             PdfInputKind.Images => ("选择图片", "图片文件",
                 ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif", "*.webp", "*.tif", "*.tiff", "*.svg"]),
-            PdfInputKind.Word => ("选择 Word 文档", "Word 文档", ["*.docx", "*.docm", "*.dotx", "*.dotm"]),
-            PdfInputKind.Excel => ("选择 Excel 工作簿", "Excel 工作簿", ["*.xlsx", "*.xlsm", "*.xltx", "*.xltm"]),
-            PdfInputKind.PowerPoint => ("选择 PowerPoint 演示文稿", "PowerPoint 演示文稿", ["*.pptx", "*.pptm"]),
+            PdfInputKind.Word => ("选择 Word 文档", "Word 文档", ["*.doc", "*.docx", "*.docm", "*.dotx", "*.dotm"]),
+            PdfInputKind.Excel => ("选择 Excel 工作簿", "Excel 工作簿", ["*.xls", "*.xlsx", "*.xlsm", "*.xltx", "*.xltm"]),
+            PdfInputKind.PowerPoint => ("选择 PowerPoint 演示文稿", "PowerPoint 演示文稿", ["*.ppt", "*.pptx", "*.pptm"]),
             PdfInputKind.Markdown => ("选择 Markdown 文档", "Markdown 文档", ["*.md", "*.markdown"]),
             PdfInputKind.Html => ("选择 HTML 文档", "HTML 文档", ["*.html", "*.htm"]),
             PdfInputKind.Rtf => ("选择 RTF 文档", "RTF 富文本", ["*.rtf"]),

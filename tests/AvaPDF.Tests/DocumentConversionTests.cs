@@ -55,6 +55,47 @@ public sealed class DocumentConversionTests
     }
 
     [Fact]
+    public async Task Word_converts_legacy_binary_doc()
+    {
+        using var document = WordDocument.Create();
+        document.AddParagraph("Legacy Word");
+        using var source = new MemoryStream();
+        document.Save(source, WordFileFormat.Doc);
+
+        var read = await ConvertAsync(new WordToPdfHandler(), PdfOperationKind.WordToPdf, "legacy.doc", source.ToArray());
+
+        Assert.Contains("Legacy Word", Text(read));
+    }
+
+    [Fact]
+    public async Task Excel_converts_legacy_binary_xls()
+    {
+        using var workbook = ExcelDocument.Create();
+        var sheet = workbook.Sheets.Count > 0 ? workbook.Sheets[0] : workbook.AddWorksheet("Sheet1");
+        sheet.Cell(1, 1, "Legacy Excel");
+        using var source = new MemoryStream();
+        workbook.Save(source, ExcelFileFormat.Xls);
+
+        var read = await ConvertAsync(new ExcelToPdfHandler(), PdfOperationKind.ExcelToPdf, "legacy.xls", source.ToArray());
+
+        Assert.Contains("Legacy Excel", Text(read));
+    }
+
+    [Fact]
+    public async Task PowerPoint_converts_legacy_binary_ppt()
+    {
+        using var presentation = PowerPointPresentation.Create();
+        var slide = presentation.AddSlide();
+        slide.AddTextBoxPoints("Legacy PowerPoint", 50, 50, 350, 60);
+        using var source = new MemoryStream();
+        presentation.Save(source, PowerPointFileFormat.Ppt);
+
+        var read = await ConvertAsync(new PowerPointToPdfHandler(), PdfOperationKind.PowerPointToPdf, "legacy.ppt", source.ToArray());
+
+        Assert.Contains("Legacy PowerPoint", Text(read));
+    }
+
+    [Fact]
     public async Task Markdown_converts_headings_tables_and_code()
     {
         var markdown = """

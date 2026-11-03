@@ -22,20 +22,54 @@
     <Style Selector="Button.secondary">
       <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackground}" />
       <Setter Property="BorderBrush" Value="{DynamicResource SecondaryButtonBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="Padding" Value="13,8" />
+    </Style>
+    <Style Selector="Button.accent">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.accent:disabled">
+      <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryText}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SecondaryButtonBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
     </Style>
     <Style Selector="TextBox">
       <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
       <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="MinHeight" Value="38" />
     </Style>
     <Style Selector="ComboBox">
       <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
       <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="MinHeight" Value="38" />
+    </Style>
+    <Style Selector="NumericUpDown">
+      <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="9" />
+      <Setter Property="MinHeight" Value="38" />
+    </Style>
+    <Style Selector="NumericUpDown Button">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryText}" />
+      <Setter Property="Width" Value="28" />
+    </Style>
+    <Style Selector="NumericUpDown TextBox">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
     </Style>
   </UserControl.Styles>
 
@@ -66,8 +100,14 @@
               </StackPanel>
             </Grid>
 
-            <Border Background="{DynamicResource ControlBackground}" CornerRadius="11" Padding="8" MinHeight="74">
-              <ItemsControl ItemsSource="{Binding Files}">
+            <Border Background="{DynamicResource ControlBackground}" CornerRadius="11" Padding="8" MinHeight="92">
+              <Grid>
+                <StackPanel IsVisible="{Binding ShowEmptyFiles}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="5" Margin="12">
+                  <TextBlock Text="＋" FontSize="22" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" />
+                  <TextBlock Text="尚未选择文件" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource PrimaryText}" HorizontalAlignment="Center" />
+                  <TextBlock Text="点击“添加文件”开始，处理顺序以列表为准。" Classes="caption" HorizontalAlignment="Center" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Files}" IsVisible="{Binding HasFiles}">
                 <ItemsControl.ItemTemplate>
                   <DataTemplate x:DataType="vm:LocalFileItem">
                     <Border BorderBrush="{DynamicResource FileRowBorder}" BorderThickness="0,0,0,1" Padding="8,7">
@@ -86,7 +126,8 @@
                     </Border>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
-              </ItemsControl>
+                </ItemsControl>
+              </Grid>
             </Border>
           </StackPanel>
         </Border>
@@ -147,6 +188,68 @@
               </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Text="无损优化不会降低图片质量；若结果更大，将保留原始内容。" Classes="caption" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="20" IsVisible="{Binding ShowWatermarkOptions}">
+          <StackPanel Spacing="12">
+            <TextBlock Text="03  水印设置" Classes="section" />
+            <ComboBox ItemsSource="{Binding WatermarkModes}" SelectedItem="{Binding SelectedWatermarkMode}" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:WatermarkModeOption">
+                  <TextBlock Text="{Binding Label}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox Text="{Binding WatermarkText}" PlaceholderText="输入水印文字" IsVisible="{Binding ShowWatermarkText}" />
+            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding ShowWatermarkImage}">
+              <TextBox Text="{Binding WatermarkImagePath}" PlaceholderText="选择 PNG、JPG 等水印图片" IsReadOnly="True" />
+              <Button Grid.Column="1" Content="选择图片…" Classes="secondary" Margin="10,0,0,0" Command="{Binding BrowseWatermarkImageCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding ShowWatermarkText}">
+              <StackPanel Spacing="5">
+                <TextBlock Text="文字大小（点）" Classes="caption" />
+                <NumericUpDown Minimum="6" Maximum="256" Increment="1" Value="{Binding WatermarkFontSize}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="5">
+                <TextBlock Text="旋转角度" Classes="caption" />
+                <NumericUpDown Minimum="-180" Maximum="180" Increment="5" Value="{Binding WatermarkRotation}" />
+              </StackPanel>
+            </Grid>
+            <StackPanel Spacing="5">
+              <TextBlock Text="透明度（0.05–1.00）" Classes="caption" />
+              <NumericUpDown Minimum="0.05" Maximum="1" Increment="0.05" Value="{Binding WatermarkOpacity}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="20" IsVisible="{Binding ShowEncryptionOptions}">
+          <StackPanel Spacing="11">
+            <TextBlock Text="02  AES-256 密码设置" Classes="section" />
+            <TextBlock Text="打开密码（必填）" Classes="caption" />
+            <TextBox Text="{Binding UserPassword}" PasswordChar="●" PlaceholderText="打开 PDF 所需的密码" />
+            <TextBlock Text="所有者密码（留空则与打开密码相同）" Classes="caption" />
+            <TextBox Text="{Binding OwnerPassword}" PasswordChar="●" PlaceholderText="用于修改权限或删除密码" />
+            <TextBlock Text="密码仅用于当前任务，不会保存到配置文件或日志。" Classes="caption" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="20" IsVisible="{Binding ShowDecryptionOptions}">
+          <StackPanel Spacing="11">
+            <TextBlock Text="02  验证所有者密码" Classes="section" />
+            <TextBox Text="{Binding OwnerPassword}" PasswordChar="●" PlaceholderText="输入当前所有者密码" />
+            <TextBlock Text="仅移除受支持的 Standard Security 加密，不提供密码破解。" Classes="caption" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="card" Padding="20" IsVisible="{Binding ShowMetadataOptions}">
+          <StackPanel Spacing="11">
+            <TextBlock Text="02  文档元数据" Classes="section" />
+            <TextBlock Text="留空的字段将保持原值。" Classes="caption" />
+            <TextBox Text="{Binding MetadataTitle}" PlaceholderText="标题" />
+            <TextBox Text="{Binding MetadataAuthor}" PlaceholderText="作者" />
+            <TextBox Text="{Binding MetadataSubject}" PlaceholderText="主题" />
+            <TextBox Text="{Binding MetadataKeywords}" PlaceholderText="关键词（使用逗号分隔）" />
           </StackPanel>
         </Border>
 

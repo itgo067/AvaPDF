@@ -77,3 +77,41 @@ public sealed record DocumentToPdfRequest(
     IPdfSource Source,
     string? ResourceBaseDirectory,
     IPdfOutputTarget Output) : SinglePdfRequest(Kind, Source, Output);
+
+public enum PdfWatermarkKind
+{
+    Text,
+    Image
+}
+
+public sealed record WatermarkPdfRequest(
+    IPdfSource Source,
+    PdfWatermarkKind WatermarkKind,
+    string? Text,
+    IPdfSource? ImageSource,
+    string? PageRanges,
+    double Opacity,
+    double RotationDegrees,
+    double FontSize,
+    double? Width,
+    double? Height,
+    IPdfOutputTarget Output) : SinglePdfRequest(PdfOperationKind.Watermark, Source, Output);
+
+public sealed record EncryptPdfRequest(
+    IPdfSource Source,
+    string UserPassword,
+    string? OwnerPassword,
+    IPdfOutputTarget Output) : SinglePdfRequest(PdfOperationKind.Encrypt, Source, Output);
+
+public sealed record DecryptPdfRequest(
+    IPdfSource Source,
+    string OwnerPassword,
+    IPdfOutputTarget Output) : SinglePdfRequest(PdfOperationKind.Decrypt, Source, Output);
+
+public sealed record UpdateMetadataPdfRequest(
+    IPdfSource Source,
+    string? Title,
+    string? Author,
+    string? Subject,
+    string? Keywords,
+    IPdfOutputTarget Output) : SinglePdfRequest(PdfOperationKind.UpdateMetadata, Source, Output);

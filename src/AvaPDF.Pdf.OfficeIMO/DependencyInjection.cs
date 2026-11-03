@@ -17,6 +17,10 @@ public static class DependencyInjection
         services.AddSingleton<IPdfOperationHandler, OptimizePdfHandler>();
         services.AddSingleton<IPdfOperationHandler, ImagesToPdfHandler>();
         services.AddSingleton<IPdfOperationHandler, ExtractTextPdfHandler>();
+        services.AddSingleton<IPdfOperationHandler, WatermarkPdfHandler>();
+        services.AddSingleton<IPdfOperationHandler, EncryptPdfHandler>();
+        services.AddSingleton<IPdfOperationHandler, UpdateMetadataPdfHandler>();
+        services.AddSingleton<IPdfOperationHandler, DecryptPdfHandler>();
         services.AddSingleton<PdfJobService>();
         return services;
     }

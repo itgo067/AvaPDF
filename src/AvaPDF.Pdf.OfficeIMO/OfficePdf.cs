@@ -24,6 +24,17 @@ internal static class OfficePdf
         await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public static async Task SaveBytesAsync(
+        byte[] bytes,
+        IPdfOutputTarget output,
+        string fileName,
+        CancellationToken cancellationToken)
+    {
+        await using var stream = await output.OpenWriteAsync(fileName, cancellationToken).ConfigureAwait(false);
+        await stream.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
+        await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public static int GetPageCount(PdfDocument document, CancellationToken cancellationToken) =>
         document.Inspect(options: null, cancellationToken).PageCount;
 

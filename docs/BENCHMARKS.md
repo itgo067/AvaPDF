@@ -19,7 +19,7 @@
 
 ## CI 记录
 
-`.github/workflows/desktop-aot.yml` 在 Windows CI 中执行单元测试、16 个 PDF 与文档转换操作的 AOT 冒烟测试、桌面发布、三次窗口启动测量和 ZIP 打包。
+`.github/workflows/desktop-aot.yml` 在 Windows CI 中执行单元测试、23 个 PDF 与文档转换验证场景的 AOT 冒烟测试、桌面发布、三次窗口启动测量和 ZIP 打包。
 
 每次运行都会：
 

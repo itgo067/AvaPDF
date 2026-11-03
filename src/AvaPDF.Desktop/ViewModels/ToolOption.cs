@@ -6,6 +6,8 @@ public sealed record SplitModeOption(PdfSplitMode Value, string Label);
 
 public sealed record OptimizationOption(PdfOptimizationLevel Value, string Label);
 
+public sealed record WatermarkModeOption(PdfWatermarkKind Value, string Label);
+
 public sealed class LocalFileItem(string path)
 {
     public string Path { get; } = path;

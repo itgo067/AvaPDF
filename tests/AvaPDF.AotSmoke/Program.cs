@@ -149,7 +149,82 @@ var txt = await Smoke.ConvertDocumentAsync(
     Encoding.UTF8.GetBytes("你好，AvaPDF。\nAlpha TXT"));
 Smoke.Require(Smoke.AllText(txt).Contains("Alpha TXT"), "txt-to-pdf");
 
-Console.WriteLine("AOT_OFFICEIMO_SMOKE_OK merge split extract delete rotate reorder optimize images-to-pdf extract-text word excel powerpoint markdown html rtf txt");
+using (var legacyWord = WordDocument.Create())
+{
+    legacyWord.AddParagraph("Legacy Word");
+    using var source = new MemoryStream();
+    legacyWord.Save(source, WordFileFormat.Doc);
+    var converted = await Smoke.ConvertDocumentAsync(new WordToPdfHandler(), PdfOperationKind.WordToPdf, "legacy.doc", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Legacy Word"), "legacy-doc-to-pdf");
+}
+
+using (var legacyWorkbook = ExcelDocument.Create())
+{
+    var sheet = legacyWorkbook.Sheets.Count > 0 ? legacyWorkbook.Sheets[0] : legacyWorkbook.AddWorksheet("Sheet1");
+    sheet.Cell(1, 1, "Legacy Excel");
+    using var source = new MemoryStream();
+    legacyWorkbook.Save(source, ExcelFileFormat.Xls);
+    var converted = await Smoke.ConvertDocumentAsync(new ExcelToPdfHandler(), PdfOperationKind.ExcelToPdf, "legacy.xls", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Legacy Excel"), "legacy-xls-to-pdf");
+}
+
+using (var legacyPresentation = PowerPointPresentation.Create())
+{
+    var slide = legacyPresentation.AddSlide();
+    slide.AddTextBoxPoints("Legacy PowerPoint", 50, 50, 350, 60);
+    using var source = new MemoryStream();
+    legacyPresentation.Save(source, PowerPointFileFormat.Ppt);
+    var converted = await Smoke.ConvertDocumentAsync(new PowerPointToPdfHandler(), PdfOperationKind.PowerPointToPdf, "legacy.ppt", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Legacy PowerPoint"), "legacy-ppt-to-pdf");
+}
+
+var watermarkOutput = new MemoryOutputTarget();
+await new WatermarkPdfHandler().HandleAsync(
+    new WatermarkPdfRequest(
+        Smoke.Source("source.pdf", Smoke.CreatePdf("Body")),
+        PdfWatermarkKind.Text,
+        "内部资料",
+        null,
+        null,
+        0.3,
+        -30,
+        48,
+        360,
+        120,
+        watermarkOutput),
+    null,
+    CancellationToken.None);
+Smoke.Require(Smoke.AllText(Smoke.Read(watermarkOutput.Files["source-watermarked.pdf"])).Contains("内部资料"), "watermark");
+
+var encryptOutput = new MemoryOutputTarget();
+await new EncryptPdfHandler().HandleAsync(
+    new EncryptPdfRequest(Smoke.Source("source.pdf", Smoke.CreatePdf("Secret")), "reader", "owner", encryptOutput),
+    null,
+    CancellationToken.None);
+var encryptedBytes = encryptOutput.Files["source-encrypted.pdf"];
+Smoke.Require(PdfDocument.Load(encryptedBytes, new PdfLoadOptions { Password = "reader" }).Read().PageCount == 1, "encrypt");
+
+var decryptOutput = new MemoryOutputTarget();
+await new DecryptPdfHandler().HandleAsync(
+    new DecryptPdfRequest(Smoke.Source("encrypted.pdf", encryptedBytes), "owner", decryptOutput),
+    null,
+    CancellationToken.None);
+Smoke.Require(Smoke.Read(decryptOutput.Files["encrypted-decrypted.pdf"]).PageCount == 1, "decrypt");
+
+var metadataOutput = new MemoryOutputTarget();
+await new UpdateMetadataPdfHandler().HandleAsync(
+    new UpdateMetadataPdfRequest(
+        Smoke.Source("source.pdf", Smoke.CreatePdf("Body")),
+        "AvaPDF title",
+        "AOT smoke",
+        "Metadata",
+        "pdf,aot",
+        metadataOutput),
+    null,
+    CancellationToken.None);
+Smoke.Require(Smoke.Read(metadataOutput.Files["source-metadata.pdf"]).Metadata.Title == "AvaPDF title", "metadata");
+
+Console.WriteLine("AOT_OFFICEIMO_SMOKE_OK merge split extract delete rotate reorder optimize images-to-pdf extract-text word excel powerpoint markdown html rtf txt legacy-doc legacy-xls legacy-ppt watermark encrypt decrypt metadata");
 
 internal static class Smoke
 {

@@ -18,5 +18,9 @@ public enum PdfOperationKind
     MarkdownToPdf,
     HtmlToPdf,
     RtfToPdf,
-    TxtToPdf
+    TxtToPdf,
+    Watermark,
+    Encrypt,
+    UpdateMetadata,
+    Decrypt
 }
