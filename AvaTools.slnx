@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AvaTools.Application/AvaTools.Application.csproj" />
+    <Project Path="src/AvaTools.Desktop/AvaTools.Desktop.csproj" />
+    <Project Path="src/AvaTools.Domain/AvaTools.Domain.csproj" />
+    <Project Path="src/AvaTools.Pdf.OfficeIMO/AvaTools.Pdf.OfficeIMO.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AvaTools.Tests/AvaTools.Tests.csproj" />
+  </Folder>
+</Solution>

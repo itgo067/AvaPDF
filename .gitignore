@@ -1,0 +1,42 @@
+# Build outputs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+publish/
+
+# IDE and user settings
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# Local package inspection and test artifacts
+.packages/
+TestResults/
+*.trx
+coverage*.json
+coverage*.xml
+*.coverage
+
+# Package outputs
+*.nupkg
+*.snupkg
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local secrets and overrides
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+secrets.json

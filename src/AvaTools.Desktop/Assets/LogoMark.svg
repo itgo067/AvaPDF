@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">AvaTools Logo Mark</title>
+  <defs>
+    <linearGradient id="accent" x1="176" y1="96" x2="358" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A996FF"/>
+      <stop offset="0.55" stop-color="#8175F7"/>
+      <stop offset="1" stop-color="#52D6D0"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="178" y1="142" x2="315" y2="376" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E9E9FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M180 104H309L350 145V300M309 104V145H350" fill="none" stroke="url(#accent)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="0.72"/>
+  <path d="M128 376L218 142C223 128 235 120 249 120H263C277 120 289 128 294 142L386 376H320L299 320H213L192 376H128ZM236 264H276L256 207L236 264Z" fill="url(#paper)" fill-rule="evenodd"/>
+  <path d="M213 320L229 272H283L299 320H213Z" fill="url(#accent)"/>
+  <circle cx="375" cy="91" r="10" fill="#66E3DC"/>
+</svg>
