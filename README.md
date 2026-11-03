@@ -33,7 +33,7 @@ dotnet test AvaPDF.slnx
 powershell -File eng/publish-desktop.ps1
 ```
 
-脚本会检测 MSVC 工具链，先运行全部 PDF 功能的 AOT 冒烟测试，再发布桌面程序；条件不足或验证失败时明确提示并回退到 CoreCLR。强制要求 AOT 时使用 `-RequireAot`。详见 [docs/PUBLISHING.md](docs/PUBLISHING.md)。
+脚本会检测 MSVC 工具链，先运行全部 PDF 功能的 AOT 冒烟测试，再发布桌面程序，并记录体积和三次窗口启动耗时、生成 ZIP；条件不足或验证失败时明确提示并回退到 CoreCLR。强制要求 AOT 时使用 `-RequireAot`。详见 [docs/PUBLISHING.md](docs/PUBLISHING.md) 和 [docs/BENCHMARKS.md](docs/BENCHMARKS.md)。
 
 ## 项目结构
 

@@ -14,7 +14,8 @@ powershell -File eng/publish-desktop.ps1
 2. 条件满足时，以 Native AOT 发布 `AvaPDF.AotSmoke`。
 3. 在 AOT 环境实际运行合并、拆分、提取、删除、旋转、重排、优化、图片转 PDF 和文本提取。
 4. 冒烟测试通过后发布 Native AOT 桌面程序。
-5. 工具链缺失、AOT 发布失败或冒烟测试失败时，明确警告并发布自包含 CoreCLR 版本。
+5. 三次启动桌面程序并测量主窗口创建耗时，统计 EXE、完整目录和 ZIP 体积，生成 JSON、Markdown 和不含 PDB 的 ZIP 包。
+6. 工具链缺失、AOT 发布失败或任何验证失败时，明确警告并发布自包含 CoreCLR 版本，同样记录体积和启动指标。
 
 输出目录：
 
@@ -22,7 +23,18 @@ powershell -File eng/publish-desktop.ps1
 artifacts/publish/win-x64-aot/       Native AOT 桌面程序
 artifacts/publish/win-x64-coreclr/   自包含 CoreCLR 桌面程序
 artifacts/publish/aot-smoke/         AOT 验证程序
+artifacts/publish/AvaPDF-win-x64-aot.zip
+artifacts/metrics/win-x64-aot.json   完整机器可读指标
+artifacts/metrics/win-x64-aot.md     可读指标摘要
 ```
+
+启动耗时采用“进程启动到 `MainWindowHandle` 非零”的统一口径，连续测量三次。ZIP 不包含 PDB 调试符号。历史数据和本机基线见 [BENCHMARKS.md](BENCHMARKS.md)。
+
+## CI 验证
+
+工作流 `.github/workflows/desktop-aot.yml` 在 `main` 推送、相关 Pull Request 和手动触发时运行于 `windows-latest`。CI 使用 `-RequireAot`，因此工具链缺失、AOT 编译失败、任一 PDF 操作失败或窗口启动超时都会使工作流失败，不会静默回退。
+
+每次成功运行会将指标写入 Job Summary，并上传 ZIP、JSON 和 Markdown 指标，产物保留 14 天。
 
 ## 强制要求 AOT
 

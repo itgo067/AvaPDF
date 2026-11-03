@@ -10,6 +10,8 @@ $root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $desktopProject = Join-Path $root 'src/AvaPDF.Desktop/AvaPDF.Desktop.csproj'
 $smokeProject = Join-Path $root 'tests/AvaPDF.AotSmoke/AvaPDF.AotSmoke.csproj'
 $publishRoot = Join-Path $root 'artifacts/publish'
+$metricsRoot = Join-Path $root 'artifacts/metrics'
+$measureScript = Join-Path $root 'eng/measure-desktop.ps1'
 $aotOutput = Join-Path $publishRoot "$Runtime-aot"
 $coreClrOutput = Join-Path $publishRoot "$Runtime-coreclr"
 $smokeOutput = Join-Path $publishRoot 'aot-smoke'
@@ -30,6 +32,25 @@ function Publish-CoreClr {
     }
 
     Write-Host "CoreCLR 发布完成：$coreClrOutput" -ForegroundColor Green
+    Invoke-ReleaseMetrics 'CoreCLR' $coreClrOutput
+}
+
+function Invoke-ReleaseMetrics([string]$engine, [string]$outputDirectory) {
+    $suffix = 'coreclr'
+    if ($engine -eq 'NativeAOT') {
+        $suffix = 'aot'
+    }
+    $jsonPath = Join-Path $metricsRoot "$Runtime-$suffix.json"
+    $zipPath = Join-Path $publishRoot "AvaPDF-$Runtime-$suffix.zip"
+    & $measureScript `
+        -ExecutablePath (Join-Path $outputDirectory 'AvaPDF.Desktop.exe') `
+        -OutputJsonPath $jsonPath `
+        -ZipPath $zipPath `
+        -Engine $engine `
+        -Runs 3
+    if ($LASTEXITCODE -ne 0) {
+        throw "发布指标测量失败，退出码：$LASTEXITCODE"
+    }
 }
 
 function Find-VcVars {
@@ -103,6 +124,7 @@ try {
     Write-Host 'AOT 冒烟测试通过，正在发布桌面程序…' -ForegroundColor Cyan
     Invoke-AotPublish $desktopProject $aotOutput $vcVars
     Write-Host "Native AOT 发布完成：$aotOutput" -ForegroundColor Green
+    Invoke-ReleaseMetrics 'NativeAOT' $aotOutput
 }
 catch {
     if ($RequireAot) {

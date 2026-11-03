@@ -1,0 +1,62 @@
+name: Windows AOT release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/desktop-aot.yml'
+      - 'AvaPDF.slnx'
+      - 'Directory.*'
+      - 'global.json'
+      - 'eng/**'
+      - 'src/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - '.github/workflows/desktop-aot.yml'
+      - 'AvaPDF.slnx'
+      - 'Directory.*'
+      - 'global.json'
+      - 'eng/**'
+      - 'src/**'
+      - 'tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-publish:
+    name: Verify win-x64 Native AOT
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Run unit tests
+        shell: powershell
+        run: dotnet test AvaPDF.slnx -c Release --nologo --verbosity minimal
+
+      - name: Publish AOT and record release metrics
+        shell: powershell
+        run: powershell -File eng/publish-desktop.ps1 -RequireAot
+
+      - name: Upload AOT package and metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: AvaPDF-win-x64-aot
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            artifacts/publish/AvaPDF-win-x64-aot.zip
+            artifacts/metrics/win-x64-aot.json
+            artifacts/metrics/win-x64-aot.md
