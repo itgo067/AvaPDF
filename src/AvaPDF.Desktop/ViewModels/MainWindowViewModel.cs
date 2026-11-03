@@ -45,6 +45,7 @@ public partial class MainWindowViewModel : ObservableObject
             .Select(group => new NavMenuItem
             {
                 Header = group.Key,
+                IsVerticalCollapsed = true,
                 ItemsSource = group.Select(tool => new NavMenuItem
                 {
                     Header = tool.Name,

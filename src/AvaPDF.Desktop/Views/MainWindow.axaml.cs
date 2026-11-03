@@ -1,23 +1,34 @@
 using Avalonia.Controls;
-using Avalonia.Threading;
+using Avalonia.LogicalTree;
 using Ursa.Controls;
 
 namespace AvaPDF.Desktop.Views;
 
 public partial class MainWindow : Window
 {
-    private bool _allowNavigationSelection;
-
     public MainWindow() => InitializeComponent();
 
-    private void OnToolSelectionChanging(object? sender, SelectionChangingEventArgs e)
+    private void OnToolNavMenuContainerPrepared(object? sender, ContainerPreparedEventArgs e)
     {
-        if (!_allowNavigationSelection)
+        if (e.Container is NavMenuItem item)
         {
-            e.CanSelect = false;
+            CollapseIfGroup(item);
         }
     }
 
-    private void OnToolNavMenuLoaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
-        Dispatcher.UIThread.Post(() => _allowNavigationSelection = true, DispatcherPriority.Background);
+    private void OnToolNavMenuLoaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        foreach (var item in ToolNavMenu.GetLogicalDescendants().OfType<NavMenuItem>())
+        {
+            CollapseIfGroup(item);
+        }
+    }
+
+    private static void CollapseIfGroup(NavMenuItem item)
+    {
+        if (item.ItemCount > 0)
+        {
+            item.IsVerticalCollapsed = true;
+        }
+    }
 }

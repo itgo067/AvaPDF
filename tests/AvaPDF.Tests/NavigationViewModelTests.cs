@@ -20,6 +20,7 @@ public sealed class NavigationViewModelTests
         Assert.Same(optimize, viewModel.SelectedTool);
         Assert.Same(optimize, viewModel.Workspace.CurrentTool);
 
+        Assert.All(viewModel.ToolCategories, category => Assert.True(category.IsVerticalCollapsed));
         var securityCategory = viewModel.ToolCategories.Single(item => Equals(item.Header, "安全与信息"));
         var watermarkItem = securityCategory.ItemsSource!.Cast<NavMenuItem>()
             .Single(item => Equals(item.Header, "添加水印"));
