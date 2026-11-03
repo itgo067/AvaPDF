@@ -16,6 +16,8 @@ public sealed partial class PdfToolNavigationItem : ObservableObject
     public PdfToolNavigationItem(PdfToolDescriptor descriptor) => Descriptor = descriptor;
 
     public PdfToolDescriptor Descriptor { get; }
+
+    public bool IsExpanded => false;
 }
 
 public sealed partial class PdfToolCategoryViewModel : ObservableObject
@@ -44,6 +46,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private ThemeOption _selectedThemeOption;
+
+    [ObservableProperty]
+    private object? _selectedNavigationNode;
 
     public MainWindowViewModel(
         PdfJobService jobs,
@@ -99,6 +104,14 @@ public partial class MainWindowViewModel : ObservableObject
         foreach (var item in ToolCategories.SelectMany(category => category.Tools))
         {
             item.IsSelected = item.Descriptor.Kind == SelectedTool.Kind;
+        }
+    }
+
+    partial void OnSelectedNavigationNodeChanged(object? value)
+    {
+        if (value is PdfToolNavigationItem item)
+        {
+            SelectedTool = item.Descriptor;
         }
     }
 

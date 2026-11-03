@@ -2,7 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:AvaPDF.Desktop.Views"
         xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
-        xmlns:domain="clr-namespace:AvaPDF.Domain;assembly=AvaPDF.Domain"
         x:Class="AvaPDF.Desktop.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Width="1280" Height="800"
@@ -23,75 +22,47 @@
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-          <StackPanel Spacing="12">
+          <StackPanel Spacing="10">
             <TextBlock Text="工具箱  /  20" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SecondaryText}" Margin="6,0,0,2" />
-            <ItemsControl ItemsSource="{Binding ToolCategories}">
-              <ItemsControl.Styles>
-                <Style Selector="Button.group">
-                  <Setter Property="Background" Value="Transparent" />
-                  <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="Padding" Value="9,8" />
-                  <Setter Property="CornerRadius" Value="9" />
-                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                  <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
-                </Style>
-                <Style Selector="Button.group:pointerover">
-                  <Setter Property="Background" Value="{DynamicResource NavHoverBackground}" />
-                </Style>
-                <Style Selector="Button.tool">
-                  <Setter Property="Background" Value="Transparent" />
-                  <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="Padding" Value="10,8" />
+            <TreeView ItemsSource="{Binding ToolCategories}" SelectedItem="{Binding SelectedNavigationNode}"
+                      Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch">
+              <TreeView.Styles>
+                <Style Selector="TreeViewItem">
+                  <Setter Property="Padding" Value="0" />
                   <Setter Property="Margin" Value="0,0,0,3" />
-                  <Setter Property="CornerRadius" Value="10" />
-                  <Setter Property="MinHeight" Value="42" />
-                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                  <Setter Property="Background" Value="Transparent" />
+                  <Setter Property="BorderThickness" Value="0" />
                   <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
                 </Style>
-                <Style Selector="Button.tool:pointerover">
+                <Style Selector="TreeViewItem:pointerover">
                   <Setter Property="Background" Value="{DynamicResource NavHoverBackground}" />
                 </Style>
-                <Style Selector="Button.tool.selected">
+                <Style Selector="TreeViewItem:selected">
                   <Setter Property="Background" Value="{DynamicResource NavSelectedBackground}" />
                 </Style>
-              </ItemsControl.Styles>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:PdfToolCategoryViewModel">
-                  <StackPanel Margin="0,0,0,8">
-                    <Button Classes="group" Command="{Binding $parent[Window].DataContext.ToggleCategoryCommand}" CommandParameter="{Binding}">
-                      <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                          <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" />
-                          <Border Background="{DynamicResource GlyphBackground}" CornerRadius="7" Padding="6,1">
-                            <TextBlock Text="{Binding Tools.Count}" FontSize="10" Foreground="{DynamicResource SecondaryText}" />
-                          </Border>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                          <TextBlock Text="▸" FontSize="14" Foreground="{DynamicResource SecondaryText}" IsVisible="{Binding !IsExpanded}" />
-                          <TextBlock Text="▾" FontSize="14" Foreground="{DynamicResource SecondaryText}" IsVisible="{Binding IsExpanded}" />
-                        </StackPanel>
-                      </Grid>
-                    </Button>
-                    <ItemsControl ItemsSource="{Binding Tools}" IsVisible="{Binding IsExpanded}" Margin="0,4,0,0">
-                      <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:PdfToolNavigationItem">
-                          <Button Classes="tool" Classes.selected="{Binding IsSelected}"
-                                  Command="{Binding $parent[Window].DataContext.SelectToolCommand}"
-                                  CommandParameter="{Binding Descriptor}">
-                            <Grid ColumnDefinitions="34,*" VerticalAlignment="Center">
-                              <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource GlyphBackground}" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Descriptor.Glyph}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                              </Border>
-                              <TextBlock Grid.Column="1" Text="{Binding Descriptor.Name}" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                            </Grid>
-                          </Button>
-                        </DataTemplate>
-                      </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <Style Selector="TreeViewItem:selected /template/ ContentPresenter">
+                  <Setter Property="Background" Value="{DynamicResource NavSelectedBackground}" />
+                </Style>
+              </TreeView.Styles>
+              <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="vm:PdfToolCategoryViewModel" ItemsSource="{Binding Tools}">
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="4,8" ToolTip.Tip="点击箭头展开或折叠分组">
+                    <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" />
+                    <Border Background="{DynamicResource GlyphBackground}" CornerRadius="7" Padding="6,1">
+                      <TextBlock Text="{Binding Tools.Count}" FontSize="10" Foreground="{DynamicResource SecondaryText}" />
+                    </Border>
                   </StackPanel>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </TreeDataTemplate>
+                <TreeDataTemplate DataType="vm:PdfToolNavigationItem">
+                  <Grid ColumnDefinitions="34,*" MinHeight="38" Margin="4,3" VerticalAlignment="Center">
+                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource GlyphBackground}" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Descriptor.Glyph}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource AccentText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{Binding Descriptor.Name}" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                  </Grid>
+                </TreeDataTemplate>
+              </TreeView.DataTemplates>
+            </TreeView>
           </StackPanel>
         </ScrollViewer>
 

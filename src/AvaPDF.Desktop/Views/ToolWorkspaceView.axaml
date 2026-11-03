@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
+             xmlns:controls="clr-namespace:AvaPDF.Desktop.Views.Controls"
              x:Class="AvaPDF.Desktop.Views.ToolWorkspaceView"
              x:DataType="vm:ToolWorkspaceViewModel">
   <UserControl.Styles>
@@ -51,25 +52,6 @@
       <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
       <Setter Property="CornerRadius" Value="9" />
       <Setter Property="MinHeight" Value="38" />
-    </Style>
-    <Style Selector="NumericUpDown">
-      <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource ControlBorder}" />
-      <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
-      <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="9" />
-      <Setter Property="MinHeight" Value="38" />
-    </Style>
-    <Style Selector="NumericUpDown Button">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="Foreground" Value="{DynamicResource SecondaryText}" />
-      <Setter Property="Width" Value="28" />
-    </Style>
-    <Style Selector="NumericUpDown TextBox">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="MinHeight" Value="0" />
     </Style>
   </UserControl.Styles>
 
@@ -144,7 +126,7 @@
             </ComboBox>
             <StackPanel IsVisible="{Binding ShowSplitPageCount}" Spacing="6">
               <TextBlock Text="每份包含的页数" Classes="caption" />
-              <NumericUpDown Minimum="1" Maximum="10000" Increment="1" Value="{Binding PagesPerPart}" />
+              <controls:NumberStepper Minimum="1" Maximum="10000" Increment="1" DecimalPlaces="0" Value="{Binding PagesPerPart}" />
             </StackPanel>
             <StackPanel IsVisible="{Binding ShowSplitRanges}" Spacing="6">
               <TextBlock Text="拆分范围（每组生成一个文件）" Classes="caption" />
@@ -209,16 +191,16 @@
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding ShowWatermarkText}">
               <StackPanel Spacing="5">
                 <TextBlock Text="文字大小（点）" Classes="caption" />
-                <NumericUpDown Minimum="6" Maximum="256" Increment="1" Value="{Binding WatermarkFontSize}" />
+                <controls:NumberStepper Minimum="6" Maximum="256" Increment="1" DecimalPlaces="0" Value="{Binding WatermarkFontSize}" />
               </StackPanel>
               <StackPanel Grid.Column="1" Spacing="5">
                 <TextBlock Text="旋转角度" Classes="caption" />
-                <NumericUpDown Minimum="-180" Maximum="180" Increment="5" Value="{Binding WatermarkRotation}" />
+                <controls:NumberStepper Minimum="-180" Maximum="180" Increment="5" DecimalPlaces="0" Value="{Binding WatermarkRotation}" />
               </StackPanel>
             </Grid>
             <StackPanel Spacing="5">
               <TextBlock Text="透明度（0.05–1.00）" Classes="caption" />
-              <NumericUpDown Minimum="0.05" Maximum="1" Increment="0.05" Value="{Binding WatermarkOpacity}" />
+              <controls:NumberStepper Minimum="0.05" Maximum="1" Increment="0.05" DecimalPlaces="2" Value="{Binding WatermarkOpacity}" />
             </StackPanel>
           </StackPanel>
         </Border>

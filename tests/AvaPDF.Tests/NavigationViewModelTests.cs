@@ -20,7 +20,9 @@ public sealed class NavigationViewModelTests
         Assert.Same(optimize, viewModel.Workspace.CurrentTool);
         Assert.Single(viewModel.ToolCategories.SelectMany(category => category.Tools), item => item.IsSelected);
 
-        viewModel.SelectToolCommand.Execute(watermark);
+        viewModel.SelectedNavigationNode = viewModel.ToolCategories
+            .SelectMany(category => category.Tools)
+            .Single(item => item.Descriptor.Kind == PdfOperationKind.Watermark);
         Assert.Same(watermark, viewModel.SelectedTool);
         Assert.Same(watermark, viewModel.Workspace.CurrentTool);
         Assert.Single(viewModel.ToolCategories.SelectMany(category => category.Tools), item => item.IsSelected);
