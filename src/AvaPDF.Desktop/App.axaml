@@ -21,6 +21,8 @@
           <SolidColorBrush x:Key="SuccessBrush">#148A68</SolidColorBrush>
           <SolidColorBrush x:Key="ErrorBrush">#C84255</SolidColorBrush>
           <SolidColorBrush x:Key="ErrorBackground">#FFF0F2</SolidColorBrush>
+          <SolidColorBrush x:Key="WarningBrush">#9A6700</SolidColorBrush>
+          <SolidColorBrush x:Key="WarningBackground">#FFF7E0</SolidColorBrush>
           <SolidColorBrush x:Key="NavSelectedBackground">#ECE8FF</SolidColorBrush>
           <SolidColorBrush x:Key="NavHoverBackground">#EEF1F7</SolidColorBrush>
           <SolidColorBrush x:Key="GlyphBackground">#EEEAFF</SolidColorBrush>
@@ -45,6 +47,8 @@
           <SolidColorBrush x:Key="SuccessBrush">#55D6A9</SolidColorBrush>
           <SolidColorBrush x:Key="ErrorBrush">#FF8995</SolidColorBrush>
           <SolidColorBrush x:Key="ErrorBackground">#3B202D</SolidColorBrush>
+          <SolidColorBrush x:Key="WarningBrush">#F2C66D</SolidColorBrush>
+          <SolidColorBrush x:Key="WarningBackground">#38301A</SolidColorBrush>
           <SolidColorBrush x:Key="NavSelectedBackground">#29264C</SolidColorBrush>
           <SolidColorBrush x:Key="NavHoverBackground">#19233A</SolidColorBrush>
           <SolidColorBrush x:Key="GlyphBackground">#222D43</SolidColorBrush>

@@ -70,3 +70,10 @@ public sealed record ExtractTextPdfRequest(
     IPdfSource Source,
     string? PageRanges,
     IPdfOutputTarget Output) : SinglePdfRequest(PdfOperationKind.ExtractText, Source, Output);
+
+/// <summary>Converts one source document. ResourceBaseDirectory is an optional host-approved resource root.</summary>
+public sealed record DocumentToPdfRequest(
+    PdfOperationKind Kind,
+    IPdfSource Source,
+    string? ResourceBaseDirectory,
+    IPdfOutputTarget Output) : SinglePdfRequest(Kind, Source, Output);

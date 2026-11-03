@@ -24,7 +24,7 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
           <StackPanel Spacing="12">
-            <TextBlock Text="工具箱  /  09" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SecondaryText}" Margin="8,0,0,2" />
+            <TextBlock Text="工具箱  /  16" FontSize="11" FontWeight="SemiBold" LetterSpacing="1.2" Foreground="{DynamicResource SecondaryText}" Margin="8,0,0,2" />
             <ListBox ItemsSource="{Binding Tools}" SelectedItem="{Binding SelectedTool}" Background="Transparent" BorderThickness="0">
               <ListBox.Styles>
                 <Style Selector="ListBoxItem">

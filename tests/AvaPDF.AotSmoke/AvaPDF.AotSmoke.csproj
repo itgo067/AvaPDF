@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
+    <ProjectReference Include="../../src/AvaPDF.Converters.OfficeIMO/AvaPDF.Converters.OfficeIMO.csproj" />
   </ItemGroup>
 </Project>

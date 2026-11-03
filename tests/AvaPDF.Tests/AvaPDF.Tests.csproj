@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/AvaPDF.Application/AvaPDF.Application.csproj" />
+    <ProjectReference Include="../../src/AvaPDF.Converters.OfficeIMO/AvaPDF.Converters.OfficeIMO.csproj" />
     <ProjectReference Include="../../src/AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />

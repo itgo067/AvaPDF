@@ -11,5 +11,12 @@ public enum PdfOperationKind
     Reorder,
     Optimize,
     ImagesToPdf,
-    ExtractText
+    ExtractText,
+    WordToPdf,
+    ExcelToPdf,
+    PowerPointToPdf,
+    MarkdownToPdf,
+    HtmlToPdf,
+    RtfToPdf,
+    TxtToPdf
 }

@@ -12,6 +12,8 @@ public sealed class LocalFileItem(string path)
 
     public string Name => System.IO.Path.GetFileName(Path);
 
+    public string Extension => System.IO.Path.GetExtension(Path).TrimStart('.').ToUpperInvariant();
+
     public string Details
     {
         get

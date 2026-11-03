@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/AvaPDF.Application/AvaPDF.Application.csproj" />
+    <Project Path="src/AvaPDF.Converters.OfficeIMO/AvaPDF.Converters.OfficeIMO.csproj" />
     <Project Path="src/AvaPDF.Desktop/AvaPDF.Desktop.csproj" />
     <Project Path="src/AvaPDF.Domain/AvaPDF.Domain.csproj" />
     <Project Path="src/AvaPDF.Pdf.OfficeIMO/AvaPDF.Pdf.OfficeIMO.csproj" />

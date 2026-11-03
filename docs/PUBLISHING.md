@@ -12,7 +12,7 @@ powershell -File eng/publish-desktop.ps1
 
 1. 通过 `vswhere` 检测 Visual Studio C++ x64 工具链。
 2. 条件满足时，以 Native AOT 发布 `AvaPDF.AotSmoke`。
-3. 在 AOT 环境实际运行合并、拆分、提取、删除、旋转、重排、优化、图片转 PDF 和文本提取。
+3. 在 AOT 环境实际运行 16 个操作：既有 PDF 页面与内容工具，以及 Word、Excel、PowerPoint、Markdown、HTML、RTF、TXT 转 PDF。
 4. 冒烟测试通过后发布 Native AOT 桌面程序。
 5. 三次启动桌面程序并测量主窗口创建耗时，统计 EXE、完整目录和 ZIP 体积，生成 JSON、Markdown 和不含 PDB 的 ZIP 包。
 6. 工具链缺失、AOT 发布失败或任何验证失败时，明确警告并发布自包含 CoreCLR 版本，同样记录体积和启动指标。
@@ -58,4 +58,4 @@ powershell -File eng/publish-desktop.ps1 -RequireAot
 
 ## 当前边界
 
-Native AOT 不等于单一 EXE。Avalonia 的 Skia、HarfBuzz 和 OpenGL ES 原生库仍需随程序发布。AOT 冒烟测试覆盖当前 9 项 PDF 功能，但新加入 OCR、Office 转换、PDF/A、签名或第三方 Provider 时，必须扩展验证。普通 CoreCLR 单元测试仍是功能正确性的主要测试入口。
+Native AOT 不等于单一 EXE。Avalonia 的 Skia、HarfBuzz 和 OpenGL ES 原生库仍需随程序发布。AOT 冒烟测试覆盖当前 16 个操作，但新加入 OCR、更多 Office 格式、PDF/A、签名或第三方 Provider 时，必须扩展验证。普通 CoreCLR 单元测试仍是功能正确性的主要测试入口。

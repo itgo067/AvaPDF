@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>AvaPDF.Converters.OfficeIMO</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AvaPDF.Application/AvaPDF.Application.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="OfficeIMO.Excel.Pdf" />
+    <PackageReference Include="OfficeIMO.Html.Pdf" />
+    <PackageReference Include="OfficeIMO.Markdown.Pdf" />
+    <PackageReference Include="OfficeIMO.PowerPoint.Pdf" />
+    <PackageReference Include="OfficeIMO.Rtf.Pdf" />
+    <PackageReference Include="OfficeIMO.Word.Pdf" />
+  </ItemGroup>
+</Project>

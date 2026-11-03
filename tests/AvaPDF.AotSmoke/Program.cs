@@ -1,8 +1,13 @@
 using System.Text;
 using AvaPDF.Application.Abstractions;
 using AvaPDF.Application.Operations;
+using AvaPDF.Converters.OfficeIMO;
+using AvaPDF.Domain;
 using AvaPDF.Pdf.OfficeIMO.Features;
+using OfficeIMO.Excel;
 using OfficeIMO.Pdf;
+using OfficeIMO.PowerPoint;
+using OfficeIMO.Word;
 
 var mergeOutput = new MemoryOutputTarget();
 await new MergePdfHandler().HandleAsync(
@@ -87,7 +92,64 @@ await new ExtractTextPdfHandler().HandleAsync(
 var text = Encoding.UTF8.GetString(textOutput.Files["source-text.txt"]);
 Smoke.Require(text.Contains("Two") && !text.Contains("One"), "extract-text");
 
-Console.WriteLine("AOT_OFFICEIMO_SMOKE_OK merge split extract delete rotate reorder optimize images-to-pdf extract-text");
+using (var word = WordDocument.Create())
+{
+    word.AddParagraph("Alpha Word");
+    using var source = new MemoryStream();
+    word.Save(source);
+    var converted = await Smoke.ConvertDocumentAsync(new WordToPdfHandler(), PdfOperationKind.WordToPdf, "sample.docx", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Alpha Word"), "word-to-pdf");
+}
+
+using (var workbook = ExcelDocument.Create())
+{
+    var sheet = workbook.Sheets.Count > 0 ? workbook.Sheets[0] : workbook.AddWorksheet("Sheet1");
+    sheet.Cell(1, 1, "Alpha Excel");
+    using var source = new MemoryStream();
+    workbook.Save(source);
+    var converted = await Smoke.ConvertDocumentAsync(new ExcelToPdfHandler(), PdfOperationKind.ExcelToPdf, "sample.xlsx", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Alpha Excel"), "excel-to-pdf");
+}
+
+using (var presentation = PowerPointPresentation.Create())
+{
+    var slide = presentation.AddSlide();
+    slide.AddTextBoxPoints("Alpha PowerPoint", 50, 50, 350, 60);
+    using var source = new MemoryStream();
+    presentation.Save(source);
+    var converted = await Smoke.ConvertDocumentAsync(new PowerPointToPdfHandler(), PdfOperationKind.PowerPointToPdf, "sample.pptx", source.ToArray());
+    Smoke.Require(Smoke.AllText(converted).Contains("Alpha PowerPoint"), "powerpoint-to-pdf");
+}
+
+var markdown = await Smoke.ConvertDocumentAsync(
+    new MarkdownToPdfHandler(),
+    PdfOperationKind.MarkdownToPdf,
+    "sample.md",
+    Encoding.UTF8.GetBytes("# MarkdownTitle\n\n**Alpha Markdown**"));
+Smoke.Require(Smoke.AllText(markdown).Contains("Alpha Markdown"), "markdown-to-pdf");
+
+var html = await Smoke.ConvertDocumentAsync(
+    new HtmlToPdfHandler(),
+    PdfOperationKind.HtmlToPdf,
+    "sample.html",
+    Encoding.UTF8.GetBytes("<h1>HtmlTitle</h1><p>Alpha HTML</p>"));
+Smoke.Require(Smoke.AllText(html).Contains("Alpha HTML"), "html-to-pdf");
+
+var rtf = await Smoke.ConvertDocumentAsync(
+    new RtfToPdfHandler(),
+    PdfOperationKind.RtfToPdf,
+    "sample.rtf",
+    Encoding.UTF8.GetBytes(@"{\rtf1\ansi RtfTitle\par Alpha RTF}"));
+Smoke.Require(Smoke.AllText(rtf).Contains("Alpha RTF"), "rtf-to-pdf");
+
+var txt = await Smoke.ConvertDocumentAsync(
+    new TxtToPdfHandler(),
+    PdfOperationKind.TxtToPdf,
+    "sample.txt",
+    Encoding.UTF8.GetBytes("你好，AvaPDF。\nAlpha TXT"));
+Smoke.Require(Smoke.AllText(txt).Contains("Alpha TXT"), "txt-to-pdf");
+
+Console.WriteLine("AOT_OFFICEIMO_SMOKE_OK merge split extract delete rotate reorder optimize images-to-pdf extract-text word excel powerpoint markdown html rtf txt");
 
 internal static class Smoke
 {
@@ -110,6 +172,22 @@ internal static class Smoke
 
     public static string[] Texts(PdfDocumentReadResult document) =>
         document.Pages.Select(page => page.TextBlocks.Single().Text).ToArray();
+
+    public static string AllText(PdfDocumentReadResult document) => string.Join(
+        '\n',
+        document.Pages.SelectMany(page => page.TextBlocks).Select(block => block.Text));
+
+    public static async Task<PdfDocumentReadResult> ConvertDocumentAsync(
+        IPdfOperationHandler handler,
+        PdfOperationKind kind,
+        string sourceName,
+        byte[] sourceBytes)
+    {
+        var output = new MemoryOutputTarget();
+        var request = new DocumentToPdfRequest(kind, Source(sourceName, sourceBytes), null, output);
+        var result = await handler.HandleAsync(request, null, CancellationToken.None);
+        return Read(output.Files[result.OutputFiles[0]]);
+    }
 
     public static void Require(bool condition, string operation)
     {

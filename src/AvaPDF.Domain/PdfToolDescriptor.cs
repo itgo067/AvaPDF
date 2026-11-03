@@ -3,7 +3,14 @@ namespace AvaPDF.Domain;
 public enum PdfInputKind
 {
     Pdf,
-    Images
+    Images,
+    Word,
+    Excel,
+    PowerPoint,
+    Markdown,
+    Html,
+    Rtf,
+    Text
 }
 
 /// <summary>UI-neutral metadata used to build a tool catalog on any host.</summary>

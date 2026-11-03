@@ -1,3 +1,4 @@
+using AvaPDF.Converters.OfficeIMO;
 using AvaPDF.Desktop.Services;
 using AvaPDF.Desktop.ViewModels;
 using AvaPDF.Desktop.Views;
@@ -19,6 +20,7 @@ public sealed class App : Avalonia.Application
         {
             var services = new ServiceCollection();
             services.AddOfficeImoPdf();
+            services.AddOfficeImoDocumentConverters();
             services.AddSingleton<IFileDialogService, FileDialogService>();
             services.AddSingleton<IShellService, ShellService>();
             services.AddSingleton<IThemeService, ThemeService>();

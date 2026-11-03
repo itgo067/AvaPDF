@@ -80,6 +80,9 @@ public partial class ToolWorkspaceViewModel : ObservableObject
     private bool _hasOutputs;
 
     [ObservableProperty]
+    private bool _hasWarnings;
+
+    [ObservableProperty]
     private string _pageRangeWatermark = "例如 1-3,5";
 
     [ObservableProperty]
@@ -98,6 +101,8 @@ public partial class ToolWorkspaceViewModel : ObservableObject
     public ObservableCollection<LocalFileItem> Files { get; } = [];
 
     public ObservableCollection<string> OutputFiles { get; } = [];
+
+    public ObservableCollection<string> ConversionWarnings { get; } = [];
 
     public IReadOnlyList<SplitModeOption> SplitModes { get; } =
     [
@@ -126,7 +131,9 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         CurrentTool = tool;
         Files.Clear();
         OutputFiles.Clear();
+        ConversionWarnings.Clear();
         HasOutputs = false;
+        HasWarnings = false;
         ErrorMessage = string.Empty;
         ProgressValue = 0;
         StatusMessage = "选择文件后即可开始处理。";
@@ -146,11 +153,18 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         PageRangeWatermark = tool.Kind is PdfOperationKind.Rotate or PdfOperationKind.ExtractText
             ? "留空处理全部页面，或输入 1-3,5"
             : "例如 1-3,5";
-        InputHint = tool.InputKind == PdfInputKind.Images
-            ? "支持 JPG、PNG、BMP、WEBP、SVG 等，按列表顺序生成页面"
-            : tool.Kind == PdfOperationKind.Merge
-                ? "至少选择两个 PDF，按列表顺序合并"
-                : "选择一个 PDF 文件";
+        InputHint = tool.InputKind switch
+        {
+            PdfInputKind.Images => "支持 JPG、PNG、BMP、WEBP、SVG 等，按列表顺序生成页面",
+            PdfInputKind.Word => "支持 DOCX、DOCM、DOTX、DOTM 文档",
+            PdfInputKind.Excel => "支持 XLSX、XLSM、XLTX、XLTM 工作簿",
+            PdfInputKind.PowerPoint => "支持 PPTX、PPTM 演示文稿",
+            PdfInputKind.Markdown => "支持 MD、MARKDOWN，可读取同目录下的相对图片",
+            PdfInputKind.Html => "支持静态 HTML、HTM，可读取同目录下的相对资源",
+            PdfInputKind.Rtf => "支持 RTF 富文本文档",
+            PdfInputKind.Text => "支持 TXT 纯文本，自动配置多语言字体回退",
+            _ => tool.Kind == PdfOperationKind.Merge ? "至少选择两个 PDF，按列表顺序合并" : "选择一个 PDF 文件"
+        };
         SelectedSplitMode = SplitModes[0];
         UpdateSplitVisibility();
     }
@@ -163,7 +177,7 @@ public partial class ToolWorkspaceViewModel : ObservableObject
             return;
         }
 
-        var paths = await _dialogs.PickFilesAsync(CurrentTool.InputKind == PdfInputKind.Images);
+        var paths = await _dialogs.PickFilesAsync(CurrentTool.InputKind);
         var maximum = CurrentTool.MaximumInputs;
         foreach (var path in paths)
         {
@@ -247,7 +261,9 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         IsRunning = true;
         ErrorMessage = string.Empty;
         OutputFiles.Clear();
+        ConversionWarnings.Clear();
         HasOutputs = false;
+        HasWarnings = false;
         ProgressValue = 0;
         StatusMessage = "正在准备任务…";
         var cancellation = new CancellationTokenSource();
@@ -274,6 +290,17 @@ public partial class ToolWorkspaceViewModel : ObservableObject
                 OutputFiles.Add(path);
             }
 
+            foreach (var warning in result.ConversionWarnings.Take(100))
+            {
+                ConversionWarnings.Add(warning);
+            }
+
+            if (result.ConversionWarnings.Count > 100)
+            {
+                ConversionWarnings.Add($"其余 {result.ConversionWarnings.Count - 100} 条警告已省略。");
+            }
+
+            HasWarnings = ConversionWarnings.Count > 0;
             HasOutputs = OutputFiles.Count > 0;
             ProgressValue = 100;
             StatusMessage = result.Message;
@@ -321,6 +348,13 @@ public partial class ToolWorkspaceViewModel : ObservableObject
             PdfOperationKind.Optimize => new OptimizePdfRequest(sources[0], SelectedOptimization.Value, target),
             PdfOperationKind.ImagesToPdf => new ImagesToPdfRequest(sources, target),
             PdfOperationKind.ExtractText => new ExtractTextPdfRequest(sources[0], PageRanges, target),
+            PdfOperationKind.WordToPdf or PdfOperationKind.ExcelToPdf or PdfOperationKind.PowerPointToPdf
+                or PdfOperationKind.MarkdownToPdf or PdfOperationKind.HtmlToPdf or PdfOperationKind.RtfToPdf
+                or PdfOperationKind.TxtToPdf => new DocumentToPdfRequest(
+                    CurrentTool.Kind,
+                    sources[0],
+                    Path.GetDirectoryName(Files[0].Path),
+                    target),
             _ => throw new NotSupportedException($"不支持的工具：{CurrentTool.Kind}")
         };
     }

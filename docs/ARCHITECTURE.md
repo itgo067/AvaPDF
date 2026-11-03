@@ -30,6 +30,12 @@
 
 OfficeIMO 的加载方法会快照输入，因此输入流在加载后即可释放；输出流由 Handler 和宿主共同确定生命周期。
 
+### Document converters / OfficeIMO
+
+`AvaPDF.Converters.OfficeIMO` 独立承载 Word、Excel、PowerPoint、Markdown、HTML、RTF 和 TXT 转 PDF，避免这些格式依赖进入 PDF 页面处理模块。每个 Handler 使用统一的流式转换管线，返回输出文件及结构化警告，并通过 `AddOfficeImoDocumentConverters()` 注册。
+
+`DocumentToPdfRequest.ResourceBaseDirectory` 是宿主明确授权的资源根目录。桌面端只传入所选 Markdown/HTML 文件所在目录，用于解析相对图片和资源；Web 宿主需要自行设置隔离目录，不能直接信任上传路径。远程资源解析默认不开启。
+
 ### Desktop
 
 - `MainWindowViewModel`：工具目录和当前工具。
@@ -38,7 +44,7 @@ OfficeIMO 的加载方法会快照输入，因此输入流在加载后即可释�
 - `LocalPdfSource` / `LocalPdfOutputTarget`：Application 流抽象的本地文件实现。
 - `App`：唯一的依赖注入组合根。
 
-PDF 工作通过 `Task.Run` 移出 UI 线程，并传递取消令牌与进度。ViewModel 不引用 OfficeIMO 类型。
+PDF 工作通过 `Task.Run` 移出 UI 线程，并传递取消令牌与进度。ViewModel 不引用 OfficeIMO 类型。转换结果中的警告单独展示，避免把成功生成文件等同于完全无损转换。
 
 ## 后续 Web 宿主
 
