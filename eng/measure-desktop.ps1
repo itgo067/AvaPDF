@@ -76,6 +76,14 @@ $payloadFiles = @(Get-ChildItem $executableDirectory -Recurse -File |
     Where-Object { $_.Extension -ne '.pdb' })
 $payloadBytes = ($payloadFiles | Measure-Object -Property Length -Sum).Sum
 $executableBytes = (Get-Item $executable).Length
+$fileVersionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable)
+$productVersion = $fileVersionInfo.ProductVersion
+$version = $productVersion.Split('+')[0]
+$commitSeparator = $productVersion.IndexOf('+')
+$commitHash = ''
+if ($commitSeparator -ge 0) {
+    $commitHash = $productVersion.Substring($commitSeparator + 1)
+}
 $milliseconds = @($measurements | ForEach-Object { $_.Milliseconds })
 $averageMilliseconds = ($milliseconds | Measure-Object -Average).Average
 $minimumMilliseconds = ($milliseconds | Measure-Object -Minimum).Minimum
@@ -106,6 +114,9 @@ $jsonDirectory = [System.IO.Path]::GetDirectoryName($jsonFullPath)
 [System.IO.Directory]::CreateDirectory($jsonDirectory) | Out-Null
 $metrics = [ordered]@{
     Product = 'AvaPDF'
+    Version = $version
+    CommitHash = $commitHash
+    FileVersion = $fileVersionInfo.FileVersion
     Engine = $Engine
     Runtime = 'win-x64'
     Configuration = 'Release'
@@ -141,6 +152,8 @@ Measurement: process start to a non-zero ``MainWindowHandle``. The first run is 
 
 | Metric | Value |
 | --- | ---: |
+| Version | $version |
+| Commit | $commitHash |
 | Executable | $([Math]::Round($executableBytes / 1MB, 2)) MiB |
 | Payload without PDB | $([Math]::Round($payloadBytes / 1MB, 2)) MiB |
 | ZIP package | $([Math]::Round($zipBytes / 1MB, 2)) MiB |

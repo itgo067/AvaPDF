@@ -41,9 +41,15 @@ function Invoke-ReleaseMetrics([string]$engine, [string]$outputDirectory) {
         $suffix = 'aot'
     }
     $jsonPath = Join-Path $metricsRoot "$Runtime-$suffix.json"
-    $zipPath = Join-Path $publishRoot "AvaPDF-$Runtime-$suffix.zip"
+    $executable = Join-Path $outputDirectory 'AvaPDF.Desktop.exe'
+    $productVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable).ProductVersion
+    $version = $productVersion.Split('+')[0]
+    if ([string]::IsNullOrWhiteSpace($version)) {
+        throw '无法从发布程序读取 MinVer 版本。'
+    }
+    $zipPath = Join-Path $publishRoot "AvaPDF-$version-$Runtime-$suffix.zip"
     & $measureScript `
-        -ExecutablePath (Join-Path $outputDirectory 'AvaPDF.Desktop.exe') `
+        -ExecutablePath $executable `
         -OutputJsonPath $jsonPath `
         -ZipPath $zipPath `
         -Engine $engine `

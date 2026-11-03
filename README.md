@@ -10,7 +10,7 @@
 | 优化与转换 | 无损优化、图片转 PDF、原生文本提取为 UTF-8 TXT |
 | 文档转换 | DOC/DOCX、XLS/XLSX、PPT/PPTX、Markdown、HTML、RTF、TXT 转 PDF，支持转换警告展示 |
 | 安全与信息 | 文字/图片水印、AES-256 加密、所有者密码解密、标题/作者/主题/关键词编辑 |
-| 桌面体验 | Ursa NavMenu 分组导航、Semi 亮色/暗色/跟随系统主题及配色、掩码密码框、文件拖入与排序、后台执行、取消、进度反馈、结果文件打开 |
+| 桌面体验 | Ursa NavMenu 分组导航、Semi 亮色/暗色/跟随系统主题及配色、掩码密码框、文件拖入与排序、MinVer 版本化发布、后台执行、取消、进度反馈、结果文件打开 |
 
 所有文件均在本机处理。输出文件遇到同名时自动添加序号，不覆盖已有文件。
 
@@ -60,7 +60,7 @@ AvaPDF.Desktop ───────> AvaPDF.Application ───────> 
        └── 仅组合根注册 ─> AvaPDF.Converters.OfficeIMO ┘
 ```
 
-更详细的边界和 Web 复用方式见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，分支与提交规范见 [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md)。
+更详细的边界和 Web 复用方式见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)，分支与提交规范见 [docs/GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md)，MinVer 版本规则见 [docs/VERSIONING.md](docs/VERSIONING.md)。
 
 ## 扩展一个 PDF 工具
 

@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
+        x:Class="AvaPDF.Desktop.Views.AboutWindow"
+        x:DataType="vm:AboutViewModel"
+        Width="430" SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource SemiColorBackground0}"
+        Icon="/Assets/AppIcon.ico"
+        Title="关于 AvaPDF">
+  <StackPanel Margin="32" Spacing="16" HorizontalAlignment="Stretch">
+    <Image Source="/Assets/AppIcon.png" Width="76" Height="76" HorizontalAlignment="Center" Margin="0,4,0,2" />
+    <TextBlock Text="AvaPDF" FontSize="27" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Center" />
+    <TextBlock Text="本地 PDF 工作台" FontSize="13" Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center" Margin="0,-8,0,0" />
+
+    <Border Background="{DynamicResource SemiColorFill0}" CornerRadius="12" Padding="16">
+      <StackPanel Spacing="12">
+        <Grid ColumnDefinitions="Auto,*">
+          <TextBlock Text="版本" Foreground="{DynamicResource SemiColorText2}" />
+          <TextBlock Grid.Column="1" Text="{Binding Version}" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Right" />
+        </Grid>
+        <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding HasCommitHash}">
+          <TextBlock Text="提交" Foreground="{DynamicResource SemiColorText2}" />
+          <TextBlock Grid.Column="1" Text="{Binding CommitHash}" FontFamily="Consolas" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Right" />
+        </Grid>
+      </StackPanel>
+    </Border>
+
+    <TextBlock Text="基于 Avalonia、Semi.Avalonia、Ursa 与 OfficeIMO 构建。所有文件均在本机处理。"
+               TextWrapping="Wrap" TextAlignment="Center" LineHeight="21" FontSize="12"
+               Foreground="{DynamicResource SemiColorText2}" />
+    <Button Content="关闭" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" MinHeight="38" Click="OnCloseClick" />
+  </StackPanel>
+</Window>

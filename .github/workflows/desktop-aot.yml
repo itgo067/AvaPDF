@@ -3,6 +3,7 @@ name: Windows AOT release
 on:
   push:
     branches: [main]
+    tags: ['v*']
     paths:
       - '.github/workflows/desktop-aot.yml'
       - 'AvaPDF.slnx'
@@ -36,6 +37,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -57,6 +60,6 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           path: |
-            artifacts/publish/AvaPDF-win-x64-aot.zip
+            artifacts/publish/AvaPDF-*-win-x64-aot.zip
             artifacts/metrics/win-x64-aot.json
             artifacts/metrics/win-x64-aot.md

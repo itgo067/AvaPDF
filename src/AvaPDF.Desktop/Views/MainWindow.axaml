@@ -53,6 +53,8 @@
               <TextBlock Text="文件仅在此设备处理，不会上传。" Foreground="{DynamicResource SemiColorText2}" FontSize="11" TextWrapping="Wrap" />
             </StackPanel>
           </Border>
+          <Button Content="关于 AvaPDF" Click="OnAboutClick" Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource SemiColorText2}" HorizontalContentAlignment="Left" Padding="4" />
         </StackPanel>
       </Grid>
     </Border>

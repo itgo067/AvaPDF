@@ -8,6 +8,9 @@ public partial class MainWindow : Window
 {
     public MainWindow() => InitializeComponent();
 
+    private async void OnAboutClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        await new AboutWindow().ShowDialog(this);
+
     private void OnToolNavMenuContainerPrepared(object? sender, ContainerPreparedEventArgs e)
     {
         if (e.Container is NavMenuItem item)
