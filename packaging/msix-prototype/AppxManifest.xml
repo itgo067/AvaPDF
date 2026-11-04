@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         xmlns:com4="http://schemas.microsoft.com/appx/manifest/com/windows10/4"
+         xmlns:desktop7="http://schemas.microsoft.com/appx/manifest/desktop/windows10/7"
+         IgnorableNamespaces="uap rescap com4 desktop7">
+  <Identity Name="AvaPDF.MsixPrototype" Publisher="CN=AvaPDF Test" Version="0.1.0.0" />
+  <Properties>
+    <DisplayName>AvaPDF MSIX Prototype</DisplayName>
+    <PublisherDisplayName>AvaPDF</PublisherDisplayName>
+    <Logo>AppIcon.png</Logo>
+  </Properties>
+  <Resources>
+    <Resource Language="zh-cn" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Applications>
+    <Application Id="AvaPDF" Executable="AvaPDF.Desktop.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="AvaPDF" Description="Local PDF workspace" BackgroundColor="transparent"
+                          Square150x150Logo="AppIcon.png" Square44x44Logo="AppIcon.png" />
+      <Extensions>
+        <desktop7:Extension Category="windows.approvedShellExtension">
+          <desktop7:ApprovedShellExtension Name="AvaPDF" Clsid="6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001" />
+        </desktop7:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Extensions>
+    <com4:Extension Category="windows.comServer">
+      <com4:ComServer>
+        <com4:InProcessServer Path="shell\AvaPDF.Shell.dll">
+          <com4:Class Id="6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001" ThreadingModel="STA" />
+        </com4:InProcessServer>
+      </com4:ComServer>
+    </com4:Extension>
+  </Extensions>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
