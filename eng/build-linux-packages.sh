@@ -19,7 +19,7 @@ dotnet publish "$PROJECT" \
   -p:PublishAot=true \
   -p:IlcUseEnvironmentalTools=true \
   -p:TrimmerSingleWarn=false \
-  '-p:WarningsNotAsErrors=IL2026;IL3050;IL2075' \
+  -p:WarningsNotAsErrors=IL2026%3BIL3050%3BIL2075 \
   -p:StripSymbols=true \
   -o "$PUBLISH_DIR"
 

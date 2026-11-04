@@ -1,4 +1,5 @@
 using AvaPDF.Application.Operations;
+using AvaPDF.Desktop;
 using AvaPDF.Desktop.Services;
 using AvaPDF.Desktop.ViewModels;
 using AvaPDF.Domain;
@@ -30,6 +31,21 @@ public sealed class NavigationViewModelTests
         viewModel.SelectedNavigationNode = watermarkItem;
         Assert.Same(watermark, viewModel.SelectedTool);
         Assert.Same(watermark, viewModel.Workspace.CurrentTool);
+    }
+
+    [Fact]
+    public void Startup_file_is_loaded_after_tool_initialization()
+    {
+        var viewModel = CreateViewModel();
+        var directory = Directory.CreateTempSubdirectory();
+        var path = Path.Combine(directory.FullName, "sample file.pdf");
+        File.WriteAllText(path, "%PDF-1.4\n");
+
+        viewModel.ApplyStartupOptions(new StartupOptions([path], PdfOperationKind.Optimize));
+
+        Assert.Equal(PdfOperationKind.Optimize, viewModel.SelectedTool.Kind);
+        var file = Assert.Single(viewModel.Workspace.Files);
+        Assert.Equal(path, file.Path);
     }
 
     private static MainWindowViewModel CreateViewModel() => new(

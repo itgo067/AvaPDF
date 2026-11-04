@@ -33,8 +33,9 @@ public sealed class App : Avalonia.Application
             {
                 DataContext = viewModel
             };
-            viewModel.ApplyStartupOptions(StartupOptions.Parse(desktop.Args));
             desktop.MainWindow = mainWindow;
+            mainWindow.Loaded += (_, _) =>
+                viewModel.ApplyStartupOptions(StartupOptions.Parse(desktop.Args));
 
             if (provider.GetRequiredService<IFileDialogService>() is FileDialogService dialogs)
             {
