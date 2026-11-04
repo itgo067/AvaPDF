@@ -30,6 +30,8 @@
     <TextBlock Text="基于 Avalonia、Semi.Avalonia、Ursa 与 OfficeIMO 构建。所有文件均在本机处理。"
                TextWrapping="Wrap" TextAlignment="Center" LineHeight="21" FontSize="12"
                Foreground="{DynamicResource SemiColorText2}" />
+    <Button Content="访问 GitHub 仓库" Click="OnGitHubClick" Background="Transparent" BorderThickness="0"
+            Foreground="{DynamicResource SemiColorPrimary}" HorizontalContentAlignment="Center" MinHeight="34" />
     <Button Content="关闭" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" MinHeight="38" Click="OnCloseClick" />
   </StackPanel>
 </Window>

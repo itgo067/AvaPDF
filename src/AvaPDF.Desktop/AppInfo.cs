@@ -4,6 +4,7 @@ namespace AvaPDF.Desktop;
 
 public static class AppInfo
 {
+    public const string GitHubUrl = "https://github.com/itgo067/AvaPDF";
     private static readonly string InformationalVersion =
         typeof(AppInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
         ?? "0.0.0";
