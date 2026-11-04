@@ -9,8 +9,8 @@ $setup = [System.IO.Path]::GetFullPath($SetupPath)
 $installDirectory = Join-Path $env:LOCALAPPDATA 'Programs/AvaPDF-Test'
 $installedExe = Join-Path $installDirectory 'AvaPDF.Desktop.exe'
 $uninstaller = Join-Path $installDirectory 'unins000.exe'
-$contextKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF\Command'
-$optimizeKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize\Command'
+$contextKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF'
+$optimizeKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize\Command'
 
 function Invoke-Installer([string]$path) {
     $process = Start-Process -FilePath $path -Wait -PassThru -ArgumentList @(
@@ -30,10 +30,17 @@ try {
         throw '安装后未找到 AvaPDF.Desktop.exe。'
     }
 
-    $command = (Get-ItemProperty $contextKey).'(default)'
+    $subCommands = (Get-ItemProperty $contextKey).SubCommands
     $optimizeCommand = (Get-ItemProperty $optimizeKey).'(default)'
-    if ($command -notmatch '--file' -or $optimizeCommand -notmatch '--tool optimize') {
-        throw '右键菜单命令注册内容不正确。'
+    if ($subCommands -notmatch 'AvaPDF.Merge' -or $subCommands -notmatch 'AvaPDF.ExtractText' -or $optimizeCommand -notmatch '--tool optimize') {
+        throw '右键功能子菜单注册内容不正确。'
+    }
+
+    foreach ($tool in @('Merge', 'Split', 'Extract', 'Rotate', 'Optimize', 'Watermark', 'Encrypt', 'Decrypt', 'ExtractText')) {
+        $key = "HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.$tool\Command"
+        if (-not (Test-Path $key)) {
+            throw "缺少右键功能命令：$tool"
+        }
     }
 
     $app = Start-Process -FilePath $installedExe -ArgumentList '--tool', 'optimize' -PassThru

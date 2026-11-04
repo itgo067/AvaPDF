@@ -43,12 +43,27 @@ Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}
 Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "使用 AvaPDF 处理"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "AvaPDF"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\AvaPDF.Desktop.exe"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize"; ValueType: string; ValueName: ""; ValueData: "使用 AvaPDF 优化 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\AvaPDF.Desktop.exe"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool optimize --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "SubCommands"; ValueData: "AvaPDF.Merge;AvaPDF.Split;AvaPDF.Extract;AvaPDF.Rotate;AvaPDF.Optimize;AvaPDF.Watermark;AvaPDF.Encrypt;AvaPDF.Decrypt;AvaPDF.ExtractText"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Merge"; ValueType: string; ValueName: ""; ValueData: "合并 PDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Merge\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool merge --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Split"; ValueType: string; ValueName: ""; ValueData: "拆分 PDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Split\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool split --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Extract"; ValueType: string; ValueName: ""; ValueData: "提取页面"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Extract\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool extract --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Rotate"; ValueType: string; ValueName: ""; ValueData: "旋转页面"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Rotate\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool rotate --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize"; ValueType: string; ValueName: ""; ValueData: "优化 PDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool optimize --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Watermark"; ValueType: string; ValueName: ""; ValueData: "添加水印"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Watermark\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool watermark --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Encrypt"; ValueType: string; ValueName: ""; ValueData: "加密 PDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Encrypt\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool encrypt --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Decrypt"; ValueType: string; ValueName: ""; ValueData: "解密 PDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Decrypt\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool decrypt --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText"; ValueType: string; ValueName: ""; ValueData: "提取文本"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool extracttext --file ""%1"""; Flags: uninsdeletekey
 
 [Run]
 Filename: "{app}\AvaPDF.Desktop.exe"; Description: "启动 AvaPDF"; Flags: postinstall nowait skipifsilent unchecked
