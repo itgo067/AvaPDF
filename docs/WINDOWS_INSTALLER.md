@@ -21,6 +21,8 @@ artifacts/publish/AvaPDF-<version>-win-x64-setup.exe
 
 ## 右键菜单
 
+此功能仅属于 Inno Setup 下载版；MSIX／商店版不打包或注册该扩展，详见 [MSIX_PACKAGING.md](MSIX_PACKAGING.md)。
+
 安装后为 PDF 注册一个 **AvaPDF 功能子菜单**，展开后可选择：
 
 - 合并 PDF

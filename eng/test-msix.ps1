@@ -8,19 +8,22 @@ $root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $packageRoot = Join-Path $root 'artifacts/msix-prototype'
 $manifest = Join-Path $root 'packaging/msix-prototype/AppxManifest.xml'
 $payload = Join-Path $root 'artifacts/publish/win-x64-aot'
-$package = Join-Path $root 'artifacts/publish/AvaPDF-0.1.0-msix-com.msix'
-$testShell = Join-Path $root 'artifacts/shell-tests/TestShell.exe'
-$associationTest = Join-Path $root 'artifacts/shell-tests/TestShellAssociation.exe'
-$samplePdf = Join-Path $root 'artifacts/startup sample.pdf'
-$handlerKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF'
-$clsidKey = 'HKCU:\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}'
+$package = Join-Path $root 'artifacts/publish/AvaPDF-0.1.0.msix'
 
 Remove-Item $packageRoot -Recurse -Force -ErrorAction SilentlyContinue
 [System.IO.Directory]::CreateDirectory($packageRoot) | Out-Null
 Copy-Item "$payload/*" $packageRoot -Recurse -Force
+Remove-Item (Join-Path $packageRoot 'shell') -Recurse -Force -ErrorAction SilentlyContinue
 Copy-Item $manifest $packageRoot
 Copy-Item (Join-Path $root 'src/AvaPDF.Desktop/Assets/AppIcon.png') $packageRoot
-& (Join-Path $PSScriptRoot 'create-msix-registry.ps1') -OutputPath (Join-Path $packageRoot 'Registry.dat')
+
+if (Test-Path (Join-Path $packageRoot 'Registry.dat')) {
+    throw 'The store package must not contain an MSIX private registry hive.'
+}
+$manifestText = [System.IO.File]::ReadAllText($manifest)
+if ($manifestText -match 'windows\.comServer|windows\.approvedShellExtension') {
+    throw 'The store package must not contain COM or classic Shell extension declarations.'
+}
 
 & (Join-Path ${env:ProgramFiles(x86)} 'Windows Kits/10/bin/10.0.26100.0/x64/makeappx.exe') pack /d $packageRoot /p $package /o
 if ($LASTEXITCODE -ne 0) {
@@ -41,39 +44,21 @@ $certificatePath = Join-Path $root 'artifacts/msix-prototype-cert.cer'
 $certificatePassword = ConvertTo-SecureString 'msix-test-only' -AsPlainText -Force
 $signingCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($pfx, $certificatePassword)
 Export-Certificate -Cert $signingCertificate -FilePath $certificatePath -Force | Out-Null
-Write-Host "MSIX prototype created: $package"
+Write-Host "MSIX package created without the classic Shell extension: $package"
 Write-Host "Test certificate: $certificatePath"
 
 if (-not $Install) {
-    Write-Host 'Build-only validation complete. Use -Install on a machine with sideloading enabled and the test certificate trusted.'
+    Write-Host 'Build-only validation complete. Use -Install with sideloading enabled and the test certificate trusted.'
     return
 }
 
-& (Join-Path $PSScriptRoot 'build-shell-tests.ps1')
-Remove-Item $handlerKey -Recurse -ErrorAction SilentlyContinue
-Remove-Item $clsidKey -Recurse -ErrorAction SilentlyContinue
 Get-AppxPackage -Name 'AvaPDF.MsixPrototype' | Remove-AppxPackage
 Add-AppxPackage -Path $package -ForceUpdateFromAnyVersion
 $identity = Get-AppxPackage -Name 'AvaPDF.MsixPrototype'
 if ($null -eq $identity) {
     throw 'MSIX package did not install.'
 }
-
-Write-Host 'MSIX installed. Calling CoCreateInstance...'
-& $testShell
-$exitCode = $LASTEXITCODE
-Write-Host "COM test exit code: $exitCode"
-if ($exitCode -ne 0) {
-    Write-Warning 'COM context-menu handler activation failed.'
-}
-
-Write-Host 'Testing the real PDF shell association...'
-& $associationTest $samplePdf
-$associationExitCode = $LASTEXITCODE
-Write-Host "Shell association test exit code: $associationExitCode"
-if ($associationExitCode -ne 0) {
-    Write-Warning 'AvaPDF was not found in the PDF shell context menu.'
-}
+Write-Host "MSIX install smoke passed: $($identity.PackageFullName)"
 
 Remove-AppxPackage -Package $identity.PackageFullName
 Write-Host 'MSIX package removed.'
