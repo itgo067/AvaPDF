@@ -39,6 +39,11 @@ if ([string]::IsNullOrWhiteSpace($version)) {
     throw '无法从发布程序读取版本。'
 }
 
+& (Join-Path $root 'eng/build-shell.ps1') -OutputDirectory (Join-Path $PayloadDirectory 'shell')
+if ($LASTEXITCODE -ne 0) {
+    throw "Shell Extension 构建失败，退出码：$LASTEXITCODE"
+}
+
 $outputBaseName = "AvaPDF-$version-win-x64-setup"
 $arguments = @(
     '/Qp',

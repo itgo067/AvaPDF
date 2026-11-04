@@ -11,8 +11,8 @@ $installedExe = Join-Path $installDirectory 'AvaPDF.Desktop.exe'
 $uninstaller = Get-ChildItem $installDirectory -Filter 'unins*.exe' -ErrorAction SilentlyContinue |
     Sort-Object LastWriteTime -Descending |
     Select-Object -First 1 -ExpandProperty FullName
-$contextKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF'
-$optimizeKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize\Command'
+$contextKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF'
+$optimizeKey = $contextKey
 
 function Invoke-Installer([string]$path) {
     $process = Start-Process -FilePath $path -Wait -PassThru -ArgumentList @(
@@ -26,7 +26,7 @@ if (-not (Test-Path $setup -PathType Leaf)) {
     throw "安装包不存在：$setup"
 }
 
-if (Test-Path $uninstaller -PathType Leaf) {
+if ($uninstaller -and (Test-Path $uninstaller -PathType Leaf)) {
     $previousCleanup = Start-Process -FilePath $uninstaller -Wait -PassThru -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART')
     if ($previousCleanup.ExitCode -ne 0) {
         throw "测试前清理旧安装失败，退出码：$($previousCleanup.ExitCode)"
@@ -61,24 +61,21 @@ try {
         throw '安装后未找到 AvaPDF.Desktop.exe。'
     }
 
-    $subCommands = (Get-ItemProperty $contextKey).SubCommands
-    $optimizeCommand = (Get-ItemProperty $optimizeKey).'(default)'
-    if ($subCommands -notmatch 'AvaPDF.Merge' -or $subCommands -notmatch 'AvaPDF.ExtractText' -or $optimizeCommand -notmatch '--tool optimize') {
-        throw '右键功能子菜单注册内容不正确。'
+    $handlerClsid = (Get-ItemProperty $contextKey).'(default)'
+    if ($handlerClsid -ne '{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}') {
+        throw 'COM 右键处理器 CLSID 不正确。'
     }
 
-    if (Test-Path 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF\Command') {
-        throw '升级后仍残留旧的单命令菜单。'
-    }
-    if (Test-Path 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize') {
-        throw '升级后仍残留旧的优化菜单。'
+    $inprocKey = 'HKCU:\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32'
+    $shellDll = (Get-ItemProperty $inprocKey).'(default)'
+    Write-Host "Shell DLL path: $shellDll"
+    if (-not [System.IO.File]::Exists($shellDll)) {
+        throw 'COM Shell Extension DLL 未正确安装。'
     }
 
-    foreach ($tool in @('Merge', 'Split', 'Extract', 'Rotate', 'Optimize', 'Watermark', 'Encrypt', 'Decrypt', 'ExtractText')) {
-        $key = "HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.$tool\Command"
-        if (-not (Test-Path $key)) {
-            throw "缺少右键功能命令：$tool"
-        }
+    & (Join-Path $PSScriptRoot 'test-shell.ps1')
+    if ($LASTEXITCODE -ne 0) {
+        throw 'COM Shell Extension 实际创建验证失败。'
     }
 
     $app = Start-Process -FilePath $installedExe -ArgumentList '--tool', 'optimize' -PassThru
@@ -92,7 +89,7 @@ try {
     Write-Host '安装、右键注册和安装后启动验证通过。'
 }
 finally {
-    if (Test-Path $uninstaller -PathType Leaf) {
+    if ($uninstaller -and (Test-Path $uninstaller -PathType Leaf)) {
         $uninstall = Start-Process -FilePath $uninstaller -Wait -PassThru -ArgumentList @(
             '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART')
         if ($uninstall.ExitCode -ne 0) {

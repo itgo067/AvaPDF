@@ -38,11 +38,11 @@ artifacts/publish/AvaPDF-<version>-win-x64-setup.exe
 它们只打开工具和文件，不会自动执行处理或覆盖源文件。注册位置：
 
 ```text
-HKCU\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF
-HKCU\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize
+HKCU\Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF
+HKCU\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32
 ```
 
-安装新版本时会先检测并提示卸载旧版本；静默升级则自动执行旧卸载器，同时清理旧右键注册项，避免旧命令与新的功能子菜单混用。卸载时删除上述注册项。
+右键菜单由原生 C++ COM `IContextMenu` 处理器创建，模型与 7-Zip 一致，不依赖 `SubCommands`，也不需要安装 .NET Runtime。安装新版本时会先检测并提示卸载旧版本；静默升级则自动执行旧卸载器，并等待旧卸载注册项被删除后才继续安装，避免仅启动卸载器就直接覆盖。卸载时删除上述注册项。
 
 ## 启动参数
 

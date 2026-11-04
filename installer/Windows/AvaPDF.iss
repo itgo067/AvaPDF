@@ -1,4 +1,4 @@
-#ifndef AppVersion
+﻿#ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
 #ifndef PayloadDir
@@ -43,28 +43,9 @@ Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}
 Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: none; ValueName: ""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "MUIVerb"; ValueData: "AvaPDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\AvaPDF.Desktop.exe"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "SubCommands"; ValueData: "AvaPDF.Merge;AvaPDF.Split;AvaPDF.Extract;AvaPDF.Rotate;AvaPDF.Optimize;AvaPDF.Watermark;AvaPDF.Encrypt;AvaPDF.Decrypt;AvaPDF.ExtractText"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Merge"; ValueType: string; ValueName: ""; ValueData: "合并 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Merge\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool merge --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Split"; ValueType: string; ValueName: ""; ValueData: "拆分 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Split\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool split --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Extract"; ValueType: string; ValueName: ""; ValueData: "提取页面"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Extract\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool extract --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Rotate"; ValueType: string; ValueName: ""; ValueData: "旋转页面"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Rotate\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool rotate --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize"; ValueType: string; ValueName: ""; ValueData: "优化 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool optimize --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Watermark"; ValueType: string; ValueName: ""; ValueData: "添加水印"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Watermark\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool watermark --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Encrypt"; ValueType: string; ValueName: ""; ValueData: "加密 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Encrypt\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool encrypt --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Decrypt"; ValueType: string; ValueName: ""; ValueData: "解密 PDF"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Decrypt\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool decrypt --file ""%1"""; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText"; ValueType: string; ValueName: ""; ValueData: "提取文本"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool extracttext --file ""%1"""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{app}\shell\AvaPDF.Shell.dll"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
 
 [Code]
 function GetPreviousUninstallString: String;
@@ -81,6 +62,7 @@ function InitializeSetup(): Boolean;
 var
   PreviousUninstaller: String;
   ResultCode: Integer;
+  Timeout: Integer;
 begin
   Result := True;
   PreviousUninstaller := GetPreviousUninstallString;
@@ -109,6 +91,20 @@ begin
   end;
   RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF');
   RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize');
+  RegDeleteValue(HKCU, 'Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF', '');
+
+  Timeout := 600;
+  while (Timeout > 0) and RegKeyExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{D8F93822-2B84-4F4A-9E4B-5BDB49CDB56F}_is1') do
+  begin
+    Sleep(100);
+    Dec(Timeout);
+  end;
+  if RegKeyExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{D8F93822-2B84-4F4A-9E4B-5BDB49CDB56F}_is1') then
+  begin
+    MsgBox('旧版本卸载超时，请先手动卸载后重试。', mbError, MB_OK);
+    Result := False;
+    exit;
+  end;
 end;
 
 [Run]

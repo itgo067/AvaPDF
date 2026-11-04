@@ -1,0 +1,4 @@
+LIBRARY AvaPDF.Shell
+EXPORTS
+    DllGetClassObject
+    DllCanUnloadNow
