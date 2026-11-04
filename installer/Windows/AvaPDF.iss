@@ -65,5 +65,50 @@ Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.D
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText"; ValueType: string; ValueName: ""; ValueData: "提取文本"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.ExtractText\Command"; ValueType: string; ValueName: ""; ValueData: """{app}\AvaPDF.Desktop.exe"" --tool extracttext --file ""%1"""; Flags: uninsdeletekey
 
+[Code]
+function GetPreviousUninstallString: String;
+var
+  UninstallString: String;
+begin
+  Result := '';
+  if not RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{D8F93822-2B84-4F4A-9E4B-5BDB49CDB56F}_is1', 'UninstallString', UninstallString) then
+    UninstallString := '';
+  Result := UninstallString;
+end;
+
+function InitializeSetup(): Boolean;
+var
+  PreviousUninstaller: String;
+  ResultCode: Integer;
+begin
+  Result := True;
+  PreviousUninstaller := GetPreviousUninstallString;
+  if PreviousUninstaller <> '' then
+  begin
+    if not WizardSilent then
+    begin
+      if MsgBox('检测到已安装的 AvaPDF 旧版本。安装程序将先卸载旧版本，是否继续？', mbConfirmation, MB_YESNO) = IDNO then
+      begin
+        Result := False;
+        exit;
+      end;
+    end;
+    if not Exec(RemoveQuotes(PreviousUninstaller), '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+    begin
+      MsgBox('无法启动旧版本卸载程序，请先手动卸载后重试。', mbError, MB_OK);
+      Result := False;
+      exit;
+    end;
+    if ResultCode <> 0 then
+    begin
+      MsgBox('旧版本卸载未完成，请先手动卸载后重试。', mbError, MB_OK);
+      Result := False;
+      exit;
+    end;
+  end;
+  RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF');
+  RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize');
+end;
+
 [Run]
 Filename: "{app}\AvaPDF.Desktop.exe"; Description: "启动 AvaPDF"; Flags: postinstall nowait skipifsilent unchecked

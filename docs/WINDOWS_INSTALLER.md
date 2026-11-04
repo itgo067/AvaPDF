@@ -42,7 +42,7 @@ HKCU\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF
 HKCU\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize
 ```
 
-卸载时删除上述注册项。
+安装新版本时会先检测并提示卸载旧版本；静默升级则自动执行旧卸载器，同时清理旧右键注册项，避免旧命令与新的功能子菜单混用。卸载时删除上述注册项。
 
 ## 启动参数
 

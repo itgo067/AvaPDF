@@ -26,6 +26,7 @@ if (-not (Test-Path $setup -PathType Leaf)) {
 
 try {
     Invoke-Installer $setup
+    Invoke-Installer $setup
     if (-not (Test-Path $installedExe -PathType Leaf)) {
         throw '安装后未找到 AvaPDF.Desktop.exe。'
     }
@@ -34,6 +35,13 @@ try {
     $optimizeCommand = (Get-ItemProperty $optimizeKey).'(default)'
     if ($subCommands -notmatch 'AvaPDF.Merge' -or $subCommands -notmatch 'AvaPDF.ExtractText' -or $optimizeCommand -notmatch '--tool optimize') {
         throw '右键功能子菜单注册内容不正确。'
+    }
+
+    if (Test-Path 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF\Command') {
+        throw '升级后仍残留旧的单命令菜单。'
+    }
+    if (Test-Path 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize') {
+        throw '升级后仍残留旧的优化菜单。'
     }
 
     foreach ($tool in @('Merge', 'Split', 'Extract', 'Rotate', 'Optimize', 'Watermark', 'Encrypt', 'Decrypt', 'ExtractText')) {
@@ -67,5 +75,8 @@ finally {
     }
     if (Test-Path $contextKey) {
         Write-Warning '卸载后仍存在右键菜单注册。'
+    }
+    if (Test-Path $optimizeKey) {
+        Write-Warning '卸载后仍存在优化功能注册。'
     }
 }
