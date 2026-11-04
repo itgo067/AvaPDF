@@ -43,6 +43,7 @@ Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.exe"; WorkingDir: "{app}"
 Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; ValueType: string; ValueName: "AppExecutable"; ValueData: "{app}\AvaPDF.exe"; Flags: uninsdeletevalue
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{app}\shell\AvaPDF.Shell.dll"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey

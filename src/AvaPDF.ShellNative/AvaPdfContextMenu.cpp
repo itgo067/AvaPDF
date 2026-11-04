@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <array>
+#include <vector>
 
 namespace {
 constexpr GUID CLSID_AvaPdfContextMenu =
@@ -25,7 +26,7 @@ constexpr std::array<Command, 9> Commands = {{
     { L"extracttext", L"提取文本" }
 }};
 
-class AvaPdfContextMenu final : public IContextMenu {
+class AvaPdfContextMenu final : public IContextMenu, public IShellExtInit {
 public:
     static LONG _serverReferences;
 
@@ -36,6 +37,11 @@ public:
         *object = nullptr;
         if (riid == IID_IUnknown || riid == IID_IContextMenu) {
             *object = static_cast<IContextMenu*>(this);
+            AddRef();
+            return S_OK;
+        }
+        if (riid == IID_IShellExtInit) {
+            *object = static_cast<IShellExtInit*>(this);
             AddRef();
             return S_OK;
         }
@@ -52,6 +58,29 @@ public:
         const auto remaining = static_cast<ULONG>(InterlockedDecrement(&_references));
         if (remaining == 0) delete this;
         return remaining;
+    }
+
+    HRESULT STDMETHODCALLTYPE Initialize(
+        PCIDLIST_ABSOLUTE, IDataObject* data, HKEY) override {
+        _documents.clear();
+        if (data == nullptr) return E_INVALIDARG;
+
+        FORMATETC format = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+        STGMEDIUM medium = {};
+        const auto result = data->GetData(&format, &medium);
+        if (FAILED(result)) return result;
+
+        const auto drop = static_cast<HDROP>(medium.hGlobal);
+        const auto count = DragQueryFileW(drop, 0xFFFFFFFF, nullptr, 0);
+        for (UINT index = 0; index < count; ++index) {
+            const auto length = DragQueryFileW(drop, index, nullptr, 0);
+            std::wstring path(length, L'\0');
+            if (DragQueryFileW(drop, index, path.data(), length + 1) != 0) {
+                _documents.push_back(path);
+            }
+        }
+        ReleaseStgMedium(&medium);
+        return S_OK;
     }
 
     HRESULT STDMETHODCALLTYPE QueryContextMenu(
@@ -87,17 +116,30 @@ public:
         const auto index = FindCommand(info->lpVerb);
         if (index < 0) return E_INVALIDARG;
 
-        wchar_t localAppData[MAX_PATH] = {};
-        if (GetEnvironmentVariableW(L"LOCALAPPDATA", localAppData, MAX_PATH) == 0) return E_FAIL;
-        std::wstringstream executable;
-        executable << localAppData << L"\\Programs\\AvaPDF\\AvaPDF.exe";
-        const auto document = Utf8ToWide(info->lpDirectory);
+        wchar_t registeredExecutable[MAX_PATH] = {};
+        DWORD executableBytes = sizeof(registeredExecutable);
+        const auto registryResult = RegGetValueW(
+            HKEY_CURRENT_USER,
+            L"Software\\Classes\\CLSID\\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}",
+            L"AppExecutable", RRF_RT_REG_SZ, nullptr, registeredExecutable, &executableBytes);
+        std::wstring executable;
+        if (registryResult == ERROR_SUCCESS) {
+            executable = registeredExecutable;
+        }
+        else {
+            wchar_t localAppData[MAX_PATH] = {};
+            if (GetEnvironmentVariableW(L"LOCALAPPDATA", localAppData, MAX_PATH) == 0) return E_FAIL;
+            std::wstringstream fallback;
+            fallback << localAppData << L"\\Programs\\AvaPDF\\AvaPDF.exe";
+            executable = fallback.str();
+        }
+        const auto document = _documents.empty() ? Utf8ToWide(info->lpDirectory) : _documents.front();
         std::wstringstream arguments;
         arguments << L"--tool " << Commands[index].tool << L" --file \""
                   << document << L"\"";
 
         const auto result = ShellExecuteW(
-            info->hwnd, L"open", executable.str().c_str(), arguments.str().c_str(),
+            info->hwnd, L"open", executable.c_str(), arguments.str().c_str(),
             document.c_str(), SW_SHOWNORMAL);
         return reinterpret_cast<INT_PTR>(result) > 32 ? S_OK : E_FAIL;
     }
@@ -120,6 +162,10 @@ public:
     }
 
     static int FindCommand(LPCSTR verb) {
+        if (IS_INTRESOURCE(verb)) {
+            const auto index = static_cast<int>(LOWORD(verb));
+            return index < static_cast<int>(Commands.size()) ? index : -1;
+        }
         for (int index = 0; index < static_cast<int>(Commands.size()); ++index) {
             char tool[32] = {};
             const auto length = WideCharToMultiByte(CP_UTF8, 0, Commands[index].tool, -1, tool, 32, nullptr, nullptr);
@@ -129,6 +175,7 @@ public:
     }
 
     LONG _references;
+    std::vector<std::wstring> _documents;
 };
 
 LONG AvaPdfContextMenu::_serverReferences = 0;

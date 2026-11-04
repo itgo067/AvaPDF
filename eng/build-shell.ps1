@@ -28,7 +28,7 @@ if (-not (Test-Path $vcVars -PathType Leaf)) {
 [System.IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
 $output = Join-Path $OutputDirectory 'AvaPDF.Shell.dll'
 $definition = Join-Path $root 'src/AvaPDF.ShellNative/AvaPDF.Shell.def'
-$command = 'call "{0}" >nul && cl.exe /LD /MT /EHsc /std:c++17 /W4 /O2 /utf-8 "{1}" /link /DEF:"{2}" /OUT:"{3}" user32.lib shell32.lib ole32.lib' -f $vcVars, $source, $definition, $output
+$command = 'call "{0}" >nul && cl.exe /LD /MT /EHsc /std:c++17 /W4 /O2 /utf-8 "{1}" /link /DEF:"{2}" /OUT:"{3}" user32.lib shell32.lib ole32.lib advapi32.lib' -f $vcVars, $source, $definition, $output
 & cmd.exe /d /c $command
 if ($LASTEXITCODE -ne 0) {
     throw "Shell Extension 编译失败，退出码：$LASTEXITCODE"
