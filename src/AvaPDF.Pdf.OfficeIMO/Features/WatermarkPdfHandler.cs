@@ -70,6 +70,15 @@ public sealed class WatermarkPdfHandler : PdfOperationHandler<WatermarkPdfReques
             var renderingOptions = new PdfOptions().UseTextFallbacks(PdfTextFallbackFeatures.Default);
             renderingOptions.TryUseDefaultDocumentFontFallback(true);
             renderingOptions.TryRegisterDefaultDocumentMonospaceFontFallback(true);
+            const string fallbackFont = "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf";
+            if (File.Exists(fallbackFont))
+            {
+                renderingOptions.UseFontFamily("Droid Sans Fallback", fallbackFont, fallbackFont, fallbackFont, fallbackFont);
+            }
+            else
+            {
+                renderingOptions.TryRegisterEmbeddedFontFallbacksFromSystem(UnicodeFontFamilies.SystemCandidates);
+            }
             var width = request.Width ?? 360;
             var height = request.Height ?? 120;
             var options = new PdfCanvasStampOptions

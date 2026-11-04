@@ -27,10 +27,12 @@ public sealed class ExcelToPdfHandler : PdfOperationHandler<DocumentToPdfRequest
         Stream output,
         CancellationToken cancellationToken)
     {
+        var options = new ExcelToPdfOptions();
+        DocumentConversion.ConfigureUnicodeFallbacks(options.PdfOptions);
         using var workbook = string.Equals(Path.GetExtension(request.Source.Name), ".xls", StringComparison.OrdinalIgnoreCase)
             ? ExcelDocument.LoadLegacyXls(input, options: null)
             : await ExcelDocument.LoadAsync(input, options: null, cancellationToken).ConfigureAwait(false);
-        var result = workbook.SaveAsPdfResult(output, new ExcelToPdfOptions(), cancellationToken);
+        var result = workbook.SaveAsPdfResult(output, options, cancellationToken);
         return DocumentConversion.Complete(result);
     }
 }

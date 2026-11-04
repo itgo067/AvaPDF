@@ -27,10 +27,12 @@ public sealed class PowerPointToPdfHandler : PdfOperationHandler<DocumentToPdfRe
         Stream output,
         CancellationToken cancellationToken)
     {
+        var options = new PowerPointToPdfOptions();
+        DocumentConversion.ConfigureUnicodeFallbacks(options.PdfOptions);
         using var presentation = string.Equals(Path.GetExtension(request.Source.Name), ".ppt", StringComparison.OrdinalIgnoreCase)
             ? PowerPointPresentation.LoadLegacyPpt(input, options: null)
             : await PowerPointPresentation.LoadAsync(input, options: null, cancellationToken).ConfigureAwait(false);
-        var result = presentation.SaveAsPdfResult(output, new PowerPointToPdfOptions(), cancellationToken);
+        var result = presentation.SaveAsPdfResult(output, options, cancellationToken);
         return DocumentConversion.Complete(result);
     }
 }

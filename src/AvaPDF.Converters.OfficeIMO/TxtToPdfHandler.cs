@@ -28,7 +28,7 @@ public sealed class TxtToPdfHandler : PdfOperationHandler<DocumentToPdfRequest>
         var pdfOptions = new PdfOptions();
         pdfOptions.TryUseDefaultDocumentFontFallback(true);
         pdfOptions.TryRegisterDefaultDocumentMonospaceFontFallback(true);
-        pdfOptions.TryRegisterEmbeddedFontFallbacksFromSystem(PdfOptions.DefaultDocumentMultilingualFontFamilyFallback);
+        DocumentConversion.ConfigureUnicodeFallbacks(pdfOptions);
         var conversion = PdfPlainTextConverter.ToPdfDocumentResult(
             input,
             new PdfPlainTextOptions { PdfOptions = pdfOptions },

@@ -19,6 +19,7 @@
 - `.github/workflows/linux-packages.yml` 构建 linux-x64 Native AOT、DEB 和 AppImage，并在 Xvfb 中检查真实 AvaPDF 窗口。
 - CI 实际执行 DEB 安装、程序入口与 KDE 文件检查、GUI 启动、卸载清理，以及 AppImage 的 extract-and-run 启动。
 - AppImageTool 固定为 1.9.1，并在 CI 中校验官方 SHA-256。
+- 中文 PDF 显式嵌入 `DroidSansFallbackFull.ttf`，同时保留 `DejaVu Sans` 等拉丁字体回退；CI 安装 `fonts-droid-fallback`，DEB 同时推荐 `fonts-noto-cjk` 和 `fonts-droid-fallback`。
 - KDE 菜单与真实桌面交互仍建议在 Kubuntu 26.04 做最终人工验证。
 
 ## DEB 结构

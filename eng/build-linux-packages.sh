@@ -64,7 +64,7 @@ Architecture: amd64
 Maintainer: AvaPDF <dev@avatools.local>
 Installed-Size: $INSTALLED_SIZE
 Depends: $DEPENDENCIES
-Recommends: fonts-noto-cjk
+Recommends: fonts-noto-cjk, fonts-droid-fallback
 Priority: optional
 Section: utils
 Description: Local PDF workspace

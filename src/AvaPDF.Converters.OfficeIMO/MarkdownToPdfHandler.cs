@@ -30,6 +30,7 @@ public sealed class MarkdownToPdfHandler : PdfOperationHandler<DocumentToPdfRequ
     {
         var document = await MarkdownDoc.LoadAsync(input, options: null, encoding: null, cancellationToken).ConfigureAwait(false);
         var options = new MarkdownToPdfOptions { IncludeImages = true };
+        DocumentConversion.ConfigureUnicodeFallbacks(options.PdfOptions);
         var resourceRoot = DocumentConversion.ResolveResourceRoot(request.ResourceBaseDirectory);
         if (resourceRoot is not null)
         {

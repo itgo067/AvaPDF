@@ -25,8 +25,10 @@ public sealed class RtfToPdfHandler : PdfOperationHandler<DocumentToPdfRequest>
         Stream output,
         CancellationToken cancellationToken)
     {
+        var options = new RtfToPdfOptions();
+        DocumentConversion.ConfigureUnicodeFallbacks(options.PdfOptions);
         var document = await RtfDocument.LoadAsync(input, options: null, encoding: null, cancellationToken).ConfigureAwait(false);
-        var result = document.SaveAsPdfResult(output, new RtfToPdfOptions(), cancellationToken);
+        var result = document.SaveAsPdfResult(output, options, cancellationToken);
         return DocumentConversion.Complete(result);
     }
 }

@@ -1,3 +1,4 @@
+using AvaPDF.Application.Common;
 using AvaPDF.Application.Operations;
 using AvaPDF.Domain;
 using OfficeIMO.Pdf;
@@ -45,6 +46,24 @@ internal static class DocumentConversion
             .Select(warning => $"{warning.Source}: {warning.Message}")
             .Distinct(StringComparer.Ordinal)
             .ToArray();
+    }
+
+    public static void ConfigureUnicodeFallbacks(PdfOptions? options)
+    {
+        const string fallbackFont = "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf";
+        if (options is null)
+        {
+            return;
+        }
+
+        if (File.Exists(fallbackFont))
+        {
+            options.UseFontFamily("Droid Sans Fallback", fallbackFont, fallbackFont, fallbackFont, fallbackFont);
+            options.TryRegisterEmbeddedFontFallbacksFromSystem(UnicodeFontFamilies.SystemCandidates);
+            return;
+        }
+
+        options.TryRegisterEmbeddedFontFallbacksFromSystem(UnicodeFontFamilies.SystemCandidates);
     }
 
     public static string? ResolveResourceRoot(string? directory)

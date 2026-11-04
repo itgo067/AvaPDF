@@ -28,11 +28,13 @@ public sealed class WordToPdfHandler : PdfOperationHandler<DocumentToPdfRequest>
         Stream output,
         CancellationToken cancellationToken)
     {
+        var options = new WordToPdfOptions();
+        DocumentConversion.ConfigureUnicodeFallbacks(options.PdfOptions);
         if (string.Equals(Path.GetExtension(request.Source.Name), ".doc", StringComparison.OrdinalIgnoreCase))
         {
             var conversion = LegacyDocPdfConverter.ToPdfDocumentResult(
                 input,
-                new WordToPdfOptions(),
+                options,
                 importOptions: null,
                 lossPolicy: OfficeConversionLossPolicy.Block,
                 cancellationToken);
@@ -46,7 +48,7 @@ public sealed class WordToPdfHandler : PdfOperationHandler<DocumentToPdfRequest>
         }
 
         using var document = await WordDocument.LoadAsync(input, options: null, cancellationToken).ConfigureAwait(false);
-        var result = document.SaveAsPdfResult(output, new WordToPdfOptions(), cancellationToken);
+        var result = document.SaveAsPdfResult(output, options, cancellationToken);
         return DocumentConversion.Complete(result);
     }
 }
