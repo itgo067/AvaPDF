@@ -15,7 +15,7 @@
     <Resource Language="zh-cn" />
   </Resources>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.20348.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
   <Applications>
     <Application Id="AvaPDF" Executable="AvaPDF.Desktop.exe" EntryPoint="Windows.FullTrustApplication">
@@ -25,18 +25,16 @@
         <desktop7:Extension Category="windows.approvedShellExtension">
           <desktop7:ApprovedShellExtension Name="AvaPDF" Clsid="6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001" />
         </desktop7:Extension>
+        <com4:Extension Category="windows.comServer">
+          <com4:ComServer>
+            <com4:SurrogateServer LaunchAndActivationPermission="O:SYG:SYD:(A;;0X1F;;;WD)">
+              <com4:Class Id="6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001" Path="shell\AvaPDF.Shell.dll" ThreadingModel="STA" Virtualization="disabled" />
+            </com4:SurrogateServer>
+          </com4:ComServer>
+        </com4:Extension>
       </Extensions>
     </Application>
   </Applications>
-  <Extensions>
-    <com4:Extension Category="windows.comServer">
-      <com4:ComServer>
-        <com4:InProcessServer Path="shell\AvaPDF.Shell.dll">
-          <com4:Class Id="6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001" ThreadingModel="STA" />
-        </com4:InProcessServer>
-      </com4:ComServer>
-    </com4:Extension>
-  </Extensions>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>

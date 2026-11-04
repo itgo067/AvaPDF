@@ -45,7 +45,6 @@ public static class MsixRegistryHive
         Check(RegLoadAppKey(path, out root, access, 0, 0));
         try
         {
-            CreateKey(root, @"SOFTWARE\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32", "shell\\AvaPDF.Shell.dll");
             CreateKey(root, @"SOFTWARE\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF", "{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}");
         }
         finally
@@ -62,10 +61,6 @@ public static class MsixRegistryHive
         try
         {
             SetString(key, null, value);
-            if (path.EndsWith("InprocServer32", StringComparison.OrdinalIgnoreCase))
-            {
-                SetString(key, "ThreadingModel", "Apartment");
-            }
         }
         finally
         {

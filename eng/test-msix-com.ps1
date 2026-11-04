@@ -10,6 +10,8 @@ $manifest = Join-Path $root 'packaging/msix-prototype/AppxManifest.xml'
 $payload = Join-Path $root 'artifacts/publish/win-x64-aot'
 $package = Join-Path $root 'artifacts/publish/AvaPDF-0.1.0-msix-com.msix'
 $testShell = Join-Path $root 'artifacts/shell-tests/TestShell.exe'
+$associationTest = Join-Path $root 'artifacts/shell-tests/TestShellAssociation.exe'
+$samplePdf = Join-Path $root 'artifacts/startup sample.pdf'
 $handlerKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF'
 $clsidKey = 'HKCU:\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}'
 
@@ -47,8 +49,10 @@ if (-not $Install) {
     return
 }
 
+& (Join-Path $PSScriptRoot 'build-shell-tests.ps1')
 Remove-Item $handlerKey -Recurse -ErrorAction SilentlyContinue
 Remove-Item $clsidKey -Recurse -ErrorAction SilentlyContinue
+Get-AppxPackage -Name 'AvaPDF.MsixPrototype' | Remove-AppxPackage
 Add-AppxPackage -Path $package -ForceUpdateFromAnyVersion
 $identity = Get-AppxPackage -Name 'AvaPDF.MsixPrototype'
 if ($null -eq $identity) {
@@ -60,7 +64,15 @@ Write-Host 'MSIX installed. Calling CoCreateInstance...'
 $exitCode = $LASTEXITCODE
 Write-Host "COM test exit code: $exitCode"
 if ($exitCode -ne 0) {
-    Write-Warning 'COM context-menu handler is not registered by the MSIX package.'
+    Write-Warning 'COM context-menu handler activation failed.'
+}
+
+Write-Host 'Testing the real PDF shell association...'
+& $associationTest $samplePdf
+$associationExitCode = $LASTEXITCODE
+Write-Host "Shell association test exit code: $associationExitCode"
+if ($associationExitCode -ne 0) {
+    Write-Warning 'AvaPDF was not found in the PDF shell context menu.'
 }
 
 Remove-AppxPackage -Package $identity.PackageFullName

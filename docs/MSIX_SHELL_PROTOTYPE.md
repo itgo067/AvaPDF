@@ -1,59 +1,59 @@
 # MSIX COM / Shell 原型验证
 
-## 当前结论
+## 结论
 
-当前只确认 **MSIX 清单、私有注册表和签名打包有效**，尚未确认安装后 Explorer 右键菜单可用，不能据此承诺商店版保留该功能。
+**当前原生 `IContextMenu` 右键扩展经 MSIX 打包后，不能作为可用的 Explorer PDF 菜单交付。**
 
-原型使用：
+最佳结果是：通过 `SurrogateServer` 可以从外部进程创建 COM 对象并生成菜单；但 Shell 没有加载 AvaPDF 关联。直接进程内激活则被拒绝。因此“COM 创建成功”不能等同于“Explorer 右键可用”。
 
-- `com4:InProcessServer` 注册现有原生 `AvaPDF.Shell.dll`；
-- `desktop7:ApprovedShellExtension` 声明 Shell 扩展；
-- `Registry.dat` 写入传统 `InprocServer32` 和 `.pdf` 的 `ShellEx\ContextMenuHandlers\AvaPDF` 关联；
-- 继续使用 CLSID `{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}`。
+## 实测结果
 
-需要特别验证：MSIX 的 COM 注册能否被非打包的 Explorer 使用，以及私有注册表中的 ShellEx 关联是否会被 Explorer 枚举。`makeappx` 成功并不证明这两点。
+| 配置 | 结果 |
+| --- | --- |
+| `com4:InProcessServer`，默认虚拟化 | `CoCreateInstance=0x80040154`，类未注册 |
+| `com4:InProcessServer`，`Virtualization="disabled"` | `CoCreateInstance=0x80070005`，拒绝访问 |
+| `com4:SurrogateServer`，禁用虚拟化并声明激活权限 | `CoCreateInstance=0x00000000`，`QueryContextMenu=0x00000000` |
+| `Registry.dat` 中的 PDF ShellEx 关联 | `AvaPDF shell association=NOT FOUND` |
+| 临时 HKCU ShellEx 关联 + MSIX SurrogateServer | `AvaPDF shell association=NOT FOUND` |
+| 临时 HKCU ShellEx 关联 + MSIX InProcessServer | `AvaPDF shell association=NOT FOUND` |
 
-## 已完成
+Shell 关联测试通过 `IShellFolder::GetUIObjectOf` 获取真实 PDF 的合并上下文菜单，并枚举菜单项；不是仅检查注册表或调用打包应用。
 
-- `makeappx pack` 成功；
-- 自签名测试证书签名成功；
-- 原型包：`artifacts/publish/AvaPDF-0.1.0-msix-com.msix`；
-- 测试证书：`artifacts/msix-prototype-cert.cer`。
+## 当前原型
 
-构建命令：
+`packaging/msix-prototype/AppxManifest.xml` 保留最佳 COM 结果：
 
-```powershell
-& eng/build-shell.ps1 -Publish
-& eng/test-msix-com.ps1
-```
+- `com4:SurrogateServer`；
+- `Virtualization="disabled"`；
+- 测试用 `LaunchAndActivationPermission`；
+- `desktop7:ApprovedShellExtension`；
+- CLSID `{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}`。
 
-## 本机阻塞
+`Registry.dat` 只保留 PDF ShellEx 关联，用于证明该关联不会被当前 Shell 枚举。测试用激活权限不得直接作为正式商店配置。
 
-当前非交互环境遇到：
+## 构建与复测
 
-- `0x800B0109`：自签名证书不在受信任根存储；
-- `0x80073CFF`：系统未允许旁加载；
-- 向受信任根存储导入证书时，系统返回“此操作中不允许使用 UI”。
+前置条件：
 
-因此 `CoCreateInstance`、Explorer 菜单和 `InvokeCommand` 的安装后测试还没有执行成功。
-
-## 下一步实测
-
-在允许旁加载的干净 Windows 测试机上，用管理员 PowerShell 导入测试证书，然后执行：
+- 开启开发者模式或允许旁加载；
+- 将 `artifacts/msix-prototype-cert.cer` 导入受信任根存储；
+- 已构建 `artifacts/publish/win-x64-aot` 和其中的 `shell/AvaPDF.Shell.dll`。
 
 ```powershell
-Import-Certificate -FilePath artifacts/msix-prototype-cert.cer -CertStoreLocation Cert:\LocalMachine\Root
+& eng/build-shell-tests.ps1
 & eng/test-msix-com.ps1 -Install
 ```
 
-`-Install` 会清除 AvaPDF 的传统 HKCU COM 测试注册，安装 MSIX，运行 `TestShell.exe` 的 `CoCreateInstance`/`QueryContextMenu` 测试，然后移除 MSIX。
+脚本安装 MSIX，依次执行直接 COM 测试和真实 PDF Shell 关联测试，然后移除 MSIX。当前预期是：直接 COM 成功，Shell 关联失败。
 
-仍需人工在 Explorer 中验证：
+## 商店版决策
 
-1. 选中一个 PDF 后出现 `AvaPDF` 及四个二级菜单；
-2. 每个命令启动 MSIX 应用并载入所选文件；
-3. 多选 PDF、中文/空格/UNC 路径；
-4. 升级和卸载后菜单及 COM 注册无残留；
-5. WACK 和 Partner Center 认证是否接受这些声明。
+不要为商店版承诺保留当前传统 `IContextMenu` 二级菜单。
 
-测试证书仅用于本机原型，不得用于正式发布。
+后续选项：
+
+1. 商店版移除传统右键扩展，Inno Setup 下载版继续保留；
+2. 单独实现 `IExplorerCommand` + `desktop4:FileExplorerContextMenus`，重新验证 Windows 版本、级联菜单、文件路径和商店认证；
+3. 若必须保留完整传统菜单，则继续通过 Inno Setup 分发，不把 MSIX 作为等价替代。
+
+仍需在采用新方案后验证 `InvokeCommand`、多选、中文/空格/UNC 路径、升级卸载、WACK 和 Partner Center 认证。
