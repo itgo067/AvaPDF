@@ -51,17 +51,21 @@ verify_gui_window() {
 "${SUDO[@]}" apt-get install -y "$DEB"
 hash -r
 command -v avapdf >/dev/null
-[[ -x /opt/avapdf/AvaPDF.Desktop ]]
+[[ -x /opt/avapdf/AvaPDF ]]
 [[ -f /usr/share/applications/avapdf.desktop ]]
 [[ -f /usr/share/kio/servicemenus/avapdf-pdf.desktop ]]
 desktop-file-validate /usr/share/applications/avapdf.desktop
-desktop-file-validate /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Type=Service' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'MimeType=application/pdf;' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Actions=AvaPDFOptimize' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx '[Desktop Action AvaPDFOptimize]' /usr/share/kio/servicemenus/avapdf-pdf.desktop
 verify_gui_window "$(mktemp)" /usr/bin/avapdf --tool optimize
 
 echo 'DEB install, desktop integration and GUI startup verified.'
 "${SUDO[@]}" apt-get remove -y avapdf
 hash -r
-[[ ! -e /opt/avapdf/AvaPDF.Desktop ]]
+[[ ! -e /opt/avapdf/AvaPDF ]]
 [[ ! -e /usr/share/applications/avapdf.desktop ]]
 [[ ! -e /usr/share/kio/servicemenus/avapdf-pdf.desktop ]]
 echo 'DEB uninstall cleanup verified.'

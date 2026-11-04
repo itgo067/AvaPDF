@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $setup = [System.IO.Path]::GetFullPath($SetupPath)
 $installDirectory = Join-Path $env:LOCALAPPDATA 'Programs/AvaPDF-Test'
-$installedExe = Join-Path $installDirectory 'AvaPDF.Desktop.exe'
+$installedExe = Join-Path $installDirectory 'AvaPDF.exe'
 $uninstaller = Get-ChildItem $installDirectory -Filter 'unins*.exe' -ErrorAction SilentlyContinue |
     Sort-Object LastWriteTime -Descending |
     Select-Object -First 1 -ExpandProperty FullName
@@ -58,7 +58,7 @@ try {
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1 -ExpandProperty FullName
     if (-not (Test-Path $installedExe -PathType Leaf)) {
-        throw '安装后未找到 AvaPDF.Desktop.exe。'
+        throw '安装后未找到 AvaPDF.exe。'
     }
 
     $handlerClsid = (Get-ItemProperty $contextKey).'(default)'

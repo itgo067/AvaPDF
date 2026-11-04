@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>AvaPDF.Desktop</RootNamespace>
+    <AssemblyName>AvaPDF</AssemblyName>
     <Product>AvaPDF</Product>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -19,5 +20,6 @@
     <PackageReference Include="Semi.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Velopack" />
   </ItemGroup>
 </Project>

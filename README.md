@@ -37,7 +37,7 @@ powershell -File eng/publish-desktop.ps1
 
 脚本会检测 MSVC 工具链，先运行全部 PDF 功能的 AOT 冒烟测试，再发布桌面程序，并记录体积和三次窗口启动耗时、生成 ZIP；条件不足或验证失败时明确提示并回退到 CoreCLR。强制要求 AOT 时使用 `-RequireAot`。详见 [docs/PUBLISHING.md](docs/PUBLISHING.md) 和 [docs/BENCHMARKS.md](docs/BENCHMARKS.md)。
 
-Windows 安装包与 PDF 右键菜单见 [docs/WINDOWS_INSTALLER.md](docs/WINDOWS_INSTALLER.md)。MSIX／商店版的独立打包边界见 [docs/MSIX_PACKAGING.md](docs/MSIX_PACKAGING.md)：**商店版不包含传统右键菜单，Inno Setup 版继续保留**。Ubuntu/Kubuntu 的 DEB、AppImage 与 Flatpak 取舍见 [docs/LINUX_PACKAGING.md](docs/LINUX_PACKAGING.md)。
+Windows 安装包与 PDF 右键菜单见 [docs/WINDOWS_INSTALLER.md](docs/WINDOWS_INSTALLER.md)；Velopack 安装与更新原型见 [docs/VELOPACK_PROTOTYPE.md](docs/VELOPACK_PROTOTYPE.md)。MSIX／商店版的独立打包边界见 [docs/MSIX_PACKAGING.md](docs/MSIX_PACKAGING.md)：**商店版不包含传统右键菜单，Inno Setup 版继续保留**。Ubuntu/Kubuntu 的 DEB、AppImage 与 Flatpak 取舍见 [docs/LINUX_PACKAGING.md](docs/LINUX_PACKAGING.md)。
 
 ## 项目结构
 

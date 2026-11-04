@@ -6,7 +6,7 @@
 
 | 指标 | 结果 |
 | --- | ---: |
-| `AvaPDF.Desktop.exe` | 111.76 MiB |
+| `AvaPDF.exe` | 111.76 MiB |
 | 完整发布目录（不含 PDB） | 129.73 MiB |
 | ZIP 发布包（不含 PDB） | 47.87 MiB |
 | 第一次启动 | 589.6 ms |

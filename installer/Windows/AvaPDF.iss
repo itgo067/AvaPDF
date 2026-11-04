@@ -27,7 +27,7 @@ WizardStyle=modern
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-UninstallDisplayIcon={app}\AvaPDF.Desktop.exe
+UninstallDisplayIcon={app}\AvaPDF.exe
 CloseApplications=yes
 RestartApplications=no
 ShowLanguageDialog=no
@@ -39,8 +39,8 @@ Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: 
 Source: "{#PayloadDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb"
 
 [Icons]
-Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"
-Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.exe"; WorkingDir: "{app}"
+Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{app}\shell\AvaPDF.Shell.dll"; Flags: uninsdeletekey
@@ -108,4 +108,4 @@ begin
 end;
 
 [Run]
-Filename: "{app}\AvaPDF.Desktop.exe"; Description: "启动 AvaPDF"; Flags: postinstall nowait skipifsilent unchecked
+Filename: "{app}\AvaPDF.exe"; Description: "启动 AvaPDF"; Flags: postinstall nowait skipifsilent unchecked

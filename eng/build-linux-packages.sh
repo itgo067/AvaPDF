@@ -31,7 +31,13 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
 fi
 
 desktop-file-validate "$ROOT/packaging/linux/avapdf.desktop"
-desktop-file-validate "$ROOT/packaging/linux/avapdf-pdf.desktop"
+# KDE service menus use Type=Service and KDE-specific keys, which the generic
+# desktop-file-validate utility incorrectly rejects as an Application entry.
+grep -Fqx 'Type=Service' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'MimeType=application/pdf;' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'Actions=AvaPDFOptimize' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx '[Desktop Action AvaPDFOptimize]' "$ROOT/packaging/linux/avapdf-pdf.desktop"
 
 # DEB payload
 mkdir -p "$DEB_ROOT/opt/avapdf" "$DEB_ROOT/usr/bin" "$DEB_ROOT/DEBIAN"
@@ -41,7 +47,7 @@ cp -a "$PUBLISH_DIR"/. "$DEB_ROOT/opt/avapdf/"
 find "$DEB_ROOT/opt/avapdf" -type f \( -name '*.pdb' -o -name '*.dbg' \) -delete
 cat > "$DEB_ROOT/usr/bin/avapdf" <<'EOF'
 #!/bin/sh
-exec /opt/avapdf/AvaPDF.Desktop "$@"
+exec /opt/avapdf/AvaPDF "$@"
 EOF
 chmod 755 "$DEB_ROOT/usr/bin/avapdf"
 cp "$ROOT/packaging/linux/avapdf.desktop" "$DEB_ROOT/usr/share/applications/avapdf.desktop"
@@ -82,7 +88,7 @@ find "$APPDIR/usr/bin" -type f \( -name '*.pdb' -o -name '*.dbg' \) -delete
 cat > "$APPDIR/AppRun" <<'EOF'
 #!/bin/sh
 HERE=$(dirname "$(readlink -f "$0")")
-exec "$HERE/usr/bin/AvaPDF.Desktop" "$@"
+exec "$HERE/usr/bin/AvaPDF" "$@"
 EOF
 chmod 755 "$APPDIR/AppRun"
 cp "$ROOT/packaging/linux/avapdf.desktop" "$APPDIR/avapdf.desktop"

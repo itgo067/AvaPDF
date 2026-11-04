@@ -90,7 +90,7 @@ public:
         wchar_t localAppData[MAX_PATH] = {};
         if (GetEnvironmentVariableW(L"LOCALAPPDATA", localAppData, MAX_PATH) == 0) return E_FAIL;
         std::wstringstream executable;
-        executable << localAppData << L"\\Programs\\AvaPDF\\AvaPDF.Desktop.exe";
+        executable << localAppData << L"\\Programs\\AvaPDF\\AvaPDF.exe";
         const auto document = Utf8ToWide(info->lpDirectory);
         std::wstringstream arguments;
         arguments << L"--tool " << Commands[index].tool << L" --file \""

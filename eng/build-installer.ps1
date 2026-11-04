@@ -16,7 +16,7 @@ if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
 
 $PayloadDirectory = [System.IO.Path]::GetFullPath($PayloadDirectory)
 $OutputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
-$executable = Join-Path $PayloadDirectory 'AvaPDF.Desktop.exe'
+$executable = Join-Path $PayloadDirectory 'AvaPDF.exe'
 $script = Join-Path $root 'installer/Windows/AvaPDF.iss'
 if (-not (Test-Path $executable -PathType Leaf)) {
     throw "找不到安装负载：$executable"

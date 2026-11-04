@@ -41,7 +41,7 @@ function Invoke-ReleaseMetrics([string]$engine, [string]$outputDirectory) {
         $suffix = 'aot'
     }
     $jsonPath = Join-Path $metricsRoot "$Runtime-$suffix.json"
-    $executable = Join-Path $outputDirectory 'AvaPDF.Desktop.exe'
+    $executable = Join-Path $outputDirectory 'AvaPDF.exe'
     $productVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($executable).ProductVersion
     $version = $productVersion.Split('+')[0]
     if ([string]::IsNullOrWhiteSpace($version)) {
