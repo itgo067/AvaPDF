@@ -8,7 +8,9 @@ $ErrorActionPreference = 'Stop'
 $setup = [System.IO.Path]::GetFullPath($SetupPath)
 $installDirectory = Join-Path $env:LOCALAPPDATA 'Programs/AvaPDF-Test'
 $installedExe = Join-Path $installDirectory 'AvaPDF.Desktop.exe'
-$uninstaller = Join-Path $installDirectory 'unins000.exe'
+$uninstaller = Get-ChildItem $installDirectory -Filter 'unins*.exe' -ErrorAction SilentlyContinue |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1 -ExpandProperty FullName
 $contextKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF'
 $optimizeKey = 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Optimize\Command'
 
@@ -24,9 +26,37 @@ if (-not (Test-Path $setup -PathType Leaf)) {
     throw "安装包不存在：$setup"
 }
 
+if (Test-Path $uninstaller -PathType Leaf) {
+    $previousCleanup = Start-Process -FilePath $uninstaller -Wait -PassThru -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART')
+    if ($previousCleanup.ExitCode -ne 0) {
+        throw "测试前清理旧安装失败，退出码：$($previousCleanup.ExitCode)"
+    }
+}
+if (Test-Path $installDirectory) {
+    Remove-Item $installDirectory -Recurse -Force
+}
+Remove-Item 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF' -Recurse -ErrorAction SilentlyContinue
+Remove-Item 'HKCU:\Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDFOptimize' -Recurse -ErrorAction SilentlyContinue
+Remove-Item 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{D8F93822-2B84-4F4A-9E4B-5BDB49CDB56F}_is1' -Recurse -ErrorAction SilentlyContinue
+
 try {
     Invoke-Installer $setup
+    $uninstaller = Get-ChildItem $installDirectory -Filter 'unins*.exe' |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1 -ExpandProperty FullName
+    $uninstallKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{D8F93822-2B84-4F4A-9E4B-5BDB49CDB56F}_is1'
+    if (-not (Test-Path $uninstallKey)) {
+        throw '未找到旧版本卸载注册项，无法验证升级卸载。'
+    }
+    $previousUninstallString = (Get-ItemProperty $uninstallKey).UninstallString
+    if ([string]::IsNullOrWhiteSpace($previousUninstallString)) {
+        throw '旧版本卸载命令为空，无法验证升级卸载。'
+    }
+
     Invoke-Installer $setup
+    $uninstaller = Get-ChildItem $installDirectory -Filter 'unins*.exe' |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1 -ExpandProperty FullName
     if (-not (Test-Path $installedExe -PathType Leaf)) {
         throw '安装后未找到 AvaPDF.Desktop.exe。'
     }

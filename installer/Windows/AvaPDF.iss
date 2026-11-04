@@ -43,7 +43,8 @@ Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}
 Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
-Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "AvaPDF"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: none; ValueName: ""; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "MUIVerb"; ValueData: "AvaPDF"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "Icon"; ValueData: """{app}\AvaPDF.Desktop.exe"""; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF"; ValueType: string; ValueName: "SubCommands"; ValueData: "AvaPDF.Merge;AvaPDF.Split;AvaPDF.Extract;AvaPDF.Rotate;AvaPDF.Optimize;AvaPDF.Watermark;AvaPDF.Encrypt;AvaPDF.Decrypt;AvaPDF.ExtractText"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\Shell\AvaPDF.Merge"; ValueType: string; ValueName: ""; ValueData: "合并 PDF"; Flags: uninsdeletekey
