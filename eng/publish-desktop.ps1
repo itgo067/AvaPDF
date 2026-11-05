@@ -2,7 +2,8 @@
 param(
     [ValidateSet('win-x64')]
     [string]$Runtime = 'win-x64',
-    [switch]$RequireAot
+    [switch]$RequireAot,
+    [switch]$SkipAotSmoke
 )
 
 $ErrorActionPreference = 'Stop'
@@ -121,15 +122,20 @@ if ($null -eq $vcVars) {
 
 try {
     Write-Host '检测到 MSVC 工具链，优先验证并发布 Native AOT…' -ForegroundColor Cyan
-    Write-Host '正在执行全部 PDF 操作的 AOT 冒烟测试…' -ForegroundColor Cyan
-    Invoke-AotPublish $smokeProject $smokeOutput $vcVars
-    $smokeExe = Join-Path $smokeOutput 'AvaPDF.AotSmoke.exe'
-    & $smokeExe
-    if ($LASTEXITCODE -ne 0) {
-        throw "AOT 冒烟测试失败，退出码：$LASTEXITCODE"
+    if (-not $SkipAotSmoke) {
+        Write-Host '正在执行全部 PDF 操作的 AOT 冒烟测试…' -ForegroundColor Cyan
+        Invoke-AotPublish $smokeProject $smokeOutput $vcVars
+        $smokeExe = Join-Path $smokeOutput 'AvaPDF.AotSmoke.exe'
+        & $smokeExe
+        if ($LASTEXITCODE -ne 0) {
+            throw "AOT 冒烟测试失败，退出码：$LASTEXITCODE"
+        }
+    }
+    else {
+        Write-Host '日常构建跳过 AotSmoke；Release 仍执行完整 AOT 冒烟。' -ForegroundColor Yellow
     }
 
-    Write-Host 'AOT 冒烟测试通过，正在发布桌面程序…' -ForegroundColor Cyan
+    Write-Host '正在发布桌面程序…' -ForegroundColor Cyan
     Invoke-AotPublish $desktopProject $aotOutput $vcVars
     Write-Host "Native AOT 发布完成：$aotOutput" -ForegroundColor Green
     Invoke-ReleaseMetrics 'NativeAOT' $aotOutput

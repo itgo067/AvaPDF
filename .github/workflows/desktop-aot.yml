@@ -59,7 +59,7 @@ jobs:
 
       - name: Publish AOT and record release metrics
         shell: powershell
-        run: powershell -File eng/publish-desktop.ps1 -RequireAot
+        run: powershell -File eng/publish-desktop.ps1 -RequireAot -SkipAotSmoke
 
       - name: Upload AOT package and metrics
         uses: actions/upload-artifact@v4

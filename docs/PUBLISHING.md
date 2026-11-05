@@ -32,7 +32,9 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 
 ## CI 验证
 
-工作流 `.github/workflows/desktop-aot.yml` 在 `main` 推送、相关 Pull Request 和手动触发时运行于 `windows-latest`。CI 使用 `-RequireAot`，因此工具链缺失、AOT 编译失败、任一 PDF 操作失败或窗口启动超时都会使工作流失败，不会静默回退。
+工作流 `.github/workflows/desktop-aot.yml` 在 `main` 推送、相关 Pull Request 和手动触发时运行于 `windows-latest`。日常 CI 使用 `-RequireAot -SkipAotSmoke`，执行轻量 Desktop AOT 构建和三次窗口启动验证，不再重复编译独立 AotSmoke。工具链缺失、AOT 编译失败或窗口启动超时都会使工作流失败，不会静默回退。
+
+只有 Release 构建保留完整 AotSmoke，覆盖 23 个场景和全部 20 个工具；日常 PR 不重复执行这部分全量操作验证。
 
 每次成功运行会将指标写入 Job Summary，并上传 ZIP、JSON 和 Markdown 指标，产物保留 14 天。
 
