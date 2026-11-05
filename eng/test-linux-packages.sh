@@ -55,7 +55,11 @@ command -v avapdf >/dev/null
 [[ -f /usr/share/applications/avapdf.desktop ]]
 [[ -f /usr/share/kio/servicemenus/avapdf-pdf.desktop ]]
 desktop-file-validate /usr/share/applications/avapdf.desktop
-desktop-file-validate /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Type=Service' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'MimeType=application/pdf;' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Actions=AvaPDFOptimize' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx '[Desktop Action AvaPDFOptimize]' /usr/share/kio/servicemenus/avapdf-pdf.desktop
 verify_gui_window "$(mktemp)" /usr/bin/avapdf --tool optimize
 
 echo 'DEB install, desktop integration and GUI startup verified.'

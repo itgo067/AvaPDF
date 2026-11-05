@@ -31,7 +31,13 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
 fi
 
 desktop-file-validate "$ROOT/packaging/linux/avapdf.desktop"
-desktop-file-validate "$ROOT/packaging/linux/avapdf-pdf.desktop"
+# KDE service menus use Type=Service and KDE-specific keys, which the generic
+# desktop-file-validate utility incorrectly rejects as an Application entry.
+grep -Fqx 'Type=Service' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'MimeType=application/pdf;' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'Actions=AvaPDFOptimize' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx '[Desktop Action AvaPDFOptimize]' "$ROOT/packaging/linux/avapdf-pdf.desktop"
 
 # DEB payload
 mkdir -p "$DEB_ROOT/opt/avapdf" "$DEB_ROOT/usr/bin" "$DEB_ROOT/DEBIAN"
