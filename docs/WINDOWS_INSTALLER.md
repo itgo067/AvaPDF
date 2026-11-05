@@ -23,28 +23,25 @@ artifacts/publish/AvaPDF-<version>-win-x64-setup.exe
 
 此功能仅属于 Inno Setup 下载版；MSIX／商店版不打包或注册该扩展，详见 [MSIX_PACKAGING.md](MSIX_PACKAGING.md)。
 
-安装后为 PDF 注册一个 **AvaPDF 功能子菜单**，展开后可选择：
+安装后为 PDF、支持的文档和图片注册一个动态 **AvaPDF 功能子菜单**：
 
-- 合并 PDF
-- 拆分 PDF
-- 提取页面
-- 旋转页面
-- 优化 PDF
-- 添加水印
-- 加密 PDF
-- 解密 PDF
-- 提取文本
+- 单个 PDF：提取文本；
+- 多个 PDF：合并 PDF，并进入界面确认顺序；
+- 文档：转换或批量转换为 PDF；
+- 单张图片：转换为 PDF；
+- 多张图片：合并为 PDF，并进入界面确认顺序；
+- 所有支持场景均提供“更多工具…”。
 
-每项功能都打开对应工具并载入文件。合并操作可在载入后继续添加其他文件。
+提取文本和转换会生成新文件，并在应用中显示进度、结果和警告；不会覆盖源文件。合并不自动执行。完整菜单矩阵和任务协议见 [SHELL_MENU.md](SHELL_MENU.md)。
 
-它们只打开工具和文件，不会自动执行处理或覆盖源文件。注册位置：
+主要注册位置：
 
 ```text
-HKCU\Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF
+HKCU\Software\Classes\SystemFileAssociations\<支持的扩展名>\ShellEx\ContextMenuHandlers\AvaPDF
 HKCU\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32
 ```
 
-右键菜单由原生 C++ COM `IContextMenu` 处理器创建，模型与 7-Zip 一致，不依赖 `SubCommands`，也不需要安装 .NET Runtime。安装新版本时会先检测并提示卸载旧版本；静默升级则自动执行旧卸载器，并等待旧卸载注册项被删除后才继续安装，避免仅启动卸载器就直接覆盖。卸载时删除上述注册项。
+右键菜单由原生 C++ COM `IContextMenu + IShellExtInit` 处理器创建，模型与 7-Zip 一致，不依赖 `SubCommands`，也不需要安装 .NET Runtime。安装新版本时会先检测并提示卸载旧版本；静默升级则自动执行旧卸载器，并等待旧卸载注册项被删除后才继续安装，避免仅启动卸载器就直接覆盖。卸载时删除上述注册项。
 
 ## 启动参数
 
@@ -55,7 +52,9 @@ HKCU\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer3
 --tool=<工具标识>
 ```
 
-支持 `--tool merge`、`watermark`、`encrypt`、`decrypt`、`word-to-pdf` 等稳定标识。不会仅凭启动参数自动执行任务。
+支持 `--tool merge`、`watermark`、`encrypt`、`decrypt`、`word-to-pdf` 等稳定标识。普通启动参数不会自动执行任务。
+
+Shell 快速任务使用 `--job "<任务文件>"`，任务文件中的 `autoRun` 决定是否直接执行；合并和“更多工具”始终要求用户在界面确认。
 
 ## 安装验证
 
@@ -63,7 +62,7 @@ HKCU\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer3
 powershell -File eng/test-installer.ps1 -SetupPath <setup.exe路径>
 ```
 
-验证脚本执行静默安装，检查程序文件与右键注册，启动安装后的程序，然后静默卸载并检查清理结果。CI Release 工作流执行相同验证。
+验证脚本执行静默安装，检查程序文件与右键注册，运行动态菜单场景，启动安装后的程序，验证右键提取文本及中文路径输出，然后静默卸载并检查清理结果。CI Release 工作流执行相同验证。
 
 ## Release 流程
 

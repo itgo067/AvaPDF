@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $setup = [System.IO.Path]::GetFullPath($SetupPath)
 $installDirectory = Join-Path $env:LOCALAPPDATA 'Programs/AvaPDF-Test'
 $installedExe = Join-Path $installDirectory 'AvaPDF.Desktop.exe'
@@ -77,6 +78,15 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'COM Shell Extension 实际创建验证失败。'
     }
+    & (Join-Path $PSScriptRoot 'build-shell-tests.ps1')
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Shell 场景测试编译失败。'
+    }
+    $menuInputs = Join-Path $root 'artifacts/shell-tests/menu-inputs'
+    & (Join-Path $root 'artifacts/shell-tests/TestShellMenu.exe') $menuInputs $shellDll
+    if ($LASTEXITCODE -ne 0) {
+        throw '动态 Shell 菜单场景验证失败。'
+    }
 
     $app = Start-Process -FilePath $installedExe -ArgumentList '--tool', 'optimize' -PassThru
     Start-Sleep -Seconds 8
@@ -87,6 +97,26 @@ try {
     Stop-Process -Id $app.Id -Force
     $app.WaitForExit()
     Write-Host '安装、右键注册和安装后启动验证通过。'
+
+    $invokePdf = Join-Path $root 'artifacts/shell-tests/invoke 中文 sample.pdf'
+    $invokeText = Join-Path (Split-Path $invokePdf) (([System.IO.Path]::GetFileNameWithoutExtension($invokePdf)) + '-text.txt')
+    Copy-Item (Join-Path $root 'artifacts/startup sample.pdf') $invokePdf -Force
+    Remove-Item $invokeText -Force -ErrorAction SilentlyContinue
+    & (Join-Path $root 'artifacts/shell-tests/TestShell.exe') --invoke $invokePdf
+    if ($LASTEXITCODE -ne 0) {
+        throw '右键 InvokeCommand 调用失败。'
+    }
+    $deadline = [DateTime]::UtcNow.AddSeconds(30)
+    while (-not (Test-Path $invokeText) -and [DateTime]::UtcNow -lt $deadline) {
+        Start-Sleep -Milliseconds 200
+    }
+    if (-not (Test-Path $invokeText)) {
+        throw '右键提取文本未生成 TXT 输出。'
+    }
+    Get-Process -Name 'AvaPDF.Desktop' -ErrorAction SilentlyContinue |
+        Where-Object Path -Like "$installDirectory\*" |
+        Stop-Process -Force
+    Write-Host '右键快速提取文本和中文路径验证通过。'
 }
 finally {
     if ($uninstaller -and (Test-Path $uninstaller -PathType Leaf)) {
@@ -97,8 +127,11 @@ finally {
         }
     }
 
-    if (Test-Path $installedExe) {
-        Write-Warning '卸载后仍存在程序文件，请检查安装目录。'
+    if (Test-Path $installDirectory) {
+        Write-Warning '卸载后仍存在安装目录，请检查安装目录。'
+    }
+    if (Test-Path 'HKCU:\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}') {
+        Write-Warning '卸载后仍存在 COM CLSID 注册。'
     }
     if (Test-Path $contextKey) {
         Write-Warning '卸载后仍存在右键菜单注册。'

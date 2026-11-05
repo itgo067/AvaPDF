@@ -34,14 +34,14 @@ public sealed class NavigationViewModelTests
     }
 
     [Fact]
-    public void Startup_file_is_loaded_after_tool_initialization()
+    public async Task Startup_file_is_loaded_after_tool_initialization()
     {
         var viewModel = CreateViewModel();
         var directory = Directory.CreateTempSubdirectory();
         var path = Path.Combine(directory.FullName, "sample file.pdf");
         File.WriteAllText(path, "%PDF-1.4\n");
 
-        viewModel.ApplyStartupOptions(new StartupOptions([path], PdfOperationKind.Optimize));
+        await viewModel.ApplyStartupOptions(new StartupOptions([path], PdfOperationKind.Optimize));
 
         Assert.Equal(PdfOperationKind.Optimize, viewModel.SelectedTool.Kind);
         var file = Assert.Single(viewModel.Workspace.Files);

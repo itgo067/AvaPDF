@@ -30,6 +30,30 @@ public sealed class StartupOptionsTests
     }
 
     [Fact]
+    public void Parses_auto_run()
+    {
+        var options = StartupOptions.Parse(["--auto", "--tool", "extracttext", "--file", "one.pdf"]);
+
+        Assert.True(options.AutoRun);
+        Assert.Equal(PdfOperationKind.ExtractText, options.Tool);
+    }
+
+    [Fact]
+    public void Reads_and_deletes_owned_job_file()
+    {
+        Directory.CreateDirectory(StartupOptions.JobDirectory);
+        var path = Path.Combine(StartupOptions.JobDirectory, $"AvaPDF-{Guid.NewGuid():N}.json");
+        File.WriteAllText(path, "{\"tool\":\"extracttext\",\"autoRun\":true,\"files\":[\"one.pdf\",\"two.pdf\"]}");
+
+        var options = StartupOptions.Parse(["--job", path]);
+
+        Assert.True(options.AutoRun);
+        Assert.Equal(PdfOperationKind.ExtractText, options.Tool);
+        Assert.Equal(["one.pdf", "two.pdf"], options.Files);
+        Assert.False(File.Exists(path));
+    }
+
+    [Fact]
     public void Rejects_unknown_or_incomplete_arguments()
     {
         Assert.NotNull(StartupOptions.Parse(["--tool", "unknown"]).Error);

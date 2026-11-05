@@ -64,11 +64,33 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ToolWorkspaceViewModel Workspace { get; }
 
-    public void ApplyStartupOptions(StartupOptions options)
+    public async Task ApplyStartupOptions(StartupOptions options)
     {
+        if (options.AutoRun)
+        {
+            await ApplyQuickAction(options);
+            return;
+        }
+
         if (options.Tool.HasValue)
         {
             SelectedTool = PdfToolCatalog.Get(options.Tool.Value);
+        }
+        else if (options.Files.Count > 0)
+        {
+            var selection = ShellFileClassifier.Classify(options.Files);
+            PdfOperationKind? inferredTool = selection switch
+            {
+                ShellSelectionKind.SinglePdf => PdfOperationKind.ExtractText,
+                ShellSelectionKind.MultiplePdfs => PdfOperationKind.Merge,
+                ShellSelectionKind.SingleImage or ShellSelectionKind.MultipleImages => PdfOperationKind.ImagesToPdf,
+                ShellSelectionKind.SingleDocument or ShellSelectionKind.MultipleDocuments => ShellFileClassifier.GetConversionTool(options.Files[0]),
+                _ => null
+            };
+            if (inferredTool.HasValue)
+            {
+                SelectedTool = PdfToolCatalog.Get(inferredTool.Value);
+            }
         }
 
         var accepted = options.Files
@@ -89,6 +111,43 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Workspace.StatusMessage = $"已从外部调用载入 {accepted.Length} 个文件，请确认后开始处理。";
         }
+    }
+
+    private async Task ApplyQuickAction(StartupOptions options)
+    {
+        var files = options.Files.Where(File.Exists).ToArray();
+        if (files.Length != options.Files.Count || files.Length == 0)
+        {
+            Workspace.ErrorMessage = "快速任务包含不存在或不可读取的输入文件。";
+            Workspace.StatusMessage = "任务未执行。";
+            return;
+        }
+
+        var selection = ShellFileClassifier.Classify(files);
+        if (selection == ShellSelectionKind.SinglePdf
+            && options.Tool == PdfOperationKind.ExtractText)
+        {
+            SelectedTool = PdfToolCatalog.Get(PdfOperationKind.ExtractText);
+            Workspace.OutputDirectory = Path.GetDirectoryName(files[0])!;
+            Workspace.AddFiles(files);
+            await Workspace.RunCurrentToolAsync();
+            return;
+        }
+
+        if (options.Tool is null && selection is ShellSelectionKind.SingleDocument
+            or ShellSelectionKind.MultipleDocuments or ShellSelectionKind.SingleImage)
+        {
+            var firstTool = ShellFileClassifier.GetConversionTool(files[0]);
+            if (firstTool.HasValue)
+            {
+                SelectedTool = PdfToolCatalog.Get(firstTool.Value);
+            }
+            await Workspace.RunBatchConversionsAsync(files);
+            return;
+        }
+
+        Workspace.ErrorMessage = "当前选中内容不支持此快速任务；请使用“更多工具”确认参数后执行。";
+        Workspace.StatusMessage = "任务未执行。";
     }
 
     [RelayCommand]

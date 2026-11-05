@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AvaPDF.Domain;
 
 namespace AvaPDF.Desktop;
@@ -5,8 +7,11 @@ namespace AvaPDF.Desktop;
 public sealed record StartupOptions(
     IReadOnlyList<string> Files,
     PdfOperationKind? Tool,
-    string? Error = null)
+    string? Error = null,
+    bool AutoRun = false)
 {
+    public static string JobDirectory { get; } = Path.Combine(Path.GetTempPath(), "AvaPDF", "Jobs");
+
     public static StartupOptions Parse(IReadOnlyList<string>? arguments)
     {
         if (arguments is null || arguments.Count == 0)
@@ -16,9 +21,25 @@ public sealed record StartupOptions(
 
         var files = new List<string>();
         PdfOperationKind? tool = null;
+        var autoRun = false;
         for (var index = 0; index < arguments.Count; index++)
         {
             var argument = arguments[index];
+            if (argument == "--auto")
+            {
+                autoRun = true;
+                continue;
+            }
+
+            if (argument == "--job")
+            {
+                if (++index >= arguments.Count || string.IsNullOrWhiteSpace(arguments[index]))
+                {
+                    return Fail("--job 需要提供任务文件路径。");
+                }
+                return ReadJob(arguments[index]);
+            }
+
             if (argument == "--file")
             {
                 if (++index >= arguments.Count || string.IsNullOrWhiteSpace(arguments[index]))
@@ -72,7 +93,59 @@ public sealed record StartupOptions(
             files.Add(argument);
         }
 
-        return new StartupOptions(files, tool);
+        return new StartupOptions(files, tool, AutoRun: autoRun);
+    }
+
+    private static StartupOptions ReadJob(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+        try
+        {
+            var json = File.ReadAllText(fullPath);
+            var job = JsonSerializer.Deserialize(json, StartupJobJsonContext.Default.StartupJob);
+            if (job is null || job.Files is null || job.Files.Count == 0)
+            {
+                return Fail("任务文件没有包含输入文件。");
+            }
+
+            PdfOperationKind? tool = null;
+            if (!string.IsNullOrWhiteSpace(job.Tool))
+            {
+                if (!TryParseTool(job.Tool, out var parsed))
+                {
+                    return Fail("任务文件包含无法识别的工具标识。");
+                }
+                tool = parsed;
+            }
+            return new StartupOptions(job.Files.ToArray(), tool, AutoRun: job.AutoRun);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
+        {
+            return Fail($"无法读取任务文件：{exception.Message}");
+        }
+        finally
+        {
+            DeleteOwnedJob(fullPath);
+        }
+    }
+
+    private static void DeleteOwnedJob(string fullPath)
+    {
+        try
+        {
+            var expectedDirectory = Path.GetFullPath(JobDirectory);
+            var fileName = Path.GetFileName(fullPath);
+            if (string.Equals(Path.GetDirectoryName(fullPath), expectedDirectory, StringComparison.OrdinalIgnoreCase)
+                && fileName.StartsWith("AvaPDF-", StringComparison.Ordinal)
+                && fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            {
+                File.Delete(fullPath);
+            }
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            // A later job cleanup may remove the temporary file; never fail the task because of cleanup.
+        }
     }
 
     private static StartupOptions Fail(string message) => new([], null, message);
@@ -122,3 +195,9 @@ public sealed record StartupOptions(
             .Replace(" ", string.Empty, StringComparison.Ordinal)
             .ToUpperInvariant();
 }
+
+public sealed record StartupJob(string? Tool, bool AutoRun, IReadOnlyList<string> Files);
+
+[JsonSerializable(typeof(StartupJob))]
+[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+internal sealed partial class StartupJobJsonContext : JsonSerializerContext;

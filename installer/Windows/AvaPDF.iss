@@ -43,9 +43,42 @@ Name: "{group}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}
 Name: "{userdesktop}\AvaPDF"; Filename: "{app}\AvaPDF.Desktop.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; ValueType: string; ValueName: "AppExecutable"; ValueData: "{app}\AvaPDF.Desktop.exe"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{app}\shell\AvaPDF.Shell.dll"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\CLSID\{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Both"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pdf\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.jpg\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.jpeg\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.png\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.bmp\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.gif\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.webp\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.tif\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.tiff\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.svg\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.doc\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.docx\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.docm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.dotx\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.dotm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.xls\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.xlsx\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.xlsm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.xltx\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.xltm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.ppt\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pptx\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.pptm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.md\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.markdown\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.html\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.htm\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.rtf\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\SystemFileAssociations\.txt\ShellEx\ContextMenuHandlers\AvaPDF"; ValueType: string; ValueName: ""; ValueData: "{{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}"; Flags: uninsdeletekey
+
+[UninstallDelete]
+Type: dirifempty; Name: "{app}\shell"
+Type: dirifempty; Name: "{app}"
 
 [Code]
 function GetPreviousUninstallString: String;

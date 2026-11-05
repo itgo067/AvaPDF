@@ -355,6 +355,95 @@ public partial class ToolWorkspaceViewModel : ObservableObject
         }
     }
 
+    public Task RunCurrentToolAsync() => RunAsync();
+
+    public async Task RunBatchConversionsAsync(IReadOnlyList<string> files)
+    {
+        if (IsRunning)
+        {
+            return;
+        }
+
+        var plans = files.Select(path => (Path: path, Tool: ShellFileClassifier.GetConversionTool(path))).ToArray();
+        if (plans.Length == 0 || plans.Any(plan => !plan.Tool.HasValue))
+        {
+            ErrorMessage = "批量转换包含不支持的文件格式。";
+            StatusMessage = "任务未执行。";
+            return;
+        }
+
+        Configure(PdfToolCatalog.Get(plans[0].Tool!.Value));
+        OutputDirectory = Path.GetDirectoryName(plans[0].Path) ?? OutputDirectory;
+        foreach (var plan in plans)
+        {
+            Files.Add(new LocalFileItem(plan.Path));
+        }
+
+        IsRunning = true;
+        ErrorMessage = string.Empty;
+        OutputFiles.Clear();
+        ConversionWarnings.Clear();
+        HasOutputs = false;
+        HasWarnings = false;
+        ProgressValue = 0;
+        var errors = new List<string>();
+        var cancellation = new CancellationTokenSource();
+        _cancellation = cancellation;
+
+        try
+        {
+            for (var index = 0; index < plans.Length; index++)
+            {
+                cancellation.Token.ThrowIfCancellationRequested();
+                var plan = plans[index];
+                StatusMessage = $"正在转换 {Path.GetFileName(plan.Path)}（{index + 1}/{plans.Length}）…";
+                ProgressValue = index * 100.0 / plans.Length;
+                var source = new LocalPdfSource(plan.Path);
+                var target = new LocalPdfOutputTarget(Path.GetDirectoryName(plan.Path) ?? OutputDirectory);
+                try
+                {
+                    PdfOperationRequest request = plan.Tool.GetValueOrDefault() == PdfOperationKind.ImagesToPdf
+                        ? new ImagesToPdfRequest([source], target)
+                        : new DocumentToPdfRequest(plan.Tool.GetValueOrDefault(), source, Path.GetDirectoryName(plan.Path), target);
+                    var result = await Task.Run(
+                        () => _jobs.ExecuteAsync(request, null, cancellation.Token),
+                        cancellation.Token);
+                    foreach (var output in target.CreatedPaths)
+                    {
+                        OutputFiles.Add(output);
+                    }
+                    foreach (var warning in result.ConversionWarnings.Take(100))
+                    {
+                        ConversionWarnings.Add($"{Path.GetFileName(plan.Path)}：{warning}");
+                    }
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    errors.Add($"{Path.GetFileName(plan.Path)}：{exception.Message}");
+                }
+            }
+
+            ProgressValue = 100;
+            StatusMessage = errors.Count == 0
+                ? $"已完成 {OutputFiles.Count} 个文件的转换。"
+                : $"转换完成：成功 {OutputFiles.Count} 个，失败 {errors.Count} 个。";
+        }
+        catch (OperationCanceledException)
+        {
+            StatusMessage = "任务已取消，未处理的源文件保持不变。";
+            ProgressValue = 0;
+        }
+        finally
+        {
+            HasOutputs = OutputFiles.Count > 0;
+            HasWarnings = ConversionWarnings.Count > 0;
+            ErrorMessage = string.Join(Environment.NewLine, errors);
+            cancellation.Dispose();
+            _cancellation = null;
+            IsRunning = false;
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanRun))]
     private async Task RunAsync()
     {

@@ -19,7 +19,7 @@ if ([string]::IsNullOrWhiteSpace($installation)) {
 $vcVars = Join-Path $installation 'VC/Auxiliary/Build/vcvars64.bat'
 [System.IO.Directory]::CreateDirectory($OutputDirectory) | Out-Null
 
-foreach ($test in @('TestShell', 'TestShellAssociation')) {
+foreach ($test in @('TestShell', 'TestShellAssociation', 'TestShellMenu')) {
     $source = Join-Path $root "src/AvaPDF.ShellNative/$test.cpp"
     $output = Join-Path $OutputDirectory "$test.exe"
     $command = 'call "{0}" >nul && cl.exe /MT /EHsc /std:c++17 /W4 /O2 /utf-8 "{1}" /link /OUT:"{2}" user32.lib shell32.lib ole32.lib' -f $vcVars, $source, $output
