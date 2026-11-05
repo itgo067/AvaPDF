@@ -63,7 +63,12 @@ command -v avapdf >/dev/null
 [[ -f /usr/share/nemo/actions/avapdf-merge.nemo_action ]]
 [[ -f /usr/share/nemo/actions/avapdf-convert.nemo_action ]]
 [[ -f /usr/share/avapdf/thunar/uca.xml ]]
-python3 -m py_compile /usr/share/nautilus-python/extensions/avapdf.py /usr/bin/avapdf-job
+python3 - <<'PY'
+import ast
+for path in ('/usr/share/nautilus-python/extensions/avapdf.py', '/usr/bin/avapdf-job'):
+    with open(path, encoding='utf-8') as source:
+        ast.parse(source.read(), filename=path)
+PY
 desktop-file-validate /usr/share/applications/avapdf.desktop
 for SERVICE_MENU in avapdf-pdf.desktop avapdf-pdf-merge.desktop avapdf-convert.desktop; do
   grep -Fqx 'Type=Service' "/usr/share/kio/servicemenus/$SERVICE_MENU"
