@@ -29,8 +29,7 @@ artifacts/publish/AvaPDF-<version>-win-x64-setup.exe
 - 多个 PDF：合并 PDF，并进入界面确认顺序；
 - 文档：转换或批量转换为 PDF；
 - 单张图片：转换为 PDF；
-- 多张图片：合并为 PDF，并进入界面确认顺序；
-- 所有支持场景均提供“更多工具…”。
+- 多张图片：合并为 PDF，并进入界面确认顺序。
 
 提取文本和转换会生成新文件，并在应用中显示进度、结果和警告；不会覆盖源文件。合并不自动执行。完整菜单矩阵和任务协议见 [SHELL_MENU.md](SHELL_MENU.md)。
 
@@ -54,7 +53,7 @@ HKCU\Software\Classes\CLSID\{6F4A17D2-6A4B-4F1E-A6B3-0A9A0DFD0001}\InprocServer3
 
 支持 `--tool merge`、`watermark`、`encrypt`、`decrypt`、`word-to-pdf` 等稳定标识。普通启动参数不会自动执行任务。
 
-Shell 快速任务使用 `--job "<任务文件>"`，任务文件中的 `autoRun` 决定是否直接执行；合并和“更多工具”始终要求用户在界面确认。
+Shell 快速任务使用 `--job "<任务文件>"`，任务文件中的 `autoRun` 决定是否直接执行；合并始终要求用户在界面确认。
 
 ## 安装验证
 

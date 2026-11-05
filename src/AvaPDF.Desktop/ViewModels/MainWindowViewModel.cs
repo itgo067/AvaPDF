@@ -146,7 +146,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        Workspace.ErrorMessage = "当前选中内容不支持此快速任务；请使用“更多工具”确认参数后执行。";
+        Workspace.ErrorMessage = "当前选中内容不支持此快速任务；请在 AvaPDF 工作区中确认参数后执行。";
         Workspace.StatusMessage = "任务未执行。";
     }
 

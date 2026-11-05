@@ -42,15 +42,4 @@
 	<patterns>*.doc;*.docx;*.odt;*.xls;*.xlsx;*.ods;*.ppt;*.pptx;*.odp;*.md;*.markdown;*.html;*.htm;*.rtf;*.txt;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tif;*.tiff;*.svg</patterns>
 	<other-files/>
 </action>
-<action>
-	<icon>avapdf</icon>
-	<name>更多工具…（AvaPDF）</name>
-	<submenu>AvaPDF</submenu>
-	<unique-id>avapdf-moretools-1</unique-id>
-	<command>avapdf-job %F</command>
-	<description>在 AvaPDF 工作区中打开所选文件</description>
-	<range></range>
-	<patterns>*.pdf;*.PDF;*.doc;*.docx;*.odt;*.xls;*.xlsx;*.ods;*.ppt;*.pptx;*.odp;*.md;*.markdown;*.html;*.htm;*.rtf;*.txt;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tif;*.tiff;*.svg</patterns>
-	<other-files/>
-</action>
 </actions>

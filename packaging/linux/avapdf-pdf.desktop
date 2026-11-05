@@ -4,7 +4,7 @@ Name=AvaPDF
 Name[zh_CN]=AvaPDF
 ServiceTypes=KonqPopupMenu/Plugin
 MimeType=application/pdf;
-Actions=AvaPDFExtractText;AvaPDFMoreTools
+Actions=AvaPDFExtractText
 X-KDE-Priority=TopLevel
 X-KDE-Submenu=AvaPDF
 X-KDE-MaxNumberOfUrls=1
@@ -14,9 +14,3 @@ Name=Extract Text
 Name[zh_CN]=提取文本
 Icon=avapdf
 Exec=avapdf-job --tool extracttext --auto %F
-
-[Desktop Action AvaPDFMoreTools]
-Name=More Tools...
-Name[zh_CN]=更多工具…
-Icon=avapdf
-Exec=avapdf-job %F

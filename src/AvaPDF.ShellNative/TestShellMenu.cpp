@@ -16,7 +16,7 @@ struct Scenario {
     std::vector<std::wstring> Files;
     std::wstring ExpectedPrimary;
     bool ExpectMenu;
-    int ExpectedItems = 2;
+    int ExpectedItems = 1;
 };
 
 std::wstring MenuLabel(HMENU menu, int index) {
@@ -119,7 +119,7 @@ bool RunScenario(const Scenario& scenario) {
         passed = passed && submenu != nullptr && GetMenuItemCount(submenu) == scenario.ExpectedItems;
         if (submenu != nullptr && GetMenuItemCount(submenu) > 0) {
             const auto primary = MenuLabel(submenu, 0);
-            const auto expected = scenario.ExpectedItems == 1 ? L"更多工具…" : scenario.ExpectedPrimary;
+            const auto expected = scenario.ExpectedPrimary;
             std::wprintf(L"primary=%s expected=%s\n", primary.c_str(), expected.c_str());
             passed = passed && primary == expected;
         }
@@ -173,7 +173,7 @@ int wmain(int argc, wchar_t** argv) {
         { L"single image", { files[4] }, L"转换为 PDF", true },
         { L"multiple images", { files[4], files[5] }, L"合并为 PDF", true },
         { L"document and image", { files[2], files[4] }, L"批量转换为 PDF", true },
-        { L"PDF and image", { files[0], files[4] }, L"", true, 1 },
+        { L"PDF and image", { files[0], files[4] }, L"", false },
         { L"unsupported file", { files[6] }, L"", false }
     };
 

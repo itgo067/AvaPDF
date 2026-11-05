@@ -33,15 +33,15 @@ fi
 desktop-file-validate "$ROOT/packaging/linux/avapdf.desktop"
 # KDE service menus use Type=Service and KDE-specific keys, which the generic
 # desktop-file-validate utility incorrectly rejects as an Application entry.
-# 菜单矩阵与 docs/SHELL_MENU.md 保持一致：提取文本 / 合并 / 转 PDF / 更多工具。
+# 菜单矩阵与 docs/SHELL_MENU.md 保持一致：提取文本 / 合并 / 转 PDF。
 for SERVICE_MENU in avapdf-pdf.desktop avapdf-pdf-merge.desktop avapdf-convert.desktop; do
   grep -Fqx 'Type=Service' "$ROOT/packaging/linux/$SERVICE_MENU"
   grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "$ROOT/packaging/linux/$SERVICE_MENU"
 done
 grep -Fqx 'MimeType=application/pdf;' "$ROOT/packaging/linux/avapdf-pdf.desktop"
-grep -Fqx 'Actions=AvaPDFExtractText;AvaPDFMoreTools' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'Actions=AvaPDFExtractText' "$ROOT/packaging/linux/avapdf-pdf.desktop"
 grep -Fqx '[Desktop Action AvaPDFExtractText]' "$ROOT/packaging/linux/avapdf-pdf.desktop"
-grep -Fqx 'Actions=AvaPDFMerge;AvaPDFMoreTools' "$ROOT/packaging/linux/avapdf-pdf-merge.desktop"
+grep -Fqx 'Actions=AvaPDFMerge' "$ROOT/packaging/linux/avapdf-pdf-merge.desktop"
 grep -Fqx '[Desktop Action AvaPDFConvertToPdf]' "$ROOT/packaging/linux/avapdf-convert.desktop"
 
 # DEB payload

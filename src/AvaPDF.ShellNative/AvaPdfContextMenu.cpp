@@ -11,7 +11,6 @@ constexpr GUID CLSID_AvaPdfContextMenu =
     { 0x6f4a17d2, 0x6a4b, 0x4f1e, { 0xa6, 0xb3, 0x0a, 0x9a, 0x0d, 0xfd, 0x00, 0x01 } };
 
 enum class ShellAction {
-    More,
     ExtractText,
     Merge,
     Convert,
@@ -265,7 +264,6 @@ private:
         else if (allConvertible) {
             _commands.push_back({ ShellAction::Convert, _documents.size() == 1 ? L"转换为 PDF" : L"批量转换为 PDF" });
         }
-        _commands.push_back({ ShellAction::More, L"更多工具…" });
     }
 
     int FindCommand(LPCSTR verb) const {

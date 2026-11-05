@@ -62,7 +62,6 @@ command -v avapdf >/dev/null
 [[ -f /usr/share/nemo/actions/avapdf-extracttext.nemo_action ]]
 [[ -f /usr/share/nemo/actions/avapdf-merge.nemo_action ]]
 [[ -f /usr/share/nemo/actions/avapdf-convert.nemo_action ]]
-[[ -f /usr/share/nemo/actions/avapdf-moretools.nemo_action ]]
 [[ -f /usr/share/avapdf/thunar/uca.xml ]]
 python3 -m py_compile /usr/share/nautilus-python/extensions/avapdf.py /usr/bin/avapdf-job
 desktop-file-validate /usr/share/applications/avapdf.desktop
@@ -71,9 +70,9 @@ for SERVICE_MENU in avapdf-pdf.desktop avapdf-pdf-merge.desktop avapdf-convert.d
   grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "/usr/share/kio/servicemenus/$SERVICE_MENU"
 done
 grep -Fqx 'MimeType=application/pdf;' /usr/share/kio/servicemenus/avapdf-pdf.desktop
-grep -Fqx 'Actions=AvaPDFExtractText;AvaPDFMoreTools' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Actions=AvaPDFExtractText' /usr/share/kio/servicemenus/avapdf-pdf.desktop
 grep -Fqx '[Desktop Action AvaPDFExtractText]' /usr/share/kio/servicemenus/avapdf-pdf.desktop
-grep -Fqx 'Actions=AvaPDFMerge;AvaPDFMoreTools' /usr/share/kio/servicemenus/avapdf-pdf-merge.desktop
+grep -Fqx 'Actions=AvaPDFMerge' /usr/share/kio/servicemenus/avapdf-pdf-merge.desktop
 grep -Fqx '[Desktop Action AvaPDFConvertToPdf]' /usr/share/kio/servicemenus/avapdf-convert.desktop
 
 # avapdf-job 任务协议：生成的任务文件必须位于 <TMPDIR>/AvaPDF/Jobs 且名为 AvaPDF-*.json。
@@ -108,7 +107,6 @@ hash -r
 [[ ! -e /usr/share/nemo/actions/avapdf-extracttext.nemo_action ]]
 [[ ! -e /usr/share/nemo/actions/avapdf-merge.nemo_action ]]
 [[ ! -e /usr/share/nemo/actions/avapdf-convert.nemo_action ]]
-[[ ! -e /usr/share/nemo/actions/avapdf-moretools.nemo_action ]]
 [[ ! -e /usr/share/avapdf/thunar/uca.xml ]]
 echo 'DEB uninstall cleanup verified.'
 

@@ -7,11 +7,11 @@ Install targets (handled by eng/build-linux-packages.sh):
 Requires the nautilus-python (python3-nautilus) or caja-python package.
 
 菜单矩阵与 docs/SHELL_MENU.md 的 Windows 右键设计保持一致：
-  单个 PDF        → 提取文本（autoRun）；更多工具…
-  多个 PDF        → 合并 PDF（进工作区确认）；更多工具…
-  单个文档/图片   → 转换为 PDF（autoRun）；更多工具…
-  多个文档/图片   → 批量转换为 PDF（autoRun）；更多工具…
-  混合/不支持     → 仅「更多工具…」/ 不显示菜单
+  单个 PDF        → 提取文本（autoRun）
+  多个 PDF        → 合并 PDF（进工作区确认）
+  单个文档/图片   → 转换为 PDF（autoRun）
+  多个文档/图片   → 批量转换为 PDF（autoRun）
+  混合/不支持     → 不显示菜单
 所有入口通过 avapdf-job 生成一次性任务文件后以 `avapdf --job` 启动。
 """
 
@@ -82,8 +82,6 @@ class AvaPDFMenuProvider(GObject.GObject, FileManager.MenuProvider):
         elif "unsupported" in kinds:
             return []
 
-        items.append(self._make_item(
-            "AvaPDFMoreTools", _label("更多工具…", "More Tools..."), [], paths))
         return items
 
     def _make_item(self, name, label, extra_args, paths):

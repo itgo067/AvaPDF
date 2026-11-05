@@ -5,7 +5,7 @@ Name=AvaPDF
 Name[zh_CN]=AvaPDF
 ServiceTypes=KonqPopupMenu/Plugin
 MimeType=application/pdf;
-Actions=AvaPDFMerge;AvaPDFMoreTools
+Actions=AvaPDFMerge
 X-KDE-Priority=TopLevel
 X-KDE-Submenu=AvaPDF
 X-KDE-MinNumberOfUrls=2
@@ -15,9 +15,3 @@ Name=Merge PDFs
 Name[zh_CN]=合并 PDF
 Icon=avapdf
 Exec=avapdf-job --tool merge %F
-
-[Desktop Action AvaPDFMoreTools]
-Name=More Tools...
-Name[zh_CN]=更多工具…
-Icon=avapdf
-Exec=avapdf-job %F
