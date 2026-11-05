@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""AvaPDF shell job launcher for Linux file managers.
+
+Builds a one-shot job JSON file following docs/SHELL_MENU.md ("启动任务协议")
+and launches `avapdf --job <file>`. The app only deletes job files named
+AvaPDF-*.json inside <TMPDIR>/AvaPDF/Jobs, so we create exactly that.
+
+Usage: avapdf-job [--tool TOOL] [--auto] FILE [FILE...]
+  --tool TOOL   稳定工具标识（extracttext、merge、imagestopdf 等）；省略表示按扩展名自动选择
+  --auto        autoRun=true：快速任务直接执行；省略则进入工作区确认
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import tempfile
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(prog="avapdf-job")
+    parser.add_argument("--tool", default=None)
+    parser.add_argument("--auto", action="store_true")
+    parser.add_argument("files", nargs="+")
+    args = parser.parse_args()
+
+    job_dir = os.path.join(tempfile.gettempdir(), "AvaPDF", "Jobs")
+    os.makedirs(job_dir, exist_ok=True)
+
+    job = {"tool": args.tool, "autoRun": args.auto, "files": args.files}
+    fd, path = tempfile.mkstemp(prefix="AvaPDF-", suffix=".json", dir=job_dir)
+    with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        json.dump(job, handle, ensure_ascii=False)
+
+    subprocess.Popen(["avapdf", "--job", path])
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

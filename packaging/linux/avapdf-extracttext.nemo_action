@@ -1,0 +1,10 @@
+# Nemo (Cinnamon)：单个 PDF 提取文本（对应 docs/SHELL_MENU.md 菜单矩阵）。
+[Nemo Action]
+Name=Extract Text
+Name[zh_CN]=提取文本
+Comment=Extract text from the PDF with AvaPDF
+Comment[zh_CN]=使用 AvaPDF 提取 PDF 文本（直接生成 TXT，不覆盖源文件）
+Exec=avapdf-job --tool extracttext --auto %F
+Icon-Name=avapdf
+Selection=s
+Extensions=pdf;

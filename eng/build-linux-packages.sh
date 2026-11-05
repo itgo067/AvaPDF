@@ -33,11 +33,16 @@ fi
 desktop-file-validate "$ROOT/packaging/linux/avapdf.desktop"
 # KDE service menus use Type=Service and KDE-specific keys, which the generic
 # desktop-file-validate utility incorrectly rejects as an Application entry.
-grep -Fqx 'Type=Service' "$ROOT/packaging/linux/avapdf-pdf.desktop"
-grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+# 菜单矩阵与 docs/SHELL_MENU.md 保持一致：提取文本 / 合并 / 转 PDF / 更多工具。
+for SERVICE_MENU in avapdf-pdf.desktop avapdf-pdf-merge.desktop avapdf-convert.desktop; do
+  grep -Fqx 'Type=Service' "$ROOT/packaging/linux/$SERVICE_MENU"
+  grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "$ROOT/packaging/linux/$SERVICE_MENU"
+done
 grep -Fqx 'MimeType=application/pdf;' "$ROOT/packaging/linux/avapdf-pdf.desktop"
-grep -Fqx 'Actions=AvaPDFOptimize' "$ROOT/packaging/linux/avapdf-pdf.desktop"
-grep -Fqx '[Desktop Action AvaPDFOptimize]' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'Actions=AvaPDFExtractText;AvaPDFMoreTools' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx '[Desktop Action AvaPDFExtractText]' "$ROOT/packaging/linux/avapdf-pdf.desktop"
+grep -Fqx 'Actions=AvaPDFMerge;AvaPDFMoreTools' "$ROOT/packaging/linux/avapdf-pdf-merge.desktop"
+grep -Fqx '[Desktop Action AvaPDFConvertToPdf]' "$ROOT/packaging/linux/avapdf-convert.desktop"
 
 # DEB payload
 mkdir -p "$DEB_ROOT/opt/avapdf" "$DEB_ROOT/usr/bin" "$DEB_ROOT/DEBIAN"
@@ -50,9 +55,27 @@ cat > "$DEB_ROOT/usr/bin/avapdf" <<'EOF'
 exec /opt/avapdf/AvaPDF.Desktop "$@"
 EOF
 chmod 755 "$DEB_ROOT/usr/bin/avapdf"
+cp "$ROOT/packaging/linux/avapdf-job" "$DEB_ROOT/usr/bin/avapdf-job"
+chmod 755 "$DEB_ROOT/usr/bin/avapdf-job"
 cp "$ROOT/packaging/linux/avapdf.desktop" "$DEB_ROOT/usr/share/applications/avapdf.desktop"
 cp "$ROOT/packaging/linux/avapdf-pdf.desktop" "$DEB_ROOT/usr/share/kio/servicemenus/avapdf-pdf.desktop"
+cp "$ROOT/packaging/linux/avapdf-pdf-merge.desktop" "$DEB_ROOT/usr/share/kio/servicemenus/avapdf-pdf-merge.desktop"
+cp "$ROOT/packaging/linux/avapdf-convert.desktop" "$DEB_ROOT/usr/share/kio/servicemenus/avapdf-convert.desktop"
 cp "$ROOT/src/AvaPDF.Desktop/Assets/AppIcon.png" "$DEB_ROOT/usr/share/icons/hicolor/512x512/apps/avapdf.png"
+
+# 其他主流文件管理器的右键集成（均为可选增强，缺依赖时菜单不出现但不影响主程序）
+mkdir -p "$DEB_ROOT/usr/share/nautilus-python/extensions"   # GNOME / Nautilus
+mkdir -p "$DEB_ROOT/usr/share/caja-python/extensions"       # MATE / Caja
+mkdir -p "$DEB_ROOT/usr/share/nemo/actions"                 # Cinnamon / Nemo
+mkdir -p "$DEB_ROOT/usr/share/avapdf/thunar"                # XFCE / Thunar（模板，需用户合并）
+cp "$ROOT/packaging/linux/avapdf-nautilus.py" "$DEB_ROOT/usr/share/nautilus-python/extensions/avapdf.py"
+cp "$ROOT/packaging/linux/avapdf-nautilus.py" "$DEB_ROOT/usr/share/caja-python/extensions/avapdf.py"
+cp "$ROOT"/packaging/linux/avapdf-*.nemo_action "$DEB_ROOT/usr/share/nemo/actions/"
+cp "$ROOT/packaging/linux/thunar-uca.xml" "$DEB_ROOT/usr/share/avapdf/thunar/uca.xml"
+chmod 644 "$DEB_ROOT/usr/share/nautilus-python/extensions/avapdf.py" \
+          "$DEB_ROOT/usr/share/caja-python/extensions/avapdf.py" \
+          "$DEB_ROOT"/usr/share/nemo/actions/avapdf-*.nemo_action \
+          "$DEB_ROOT/usr/share/avapdf/thunar/uca.xml"
 
 mapfile -t NATIVE_FILES < <(find "$DEB_ROOT/opt/avapdf" -type f \( -name '*.so' -o -name '*.so.*' \))
 DEPENDENCIES='libc6'
@@ -71,6 +94,7 @@ Maintainer: AvaPDF <dev@avatools.local>
 Installed-Size: $INSTALLED_SIZE
 Depends: $DEPENDENCIES
 Recommends: fonts-noto-cjk, fonts-droid-fallback
+Suggests: python3, python3-nautilus, caja-python
 Priority: optional
 Section: utils
 Description: Local PDF workspace

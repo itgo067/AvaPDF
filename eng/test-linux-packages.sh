@@ -54,12 +54,44 @@ command -v avapdf >/dev/null
 [[ -x /opt/avapdf/AvaPDF.Desktop ]]
 [[ -f /usr/share/applications/avapdf.desktop ]]
 [[ -f /usr/share/kio/servicemenus/avapdf-pdf.desktop ]]
+[[ -f /usr/share/kio/servicemenus/avapdf-pdf-merge.desktop ]]
+[[ -f /usr/share/kio/servicemenus/avapdf-convert.desktop ]]
+[[ -x /usr/bin/avapdf-job ]]
+[[ -f /usr/share/nautilus-python/extensions/avapdf.py ]]
+[[ -f /usr/share/caja-python/extensions/avapdf.py ]]
+[[ -f /usr/share/nemo/actions/avapdf-extracttext.nemo_action ]]
+[[ -f /usr/share/nemo/actions/avapdf-merge.nemo_action ]]
+[[ -f /usr/share/nemo/actions/avapdf-convert.nemo_action ]]
+[[ -f /usr/share/nemo/actions/avapdf-moretools.nemo_action ]]
+[[ -f /usr/share/avapdf/thunar/uca.xml ]]
+python3 -m py_compile /usr/share/nautilus-python/extensions/avapdf.py /usr/bin/avapdf-job
 desktop-file-validate /usr/share/applications/avapdf.desktop
-grep -Fqx 'Type=Service' /usr/share/kio/servicemenus/avapdf-pdf.desktop
-grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+for SERVICE_MENU in avapdf-pdf.desktop avapdf-pdf-merge.desktop avapdf-convert.desktop; do
+  grep -Fqx 'Type=Service' "/usr/share/kio/servicemenus/$SERVICE_MENU"
+  grep -Fqx 'ServiceTypes=KonqPopupMenu/Plugin' "/usr/share/kio/servicemenus/$SERVICE_MENU"
+done
 grep -Fqx 'MimeType=application/pdf;' /usr/share/kio/servicemenus/avapdf-pdf.desktop
-grep -Fqx 'Actions=AvaPDFOptimize' /usr/share/kio/servicemenus/avapdf-pdf.desktop
-grep -Fqx '[Desktop Action AvaPDFOptimize]' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Actions=AvaPDFExtractText;AvaPDFMoreTools' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx '[Desktop Action AvaPDFExtractText]' /usr/share/kio/servicemenus/avapdf-pdf.desktop
+grep -Fqx 'Actions=AvaPDFMerge;AvaPDFMoreTools' /usr/share/kio/servicemenus/avapdf-pdf-merge.desktop
+grep -Fqx '[Desktop Action AvaPDFConvertToPdf]' /usr/share/kio/servicemenus/avapdf-convert.desktop
+
+# avapdf-job 任务协议：生成的任务文件必须位于 <TMPDIR>/AvaPDF/Jobs 且名为 AvaPDF-*.json。
+# 用 avapdf 替身避免真实应用立即消费并删除任务文件。
+SHIM_DIR=$(mktemp -d)
+printf '#!/bin/sh\nexit 0\n' > "$SHIM_DIR/avapdf"
+chmod +x "$SHIM_DIR/avapdf"
+rm -rf "${TMPDIR:-/tmp}/AvaPDF/Jobs"
+PATH="$SHIM_DIR:$PATH" avapdf-job --tool extracttext --auto /tmp/sample.pdf
+JOB=$(find "${TMPDIR:-/tmp}/AvaPDF/Jobs" -name 'AvaPDF-*.json' -print -quit 2>/dev/null)
+[[ -n "$JOB" ]]
+python3 - "$JOB" <<'PYEOF'
+import json, sys
+job = json.load(open(sys.argv[1], encoding="utf-8"))
+assert job["tool"] == "extracttext", job
+assert job["autoRun"] is True, job
+assert job["files"] == ["/tmp/sample.pdf"], job
+PYEOF
 verify_gui_window "$(mktemp)" /usr/bin/avapdf --tool optimize
 
 echo 'DEB install, desktop integration and GUI startup verified.'
@@ -68,6 +100,16 @@ hash -r
 [[ ! -e /opt/avapdf/AvaPDF.Desktop ]]
 [[ ! -e /usr/share/applications/avapdf.desktop ]]
 [[ ! -e /usr/share/kio/servicemenus/avapdf-pdf.desktop ]]
+[[ ! -e /usr/share/kio/servicemenus/avapdf-pdf-merge.desktop ]]
+[[ ! -e /usr/share/kio/servicemenus/avapdf-convert.desktop ]]
+[[ ! -e /usr/bin/avapdf-job ]]
+[[ ! -e /usr/share/nautilus-python/extensions/avapdf.py ]]
+[[ ! -e /usr/share/caja-python/extensions/avapdf.py ]]
+[[ ! -e /usr/share/nemo/actions/avapdf-extracttext.nemo_action ]]
+[[ ! -e /usr/share/nemo/actions/avapdf-merge.nemo_action ]]
+[[ ! -e /usr/share/nemo/actions/avapdf-convert.nemo_action ]]
+[[ ! -e /usr/share/nemo/actions/avapdf-moretools.nemo_action ]]
+[[ ! -e /usr/share/avapdf/thunar/uca.xml ]]
 echo 'DEB uninstall cleanup verified.'
 
 chmod +x "$APPIMAGE"

@@ -1,0 +1,23 @@
+# KDE service menu：文档/图片转 PDF（对应 docs/SHELL_MENU.md 菜单矩阵）。
+# 不传 --tool，由 AvaPDF 按扩展名选择转换器（见 SHELL_MENU.md 启动任务协议）。
+[Desktop Entry]
+Type=Service
+Name=AvaPDF
+Name[zh_CN]=AvaPDF
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=application/msword;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.oasis.opendocument.text;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.oasis.opendocument.spreadsheet;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.oasis.opendocument.presentation;text/markdown;text/html;application/rtf;text/rtf;text/plain;image/jpeg;image/png;image/bmp;image/gif;image/webp;image/tiff;image/svg+xml;
+Actions=AvaPDFConvertToPdf;AvaPDFMoreTools
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=AvaPDF
+
+[Desktop Action AvaPDFConvertToPdf]
+Name=Convert to PDF
+Name[zh_CN]=转换为 PDF
+Icon=avapdf
+Exec=avapdf-job --auto %F
+
+[Desktop Action AvaPDFMoreTools]
+Name=More Tools...
+Name[zh_CN]=更多工具…
+Icon=avapdf
+Exec=avapdf-job %F

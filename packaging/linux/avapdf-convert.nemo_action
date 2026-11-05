@@ -1,0 +1,10 @@
+# Nemo (Cinnamon)：文档/图片转 PDF（autoRun，由 AvaPDF 按扩展名选择转换器）。
+[Nemo Action]
+Name=Convert to PDF
+Name[zh_CN]=转换为 PDF
+Comment=Convert the selection to PDF with AvaPDF
+Comment[zh_CN]=使用 AvaPDF 将所选文件转换为 PDF（不覆盖源文件）
+Exec=avapdf-job --auto %F
+Icon-Name=avapdf
+Selection=any
+Extensions=doc;docx;odt;xls;xlsx;ods;ppt;pptx;odp;md;markdown;html;htm;rtf;txt;jpg;jpeg;png;bmp;gif;webp;tif;tiff;svg;

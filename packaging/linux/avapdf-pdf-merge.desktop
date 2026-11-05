@@ -1,0 +1,23 @@
+# KDE service menu：多个 PDF 的合并入口（对应 docs/SHELL_MENU.md 菜单矩阵）。
+[Desktop Entry]
+Type=Service
+Name=AvaPDF
+Name[zh_CN]=AvaPDF
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=application/pdf;
+Actions=AvaPDFMerge;AvaPDFMoreTools
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=AvaPDF
+X-KDE-MinNumberOfUrls=2
+
+[Desktop Action AvaPDFMerge]
+Name=Merge PDFs
+Name[zh_CN]=合并 PDF
+Icon=avapdf
+Exec=avapdf-job --tool merge %F
+
+[Desktop Action AvaPDFMoreTools]
+Name=More Tools...
+Name[zh_CN]=更多工具…
+Icon=avapdf
+Exec=avapdf-job %F

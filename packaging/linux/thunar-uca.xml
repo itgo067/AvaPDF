@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Thunar (XFCE) custom action templates for AvaPDF.
+  菜单矩阵与 docs/SHELL_MENU.md 的 Windows 右键设计保持一致。
+
+  Thunar 只读取用户配置 ~/.config/Thunar/uca.xml，没有可靠的系统级注册机制。
+  本文件作为模板随 DEB 安装到 /usr/share/avapdf/thunar/uca.xml，
+  用户或发行版可将其中的 <action> 段合并进自己的 uca.xml
+  （或在 Thunar「编辑 → 配置自定义操作」中按同样参数手动添加）。
+-->
+<actions>
+<action>
+	<icon>avapdf</icon>
+	<name>提取文本（AvaPDF）</name>
+	<submenu>AvaPDF</submenu>
+	<unique-id>avapdf-extracttext-1</unique-id>
+	<command>avapdf-job --tool extracttext --auto %F</command>
+	<description>使用 AvaPDF 提取 PDF 文本（直接生成 TXT，不覆盖源文件）</description>
+	<range></range>
+	<patterns>*.pdf;*.PDF</patterns>
+	<other-files/>
+</action>
+<action>
+	<icon>avapdf</icon>
+	<name>合并 PDF（AvaPDF）</name>
+	<submenu>AvaPDF</submenu>
+	<unique-id>avapdf-merge-1</unique-id>
+	<command>avapdf-job --tool merge %F</command>
+	<description>使用 AvaPDF 合并所选 PDF（进入合并工作区确认）</description>
+	<range>2-*</range>
+	<patterns>*.pdf;*.PDF</patterns>
+	<other-files/>
+</action>
+<action>
+	<icon>avapdf</icon>
+	<name>转换为 PDF（AvaPDF）</name>
+	<submenu>AvaPDF</submenu>
+	<unique-id>avapdf-convert-1</unique-id>
+	<command>avapdf-job --auto %F</command>
+	<description>使用 AvaPDF 将所选文件转换为 PDF（不覆盖源文件）</description>
+	<range></range>
+	<patterns>*.doc;*.docx;*.odt;*.xls;*.xlsx;*.ods;*.ppt;*.pptx;*.odp;*.md;*.markdown;*.html;*.htm;*.rtf;*.txt;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tif;*.tiff;*.svg</patterns>
+	<other-files/>
+</action>
+<action>
+	<icon>avapdf</icon>
+	<name>更多工具…（AvaPDF）</name>
+	<submenu>AvaPDF</submenu>
+	<unique-id>avapdf-moretools-1</unique-id>
+	<command>avapdf-job %F</command>
+	<description>在 AvaPDF 工作区中打开所选文件</description>
+	<range></range>
+	<patterns>*.pdf;*.PDF;*.doc;*.docx;*.odt;*.xls;*.xlsx;*.ods;*.ppt;*.pptx;*.odp;*.md;*.markdown;*.html;*.htm;*.rtf;*.txt;*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tif;*.tiff;*.svg</patterns>
+	<other-files/>
+</action>
+</actions>

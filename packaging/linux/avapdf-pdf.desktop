@@ -1,12 +1,22 @@
 [Desktop Entry]
 Type=Service
+Name=AvaPDF
+Name[zh_CN]=AvaPDF
 ServiceTypes=KonqPopupMenu/Plugin
 MimeType=application/pdf;
-Actions=AvaPDFOptimize
+Actions=AvaPDFExtractText;AvaPDFMoreTools
 X-KDE-Priority=TopLevel
+X-KDE-Submenu=AvaPDF
+X-KDE-MaxNumberOfUrls=1
 
-[Desktop Action AvaPDFOptimize]
-Name=Optimize with AvaPDF
-Name[zh_CN]=使用 AvaPDF 优化 PDF
+[Desktop Action AvaPDFExtractText]
+Name=Extract Text
+Name[zh_CN]=提取文本
 Icon=avapdf
-Exec=avapdf --tool optimize --file %F
+Exec=avapdf-job --tool extracttext --auto %F
+
+[Desktop Action AvaPDFMoreTools]
+Name=More Tools...
+Name[zh_CN]=更多工具…
+Icon=avapdf
+Exec=avapdf-job %F

@@ -1,0 +1,10 @@
+# Nemo (Cinnamon)：更多工具…（打开 AvaPDF 工作区，不自动执行）。
+[Nemo Action]
+Name=More Tools...
+Name[zh_CN]=更多工具…
+Comment=Open the selection in the AvaPDF workspace
+Comment[zh_CN]=在 AvaPDF 工作区中打开所选文件
+Exec=avapdf-job %F
+Icon-Name=avapdf
+Selection=any
+Extensions=pdf;doc;docx;odt;xls;xlsx;ods;ppt;pptx;odp;md;markdown;html;htm;rtf;txt;jpg;jpeg;png;bmp;gif;webp;tif;tiff;svg;

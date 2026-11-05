@@ -1,0 +1,10 @@
+# Nemo (Cinnamon)：多个 PDF 合并（进工作区确认顺序，不自动执行）。
+[Nemo Action]
+Name=Merge PDFs
+Name[zh_CN]=合并 PDF
+Comment=Merge the selected PDFs with AvaPDF
+Comment[zh_CN]=使用 AvaPDF 合并所选 PDF（进入合并工作区确认）
+Exec=avapdf-job --tool merge %F
+Icon-Name=avapdf
+Selection=m
+Extensions=pdf;

@@ -29,12 +29,23 @@
 ```text
 /opt/avapdf/                                程序和原生依赖
 /usr/bin/avapdf                            启动入口或符号链接
+/usr/bin/avapdf-job                        右键菜单任务启动器（生成 --job 任务文件）
 /usr/share/applications/avapdf.desktop     应用菜单与文件关联
 /usr/share/icons/hicolor/512x512/apps/avapdf.png
-/usr/share/kio/servicemenus/avapdf-pdf.desktop
+/usr/share/kio/servicemenus/avapdf-pdf.desktop        KDE：单个 PDF（提取文本/更多工具）
+/usr/share/kio/servicemenus/avapdf-pdf-merge.desktop  KDE：多个 PDF（合并/更多工具）
+/usr/share/kio/servicemenus/avapdf-convert.desktop    KDE：文档/图片（转 PDF/更多工具）
+/usr/share/nautilus-python/extensions/avapdf.py   GNOME Nautilus（需 python3-nautilus，Suggests）
+/usr/share/caja-python/extensions/avapdf.py       MATE Caja（需 caja-python，Suggests）
+/usr/share/nemo/actions/avapdf-*.nemo_action      Cinnamon Nemo（声明式，无额外依赖）
+/usr/share/avapdf/thunar/uca.xml                  XFCE Thunar 模板，需用户合并进自己的 uca.xml
 ```
 
-`avapdf.desktop` 使用 `avapdf --file %F`，支持文件管理器带入文件。KDE 服务菜单使用 `avapdf --tool optimize --file %F` 提供优化入口，不自动执行处理。
+右键集成在 KDE/GNOME/MATE/Cinnamon 上随 DEB 自动生效（GNOME/MATE 需装对应 python 扩展包后重启文件管理器）；Thunar 无系统级注册机制，只提供模板。AppImage 不做任何系统级右键注册。
+
+Linux 右键菜单的菜单矩阵与 Windows 版保持一致（见 docs/SHELL_MENU.md）：单个 PDF 提供提取文本、多个 PDF 提供合并、文档/图片提供转 PDF，所有场景都有「更多工具…」。各桌面入口统一调用 `avapdf-job [--tool …] [--auto] <文件…>`，由它按 SHELL_MENU.md 的启动任务协议在 `$TMPDIR/AvaPDF/Jobs` 生成一次性 `AvaPDF-*.json` 后以 `avapdf --job` 启动应用；autoRun 仅用于提取文本和转换，合并与「更多工具…」进入工作区确认。
+
+`avapdf.desktop` 使用 `avapdf --file %F`，支持文件管理器带入文件。KDE 服务菜单通过 `avapdf-job` 提供提取文本、合并与转 PDF 入口。
 
 DEB 构建时需要：
 
