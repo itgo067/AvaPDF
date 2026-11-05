@@ -1,9 +1,12 @@
 name: Windows AOT release
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
-    tags: ['v*']
     paths:
       - '.github/workflows/desktop-aot.yml'
       - 'AvaPDF.slnx'
@@ -44,6 +47,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            global.json
+            **/*.csproj
 
       - name: Run unit tests
         shell: powershell

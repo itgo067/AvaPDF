@@ -36,6 +36,15 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 
 每次成功运行会将指标写入 Job Summary，并上传 ZIP、JSON 和 Markdown 指标，产物保留 14 天。
 
+## CI 耗时优化
+
+- `desktop-aot.yml` 只负责 `main` 和 Pull Request 的日常 AOT 验证，不再对 `v*` 标签重复发布；Release 的 Windows AOT 由 `release-installer.yml` 统一构建。
+- 三个构建工作流使用 `setup-dotnet` 的 NuGet 缓存，依赖版本文件作为缓存键。
+- Linux 的 AppImageTool 和 Windows 的 Inno Setup 使用 Actions Cache，同时保留 AppImageTool 的 SHA-256 校验。
+- 同一工作流、同一分支出现新提交时自动取消过期运行，减少重复 AOT 编译。
+
+这些优化不减少单元测试、AOT 冒烟、GUI 启动、安装或卸载验证。
+
 ## 自动创建 GitHub Release
 
 `.github/workflows/create-release.yml` 在推送 `v*` 标签或手动输入版本标签时运行：

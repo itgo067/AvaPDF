@@ -1,5 +1,9 @@
 name: Windows release installer
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   release:
     types: [published]
@@ -27,6 +31,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            global.json
+            **/*.csproj
 
       - name: Run unit tests
         shell: powershell
@@ -36,7 +45,15 @@ jobs:
         shell: powershell
         run: powershell -File eng/publish-desktop.ps1 -RequireAot
 
+      - name: Cache Inno Setup
+        id: inno-setup-cache
+        uses: actions/cache@v4
+        with:
+          path: C:\Program Files (x86)\Inno Setup 6
+          key: inno-setup-6
+
       - name: Install Inno Setup
+        if: steps.inno-setup-cache.outputs.cache-hit != 'true'
         shell: powershell
         run: winget install --id JRSoftware.InnoSetup --exact --silent --accept-package-agreements --accept-source-agreements
 

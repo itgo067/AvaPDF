@@ -1,5 +1,9 @@
 name: Linux packages
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
@@ -48,6 +52,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            Directory.Packages.props
+            global.json
+            **/*.csproj
 
       - name: Install build and desktop test tools
         shell: bash
@@ -55,10 +64,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential clang zlib1g-dev dpkg-dev desktop-file-utils xvfb x11-utils libfuse2 fonts-noto-cjk fonts-droid-fallback
 
-      - name: Install verified AppImageTool 1.9.1
+      - name: Restore AppImageTool cache
+        id: appimagetool-cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/appimagetool-x86_64.AppImage
+          key: appimagetool-1.9.1
+
+      - name: Download AppImageTool 1.9.1
+        if: steps.appimagetool-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: curl -fL --retry 5 --retry-all-errors https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage -o /tmp/appimagetool-x86_64.AppImage
+
+      - name: Install verified AppImageTool
         shell: bash
         run: |
-          curl -fL --retry 5 --retry-all-errors https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage -o /tmp/appimagetool-x86_64.AppImage
           echo 'ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0  /tmp/appimagetool-x86_64.AppImage' | sha256sum -c -
           sudo install -m 755 /tmp/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 
