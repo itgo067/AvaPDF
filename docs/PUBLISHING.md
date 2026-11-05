@@ -36,6 +36,17 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 
 每次成功运行会将指标写入 Job Summary，并上传 ZIP、JSON 和 Markdown 指标，产物保留 14 天。
 
+## 自动创建 GitHub Release
+
+`.github/workflows/create-release.yml` 在推送 `v*` 标签或手动输入版本标签时运行：
+
+1. 校验标签格式；
+2. 使用 `GITHUB_TOKEN` 创建 Release 并生成发布说明；
+3. 预发布标签自动设置 prerelease；
+4. 已存在的 Release 不覆盖描述和备注，支持安全重跑。
+
+Release 创建后，`release-installer.yml` 和 `linux-packages.yml` 的 `release: published` 触发器接管构建、安装验证和产物上传。自动发布不需要手动在 GitHub 页面先建 Release。
+
 ## 强制要求 AOT
 
 CI 或发布环境不允许回退时：

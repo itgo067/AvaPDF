@@ -28,3 +28,13 @@ git tag -a v0.1.0 -m "AvaPDF 0.1.0"
 ```
 
 将标签和提交推送到同一远程仓库后，GitHub Actions 会按该提交和标签计算相同版本。创建标签前，应先完成测试、文档和提交；不要在标签之后继续追加本应属于该版本的改动。
+
+推送 `v*` 标签还会触发 `.github/workflows/create-release.yml`，自动创建对应的 GitHub Release；含 `-` 的预发布标签会标记为 prerelease。若 Release 已存在，工作流保持其元数据不变，便于安全重跑。
+
+Release 创建后，现有 Windows 和 Linux 发布工作流会继续构建并上传：
+
+- Windows Setup 安装包和 Native AOT ZIP；
+- Linux DEB 和 AppImage；
+- 启动耗时、体积等发布指标。
+
+手动创建 Release 或从 Actions 页面运行 `Create GitHub Release` 也可以达到相同效果。

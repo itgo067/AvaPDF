@@ -1,0 +1,55 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag to create, for example v0.2.0 or v0.2.0-rc.1'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create or verify release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate version tag
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          if [[ -z "$RELEASE_TAG" || "$RELEASE_TAG" != v* ]]; then
+            echo "A version tag beginning with 'v' is required, got: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          echo "Release tag: $RELEASE_TAG"
+
+      - name: Create release if needed
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists; keeping its existing metadata."
+            exit 0
+          fi
+
+          args=(--target "$GITHUB_SHA" --generate-notes --title "AvaPDF ${RELEASE_TAG#v}")
+          if [[ "$RELEASE_TAG" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+          gh release create "$RELEASE_TAG" "${args[@]}"
+
+      - name: Report release URL
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: gh release view "$RELEASE_TAG" --json url --jq '.url'
