@@ -59,6 +59,17 @@
       </Grid>
     </Border>
 
-    <views:ToolWorkspaceView Grid.Column="1" DataContext="{Binding Workspace}" />
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+      <Border Grid.Row="0" Background="{DynamicResource SemiColorPrimaryLight}" Padding="14,10"
+              BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="0,0,0,1" IsVisible="{Binding HasUpdate}">
+        <Grid ColumnDefinitions="*,Auto,Auto" VerticalAlignment="Center">
+          <TextBlock Text="{Binding UpdateMessage}" Foreground="{DynamicResource SemiColorPrimary}"
+                     VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,14,0" />
+          <Button Grid.Column="1" Content="查看更新" Click="OnUpdateClick" Margin="0,0,8,0" />
+          <Button Grid.Column="2" Content="忽略此版本" Click="OnIgnoreUpdateClick" />
+        </Grid>
+      </Border>
+      <views:ToolWorkspaceView Grid.Row="1" DataContext="{Binding Workspace}" />
+    </Grid>
   </Grid>
 </Window>

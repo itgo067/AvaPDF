@@ -55,6 +55,7 @@ public sealed partial class App : Avalonia.Application
             services.AddSingleton<IFileDialogService, FileDialogService>();
             services.AddSingleton<IShellService, ShellService>();
             services.AddSingleton<IThemeService, ThemeService>();
+            services.AddSingleton<IUpdateService, UpdateService>();
             services.AddSingleton<MainWindowViewModel>();
 
             var provider = services.BuildServiceProvider();
@@ -86,7 +87,10 @@ public sealed partial class App : Avalonia.Application
             };
             desktop.MainWindow = mainWindow;
             mainWindow.Loaded += async (_, _) =>
+            {
                 await viewModel.ApplyStartupOptions(StartupOptions.Parse(desktop.Args));
+                await viewModel.CheckForUpdatesAsync();
+            };
 
             if (provider.GetRequiredService<IFileDialogService>() is FileDialogService dialogs)
             {

@@ -11,6 +11,12 @@ public partial class MainWindow : Window
     private async void OnAboutClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         await new AboutWindow().ShowDialog(this);
 
+    private void OnUpdateClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        (DataContext as ViewModels.MainWindowViewModel)?.OpenUpdate();
+
+    private void OnIgnoreUpdateClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        (DataContext as ViewModels.MainWindowViewModel)?.IgnoreUpdate();
+
     private void OnToolNavMenuContainerPrepared(object? sender, ContainerPreparedEventArgs e)
     {
         if (e.Container is NavMenuItem item)

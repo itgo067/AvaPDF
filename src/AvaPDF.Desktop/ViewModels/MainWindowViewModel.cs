@@ -12,9 +12,14 @@ public sealed record ThemeOption(AppThemeMode Mode, string Label, string Glyph);
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IThemeService _themeService;
+    private readonly IShellService _shell;
+    private readonly IUpdateService? _updateService;
 
     [ObservableProperty]
     private PdfToolDescriptor _selectedTool;
+
+    [ObservableProperty]
+    private UpdateInfo? _availableUpdate;
 
     [ObservableProperty]
     private ThemeOption _selectedThemeOption;
@@ -26,9 +31,12 @@ public partial class MainWindowViewModel : ObservableObject
         PdfJobService jobs,
         IFileDialogService dialogs,
         IShellService shell,
-        IThemeService themeService)
+        IThemeService themeService,
+        IUpdateService? updateService = null)
     {
         _themeService = themeService;
+        _shell = shell;
+        _updateService = updateService;
         Tools = PdfToolCatalog.Tools;
         ThemeOptions =
         [
@@ -63,6 +71,37 @@ public partial class MainWindowViewModel : ObservableObject
     public IReadOnlyList<ThemeOption> ThemeOptions { get; }
 
     public ToolWorkspaceViewModel Workspace { get; }
+
+    public bool HasUpdate => AvailableUpdate is not null;
+
+    public string UpdateMessage => AvailableUpdate is null
+        ? string.Empty
+        : $"发现 AvaPDF {AvailableUpdate.LatestVersion} 可更新（当前 {AvailableUpdate.CurrentVersion}）";
+
+    public async Task CheckForUpdatesAsync()
+    {
+        if (_updateService is not null)
+        {
+            AvailableUpdate = await _updateService.CheckForUpdateAsync();
+        }
+    }
+
+    public void OpenUpdate()
+    {
+        if (AvailableUpdate is not null)
+        {
+            _shell.OpenFile(AvailableUpdate.ReleaseUrl);
+        }
+    }
+
+    public void IgnoreUpdate()
+    {
+        if (AvailableUpdate is not null && _updateService is not null)
+        {
+            _updateService.IgnoreVersion(AvailableUpdate.LatestVersion);
+            AvailableUpdate = null;
+        }
+    }
 
     public async Task ApplyStartupOptions(StartupOptions options)
     {
@@ -154,6 +193,12 @@ public partial class MainWindowViewModel : ObservableObject
     private void SelectTool(PdfToolDescriptor tool) => SelectedTool = tool;
 
     partial void OnSelectedToolChanged(PdfToolDescriptor value) => Workspace.Configure(value);
+
+    partial void OnAvailableUpdateChanged(UpdateInfo? value)
+    {
+        OnPropertyChanged(nameof(HasUpdate));
+        OnPropertyChanged(nameof(UpdateMessage));
+    }
 
     partial void OnSelectedNavigationNodeChanged(object? value)
     {
