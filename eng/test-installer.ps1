@@ -100,7 +100,7 @@ try {
 
     $invokePdf = Join-Path $root 'artifacts/shell-tests/invoke 中文 sample.pdf'
     $invokeText = Join-Path (Split-Path $invokePdf) (([System.IO.Path]::GetFileNameWithoutExtension($invokePdf)) + '-text.txt')
-    Copy-Item (Join-Path $root 'artifacts/startup sample.pdf') $invokePdf -Force
+    Copy-Item (Join-Path $root 'tests/Fixtures/StartupSample.pdf') $invokePdf -Force
     Remove-Item $invokeText -Force -ErrorAction SilentlyContinue
     & (Join-Path $root 'artifacts/shell-tests/TestShell.exe') --invoke $invokePdf
     if ($LASTEXITCODE -ne 0) {
