@@ -8,7 +8,7 @@
 
       <StackPanel Spacing="6">
         <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
-        <TextBlock Text="外观、主题和网络代理。" FontSize="13" Foreground="{DynamicResource SemiColorText2}" />
+        <TextBlock Text="外观、网络代理和应用信息。" FontSize="13" Foreground="{DynamicResource SemiColorText2}" />
       </StackPanel>
 
       <Border Padding="22" CornerRadius="14" Background="{DynamicResource SemiColorBackground1}"
@@ -55,6 +55,17 @@
               <TextBlock Text="{Binding ProxyErrorMessage}" Foreground="{DynamicResource SemiColorDanger}"
                          TextWrapping="Wrap" FontSize="12" VerticalAlignment="Center" />
             </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="22" CornerRadius="14" Background="{DynamicResource SemiColorBackground1}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
+        <StackPanel Spacing="14">
+          <TextBlock Text="关于" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button Content="关于 AvaPDF" Click="OnAboutClick" MinHeight="34" MinWidth="120" />
+            <TextBlock Text="版本、开源许可和项目信息。" FontSize="12" Foreground="{DynamicResource SemiColorText2}" VerticalAlignment="Center" />
           </StackPanel>
         </StackPanel>
       </Border>
