@@ -43,7 +43,7 @@ jobs:
 
       - name: Publish Native AOT
         shell: powershell
-        run: powershell -File eng/publish-desktop.ps1 -RequireAot
+        run: powershell -File eng/publish-desktop.ps1 -RequireAot -DisableNativeDebugSymbols
 
       - name: Cache Inno Setup
         id: inno-setup-cache

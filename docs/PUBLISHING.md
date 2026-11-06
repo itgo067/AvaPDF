@@ -44,6 +44,9 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 - 三个构建工作流使用 `setup-dotnet` 的 NuGet 缓存，依赖版本文件作为缓存键。
 - Linux 的 AppImageTool 和 Windows 的 Inno Setup 使用 Actions Cache，同时保留 AppImageTool 的 SHA-256 校验。
 - 同一工作流、同一分支出现新提交时自动取消过期运行，减少重复 AOT 编译。
+- CI 使用 `-DisableNativeDebugSymbols`，避免为发布包不需要的原生 PDB 生成和写入调试信息；本地需要原生调试时不加此参数。
+
+本机诊断构建中，关闭原生符号将总发布时间从约 503 秒降至 414 秒，其中 ILC 编译从约 462 秒降至 394 秒。实际 CI 收益取决于 runner 和缓存。
 
 这些优化不减少单元测试、AOT 冒烟、GUI 启动、安装或卸载验证。
 

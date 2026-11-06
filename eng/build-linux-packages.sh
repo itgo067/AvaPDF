@@ -21,6 +21,9 @@ dotnet publish "$PROJECT" \
   -p:TrimmerSingleWarn=false \
   -p:WarningsNotAsErrors=IL2026%3BIL3050%3BIL2075 \
   -p:StripSymbols=true \
+  -p:DebugType=None \
+  -p:DebugSymbols=false \
+  -p:NativeDebugSymbols=false \
   -o "$PUBLISH_DIR"
 
 VERSION=$(dotnet msbuild "$PROJECT" -nologo -target:MinVer -getProperty:MinVerVersion | tail -n 1 | tr -d '\r' | xargs)
