@@ -17,6 +17,17 @@ public partial class MainWindow : Window
     private void OnIgnoreUpdateClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         (DataContext as ViewModels.MainWindowViewModel)?.IgnoreUpdate();
 
+    private void OnSaveProxyClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        (DataContext as ViewModels.MainWindowViewModel)?.SaveProxySettings();
+
+    private async void OnApplyUpdateClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is ViewModels.MainWindowViewModel viewModel)
+        {
+            await viewModel.ApplyUpdateAsync();
+        }
+    }
+
     private void OnToolNavMenuContainerPrepared(object? sender, ContainerPreparedEventArgs e)
     {
         if (e.Container is NavMenuItem item)

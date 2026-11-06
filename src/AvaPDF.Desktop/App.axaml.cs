@@ -56,6 +56,8 @@ public sealed partial class App : Avalonia.Application
             services.AddSingleton<IShellService, ShellService>();
             services.AddSingleton<IThemeService, ThemeService>();
             services.AddSingleton<IUpdateService, UpdateService>();
+            services.AddSingleton<IVelopackUpdateService, VelopackUpdateService>();
+            services.AddSingleton<IProxySettingsService, ProxySettingsService>();
             services.AddSingleton<MainWindowViewModel>();
 
             var provider = services.BuildServiceProvider();

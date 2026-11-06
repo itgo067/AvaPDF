@@ -9,14 +9,36 @@ namespace AvaPDF.Desktop.ViewModels;
 
 public sealed record ThemeOption(AppThemeMode Mode, string Label, string Glyph);
 
+public sealed record ProxyOption(ProxyMode Mode, string Label);
+
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly IThemeService _themeService;
     private readonly IShellService _shell;
     private readonly IUpdateService? _updateService;
+    private readonly IVelopackUpdateService? _velopackUpdateService;
+    private readonly IProxySettingsService? _proxySettings;
 
     [ObservableProperty]
     private PdfToolDescriptor _selectedTool;
+
+    [ObservableProperty]
+    private ProxyOption _selectedProxyOption;
+
+    [ObservableProperty]
+    private string _customProxyAddress = string.Empty;
+
+    [ObservableProperty]
+    private string _proxyErrorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _isUpdating;
+
+    [ObservableProperty]
+    private int _updateProgress;
+
+    [ObservableProperty]
+    private string _updateErrorMessage = string.Empty;
 
     [ObservableProperty]
     private UpdateInfo? _availableUpdate;
@@ -32,11 +54,27 @@ public partial class MainWindowViewModel : ObservableObject
         IFileDialogService dialogs,
         IShellService shell,
         IThemeService themeService,
-        IUpdateService? updateService = null)
+        IUpdateService? updateService = null,
+        IVelopackUpdateService? velopackUpdateService = null,
+        IProxySettingsService? proxySettings = null)
     {
         _themeService = themeService;
         _shell = shell;
         _updateService = updateService;
+        _velopackUpdateService = velopackUpdateService;
+        _proxySettings = proxySettings;
+        ProxyOptions =
+        [
+            new ProxyOption(ProxyMode.System, "跟随系统代理"),
+            new ProxyOption(ProxyMode.Disabled, "不使用代理"),
+            new ProxyOption(ProxyMode.Custom, "自定义 HTTP 代理")
+        ];
+        _selectedProxyOption = ProxyOptions[0];
+        if (proxySettings is not null)
+        {
+            _selectedProxyOption = ProxyOptions.Single(option => option.Mode == proxySettings.Mode);
+            _customProxyAddress = proxySettings.Address;
+        }
         Tools = PdfToolCatalog.Tools;
         ThemeOptions =
         [
@@ -70,6 +108,10 @@ public partial class MainWindowViewModel : ObservableObject
 
     public IReadOnlyList<ThemeOption> ThemeOptions { get; }
 
+    public IReadOnlyList<ProxyOption> ProxyOptions { get; }
+
+    public bool IsCustomProxy => SelectedProxyOption.Mode == ProxyMode.Custom;
+
     public ToolWorkspaceViewModel Workspace { get; }
 
     public bool HasUpdate => AvailableUpdate is not null;
@@ -100,6 +142,43 @@ public partial class MainWindowViewModel : ObservableObject
         {
             _updateService.IgnoreVersion(AvailableUpdate.LatestVersion);
             AvailableUpdate = null;
+        }
+    }
+
+    public void SaveProxySettings()
+    {
+        if (_proxySettings is null)
+        {
+            return;
+        }
+        try
+        {
+            _proxySettings.Set(SelectedProxyOption.Mode, CustomProxyAddress);
+            ProxyErrorMessage = string.Empty;
+        }
+        catch (Exception exception) when (exception is ArgumentException)
+        {
+            ProxyErrorMessage = exception.Message;
+        }
+    }
+
+    public async Task ApplyUpdateAsync()
+    {
+        if (_velopackUpdateService is null || IsUpdating)
+        {
+            return;
+        }
+        IsUpdating = true;
+        UpdateErrorMessage = string.Empty;
+        UpdateProgress = 0;
+        try
+        {
+            await _velopackUpdateService.ApplyUpdatesAndRestartAsync(percent => UpdateProgress = percent);
+        }
+        catch (Exception exception)
+        {
+            UpdateErrorMessage = $"更新失败：{exception.Message}";
+            IsUpdating = false;
         }
     }
 
@@ -209,4 +288,6 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     partial void OnSelectedThemeOptionChanged(ThemeOption value) => _themeService.SetTheme(value.Mode);
+
+    partial void OnSelectedProxyOptionChanged(ProxyOption value) => OnPropertyChanged(nameof(IsCustomProxy));
 }

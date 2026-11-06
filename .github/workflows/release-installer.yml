@@ -66,6 +66,10 @@ jobs:
         shell: powershell
         run: powershell -File eng/build-installer.ps1
 
+      - name: Build Velopack update packages
+        shell: powershell
+        run: powershell -File eng/build-velopack.ps1
+
       - name: Verify install, context menu and uninstall
         shell: powershell
         run: powershell -File eng/test-installer.ps1 -SetupPath (Get-ChildItem artifacts/publish/*-win-x64-setup.exe).FullName
@@ -79,6 +83,9 @@ jobs:
           path: |
             artifacts/publish/AvaPDF-*-win-x64-setup.exe
             artifacts/publish/AvaPDF-*-win-x64-aot.zip
+            artifacts/velopack/AvaPDF-*.nupkg
+            artifacts/velopack/AvaPDF-*-Setup.exe
+            artifacts/velopack/releases.win.json
             artifacts/metrics/win-x64-aot.json
             artifacts/metrics/win-x64-aot.md
 
@@ -90,7 +97,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
         run: |
           $assets = Get-ChildItem artifacts/publish -File |
-            Where-Object { $_.Name -like 'AvaPDF-*-win-x64-setup.exe' -or $_.Name -like 'AvaPDF-*-win-x64-aot.zip' } |
+            Where-Object { $_.Name -like 'AvaPDF-*-win-x64-setup.exe' -or $_.Name -like 'AvaPDF-*-win-x64-aot.zip' -or $_.Name -like 'AvaPDF-*.nupkg' -or $_.Name -like 'AvaPDF-*-Setup.exe' -or $_.Name -eq 'releases.win.json' } |
             ForEach-Object { $_.FullName }
           gh release upload $env:RELEASE_TAG $assets --clobber
           if ($LASTEXITCODE -ne 0) { throw "gh release upload failed: $LASTEXITCODE" }

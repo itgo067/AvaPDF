@@ -50,6 +50,10 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 
 这些优化不减少单元测试、AOT 冒烟、GUI 启动、安装或卸载验证。
 
+## Velopack 更新包
+
+`eng/build-velopack.ps1` 使用现有 Native AOT 目录生成 Velopack 安装包、更新包和 `releases.win.json`。Release 工作流将这些文件与 Inno Setup、AOT ZIP、DEB 和 AppImage 一并上传，供应用内一键更新使用。首次通过 Velopack Setup 安装后即可使用后续 Velopack 更新。
+
 ## 自动创建 GitHub Release
 
 `.github/workflows/create-release.yml` 在推送 `v*` 标签或手动输入版本标签时运行：

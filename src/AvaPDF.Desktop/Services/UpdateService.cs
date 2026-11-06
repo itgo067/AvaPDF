@@ -26,7 +26,12 @@ public sealed class UpdateService : IUpdateService
     private readonly HttpClient _httpClient;
 
     public UpdateService()
-        : this(new HttpClient())
+        : this(new ProxySettingsService())
+    {
+    }
+
+    public UpdateService(IProxySettingsService proxySettings)
+        : this(new HttpClient(proxySettings.CreateHandler()))
     {
     }
 
