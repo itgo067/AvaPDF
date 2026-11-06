@@ -19,6 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Checkout release source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Validate version tag
         shell: bash
         env:
@@ -29,6 +34,24 @@ jobs:
             exit 1
           fi
           echo "Release tag: $RELEASE_TAG"
+
+      - name: Extract changelog for this version
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          python3 - "$RELEASE_TAG" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          version = sys.argv[1].removeprefix('v')
+          text = pathlib.Path('CHANGELOG.md').read_text(encoding='utf-8')
+          match = re.search(rf'^## \[{re.escape(version)}\][^\n]*\n(.*?)(?=^## \[|\Z)', text, re.MULTILINE | re.DOTALL)
+          if match is None or not match.group(1).strip():
+              raise SystemExit(f'No changelog section found for version {version}.')
+          pathlib.Path('/tmp/avapdf-release-notes.md').write_text(match.group(1).strip() + '\n', encoding='utf-8')
+          PY
 
       - name: Create release if needed
         shell: bash
@@ -41,7 +64,7 @@ jobs:
             exit 0
           fi
 
-          args=(--target "$GITHUB_SHA" --generate-notes --title "AvaPDF ${RELEASE_TAG#v}")
+          args=(--target "$GITHUB_SHA" --notes-file /tmp/avapdf-release-notes.md --title "AvaPDF ${RELEASE_TAG#v}")
           if [[ "$RELEASE_TAG" == *-* ]]; then
             args+=(--prerelease)
           fi
