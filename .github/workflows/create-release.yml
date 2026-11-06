@@ -76,3 +76,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: gh release view "$RELEASE_TAG" --json url --jq '.url'
+
+      - name: Start Windows and Linux package builds
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          gh workflow run release-installer.yml -f release_tag="$RELEASE_TAG"
+          gh workflow run linux-packages.yml -f release_tag="$RELEASE_TAG"

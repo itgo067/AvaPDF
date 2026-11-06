@@ -8,6 +8,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag to build and upload, for example v0.2.0'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -24,7 +29,7 @@ jobs:
       - name: Checkout release tag
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
+          ref: ${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
           fetch-depth: 0
 
       - name: Setup .NET
@@ -78,11 +83,11 @@ jobs:
             artifacts/metrics/win-x64-aot.md
 
       - name: Attach assets to GitHub Release
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || inputs.release_tag != ''
         shell: powershell
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
         run: |
           $assets = Get-ChildItem artifacts/publish -File |
             Where-Object { $_.Name -like 'AvaPDF-*-win-x64-setup.exe' -or $_.Name -like 'AvaPDF-*-win-x64-aot.zip' } |

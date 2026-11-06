@@ -59,7 +59,7 @@ artifacts/metrics/win-x64-aot.md     可读指标摘要
 3. 预发布标签自动设置 prerelease；
 4. 已存在的 Release 不覆盖描述和备注，支持安全重跑。
 
-Release 创建后，`release-installer.yml` 和 `linux-packages.yml` 的 `release: published` 触发器接管构建、安装验证和产物上传。自动发布不需要手动在 GitHub 页面先建 Release。
+Release 创建后，编排工作流显式调用 `release-installer.yml` 和 `linux-packages.yml`，传入版本标签并完成构建、安装验证和产物上传。使用 `GITHUB_TOKEN` 创建 Release 不会自行触发其他工作流，因此不能仅依赖 `release: published`。自动发布不需要手动在 GitHub 页面先建 Release。
 
 ## 强制要求 AOT
 

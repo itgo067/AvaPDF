@@ -31,7 +31,7 @@ git tag -a v0.1.0 -m "AvaPDF 0.1.0"
 
 推送 `v*` 标签还会触发 `.github/workflows/create-release.yml`，自动创建对应的 GitHub Release，并附上 `CHANGELOG.md` 中当前版本的章节；含 `-` 的预发布标签会标记为 prerelease。若 Release 已存在，工作流保持其元数据不变，便于安全重跑。
 
-Release 创建后，现有 Windows 和 Linux 发布工作流会继续构建并上传：
+Release 创建后，编排工作流会显式调用现有 Windows 和 Linux 发布工作流，继续构建并上传：
 
 - Windows Setup 安装包和 Native AOT ZIP；
 - Linux DEB 和 AppImage；

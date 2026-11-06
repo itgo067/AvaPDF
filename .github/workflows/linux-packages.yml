@@ -29,6 +29,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag to build and upload, for example v0.2.0'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -45,7 +50,7 @@ jobs:
       - name: Checkout source or release tag
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
+          ref: ${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
           fetch-depth: 0
 
       - name: Setup .NET
@@ -108,10 +113,10 @@ jobs:
             artifacts/publish/AvaPDF-*-linux-x64.AppImage
 
       - name: Attach packages to GitHub Release
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || inputs.release_tag != ''
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
         run: |
           gh release upload "$RELEASE_TAG" artifacts/publish/AvaPDF-*-linux-x64.deb artifacts/publish/AvaPDF-*-linux-x64.AppImage --clobber
