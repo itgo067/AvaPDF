@@ -49,6 +49,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private object? _selectedNavigationNode;
 
+    [ObservableProperty]
+    private bool _isSettingsVisible;
+
     public MainWindowViewModel(
         PdfJobService jobs,
         IFileDialogService dialogs,
@@ -271,7 +274,13 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void SelectTool(PdfToolDescriptor tool) => SelectedTool = tool;
 
-    partial void OnSelectedToolChanged(PdfToolDescriptor value) => Workspace.Configure(value);
+    partial void OnSelectedToolChanged(PdfToolDescriptor value)
+    {
+        IsSettingsVisible = false;
+        Workspace.Configure(value);
+    }
+
+    public void ShowSettings() => IsSettingsVisible = true;
 
     partial void OnAvailableUpdateChanged(UpdateInfo? value)
     {

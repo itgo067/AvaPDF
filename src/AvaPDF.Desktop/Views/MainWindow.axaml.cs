@@ -20,6 +20,9 @@ public partial class MainWindow : Window
     private void OnSaveProxyClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         (DataContext as ViewModels.MainWindowViewModel)?.SaveProxySettings();
 
+    private void OnSettingsClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
+        (DataContext as ViewModels.MainWindowViewModel)?.ShowSettings();
+
     private async void OnApplyUpdateClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is ViewModels.MainWindowViewModel viewModel)

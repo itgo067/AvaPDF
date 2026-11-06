@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:AvaPDF.Desktop.ViewModels"
+             x:Class="AvaPDF.Desktop.Views.SettingsView"
+             x:DataType="vm:MainWindowViewModel">
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <StackPanel MaxWidth="720" Margin="36,32,36,36" Spacing="26" HorizontalAlignment="Left">
+
+      <StackPanel Spacing="6">
+        <TextBlock Text="设置" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
+        <TextBlock Text="外观、主题和网络代理。" FontSize="13" Foreground="{DynamicResource SemiColorText2}" />
+      </StackPanel>
+
+      <Border Padding="22" CornerRadius="14" Background="{DynamicResource SemiColorBackground1}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
+        <StackPanel Spacing="14">
+          <TextBlock Text="外观主题" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
+          <TextBlock Text="选择应用的主题模式。" FontSize="12" Foreground="{DynamicResource SemiColorText2}" />
+          <ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}"
+                    HorizontalAlignment="Left" MinWidth="260" MinHeight="38" CornerRadius="9"
+                    Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ThemeOption">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <TextBlock Text="{Binding Glyph}" FontSize="15" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="22" CornerRadius="14" Background="{DynamicResource SemiColorBackground1}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
+        <StackPanel Spacing="14">
+          <TextBlock Text="网络代理" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}" />
+          <TextBlock Text="更新检查和下载使用的网络代理；应用不会保存代理账号或密码。"
+                     FontSize="12" Foreground="{DynamicResource SemiColorText2}" TextWrapping="Wrap" />
+          <ComboBox ItemsSource="{Binding ProxyOptions}" SelectedItem="{Binding SelectedProxyOption}"
+                    HorizontalAlignment="Left" MinWidth="260" MinHeight="38" CornerRadius="9"
+                    Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:ProxyOption">
+                <TextBlock Text="{Binding Label}" FontSize="12" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <StackPanel Spacing="10" IsVisible="{Binding IsCustomProxy}">
+            <TextBox Text="{Binding CustomProxyAddress}" PlaceholderText="http://127.0.0.1:7890"
+                     MinHeight="36" CornerRadius="9" HorizontalAlignment="Left" MinWidth="320"
+                     Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}" />
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <Button Content="保存代理设置" Click="OnSaveProxyClick" MinHeight="34" MinWidth="120" />
+              <TextBlock Text="{Binding ProxyErrorMessage}" Foreground="{DynamicResource SemiColorDanger}"
+                         TextWrapping="Wrap" FontSize="12" VerticalAlignment="Center" />
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

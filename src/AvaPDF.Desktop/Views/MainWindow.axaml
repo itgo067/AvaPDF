@@ -32,38 +32,8 @@
         </Grid>
 
         <StackPanel Grid.Row="2" Margin="0,18,0,0" Spacing="12">
-          <StackPanel Spacing="6">
-            <TextBlock Text="外观主题" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText2}" Margin="4,0,0,0" />
-            <ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeOption}"
-                      HorizontalAlignment="Stretch" MinHeight="38" CornerRadius="9"
-                      Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:ThemeOption">
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="{Binding Glyph}" FontSize="15" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
-                  </StackPanel>
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-          </StackPanel>
-          <StackPanel Spacing="6">
-            <TextBlock Text="网络代理" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText2}" Margin="4,0,0,0" />
-            <ComboBox ItemsSource="{Binding ProxyOptions}" SelectedItem="{Binding SelectedProxyOption}"
-                      HorizontalAlignment="Stretch" MinHeight="38" CornerRadius="9"
-                      Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:ProxyOption">
-                  <TextBlock Text="{Binding Label}" FontSize="12" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBox Text="{Binding CustomProxyAddress}" PlaceholderText="http://127.0.0.1:7890"
-                     IsVisible="{Binding IsCustomProxy}" MinHeight="36" CornerRadius="9"
-                     Background="{DynamicResource SemiColorBackground0}" BorderBrush="{DynamicResource SemiColorBorder}" />
-            <Button Content="保存代理设置" Click="OnSaveProxyClick" HorizontalContentAlignment="Center" MinHeight="34" />
-            <TextBlock Text="{Binding ProxyErrorMessage}" Foreground="{DynamicResource SemiColorDanger}" TextWrapping="Wrap" FontSize="11" />
-          </StackPanel>
+          <Button Content="设置" Click="OnSettingsClick" HorizontalContentAlignment="Left" Padding="4"
+                  Background="Transparent" BorderThickness="0" Foreground="{DynamicResource SemiColorText2}" />
           <Border Padding="13" CornerRadius="12" Background="{DynamicResource SemiColorSuccessLight}" BorderBrush="{DynamicResource SemiColorSuccess}" BorderThickness="1">
             <StackPanel Spacing="5">
               <TextBlock Text="●  本地运行" Foreground="{DynamicResource SemiColorSuccess}" FontSize="12" FontWeight="SemiBold" />
@@ -92,7 +62,10 @@
         <TextBlock Text="{Binding UpdateErrorMessage}" Foreground="{DynamicResource SemiColorDanger}" TextWrapping="Wrap" Margin="0,8,0,0" />
         </StackPanel>
       </Border>
-      <views:ToolWorkspaceView Grid.Row="1" DataContext="{Binding Workspace}" />
+      <Grid Grid.Row="1">
+        <views:ToolWorkspaceView DataContext="{Binding Workspace}" IsVisible="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).IsSettingsVisible}" />
+        <views:SettingsView IsVisible="{Binding IsSettingsVisible}" />
+      </Grid>
     </Grid>
   </Grid>
 </Window>
