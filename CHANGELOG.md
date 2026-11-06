@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.6] - 2026-11-06
+
+包含 [0.2.5](#025---2026-11-06) 的全部功能与修复。
+
+### 修复
+
+- Release 上传步骤同时扫描 `artifacts/publish` 和 `artifacts/velopack`，确保 Velopack 安装包、更新包和 `releases.win.json` 都进入 GitHub Release。
+
 ## [0.2.5] - 2026-11-06
 
 包含 [0.2.4](#024---2026-11-06) 的全部功能与修复。

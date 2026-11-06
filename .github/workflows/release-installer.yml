@@ -96,7 +96,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
         run: |
-          $assets = Get-ChildItem artifacts/publish -File |
+          $assets = @(
+            (Get-ChildItem artifacts/publish -File) +
+            (Get-ChildItem artifacts/velopack -File)
+          ) |
             Where-Object { $_.Name -like 'AvaPDF-*-win-x64-setup.exe' -or $_.Name -like 'AvaPDF-*-win-x64-aot.zip' -or $_.Name -like 'AvaPDF-*.nupkg' -or $_.Name -like 'AvaPDF-*-Setup.exe' -or $_.Name -eq 'releases.win.json' } |
             ForEach-Object { $_.FullName }
           gh release upload $env:RELEASE_TAG $assets --clobber
